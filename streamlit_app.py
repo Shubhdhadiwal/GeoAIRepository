@@ -58,25 +58,17 @@ if selected_tab == "About":
     """, unsafe_allow_html=True)
     st.stop()
 
-# ===== SUBMIT RESOURCE ===== #
+# ===== SUBMIT NEW RESOURCE (Redirect to Google Form) ===== #
 if selected_tab == "Submit New Resource":
     st.title("📤 Submit a New Resource")
     st.markdown("Help us grow this repository by contributing useful links and resources.")
-
-    with st.form("submit_form"):
-        title = st.text_input("📌 Title")
-        description = st.text_area("📝 Description")
-        link = st.text_input("🔗 Link")
-        category = st.selectbox("📁 Category", list(sheet_options.keys())[1:-1])
-        resource_type = st.text_input("📂 Type (e.g. Satellite, Tool, Course)")
-        purpose = st.text_input("🎯 Purpose or Use Case")
-        submitted = st.form_submit_button("Submit")
-
-        if submitted:
-            if title and description and link:
-                st.success("✅ Thank you! Your resource has been submitted for review.")
-            else:
-                st.error("⚠️ Please fill out all required fields.")
+    
+    google_form_url = "https://forms.gle/FZZpvr4xQyon5nDs6"
+    
+    if st.button("Open Google Submission Form"):
+        st.markdown(f"[Click here to submit your resource]({google_form_url})", unsafe_allow_html=True)
+    else:
+        st.markdown(f"Or you can submit your resource using [this Google Form]({google_form_url})")
     st.stop()
 
 # ===== LOAD DATA ===== #

@@ -1,151 +1,160 @@
 import streamlit as st
 import pandas as pd
-import math
-from pathlib import Path
 
-# Set the title and favicon that appear in the Browser's tab bar.
-st.set_page_config(
-    page_title='GDP dashboard',
-    page_icon=':earth_americas:', # This is an emoji shortcode. Could be a URL too.
-)
+# ----- Page Configuration ----- #
+st.set_page_config(page_title="GeoAI Repository", layout="wide")
 
-# -----------------------------------------------------------------------------
-# Declare some useful functions.
-
+# ----- Load Excel Data ----- #
 @st.cache_data
-def get_gdp_data():
-    """Grab GDP data from a CSV file.
+def load_data(sheet_name):
+    df = pd.read_excel("Geospatial Data Repository (1).xlsx", sheet_name=sheet_name)
+    df.columns = df.iloc[0]  # Set first row as header
+    df = df[1:]  # Skip header row
+    df = df.dropna(subset=[df.columns[0]])  # Drop rows with empty first column
+    return df
 
-    This uses caching to avoid having to read the file every time. If we were
-    reading from an HTTP endpoint instead of a file, it's a good idea to set
-    a maximum age to the cache with the TTL argument: @st.cache_data(ttl='1d')
+# ----- Sidebar Navigation ----- #
+st.sidebar.header("🧭 GeoAI Repository")
+
+sheet_options = {
+    "About": "About",
+    "Data Sources": "Data Sources",
+    "Tools": "Tools",
+    "Free Tutorials": "Free Tutorials",
+    "Python Codes (GEE)": "Google Earth EnginePython Codes",
+    "Courses": "Courses",
+    "Submit New Resource": "Submit New Resource"
+}
+selected_tab = st.sidebar.radio("Select Section", list(sheet_options.keys()))
+
+# ----- Sidebar Footer ----- #
+st.sidebar.markdown("---")
+st.sidebar.markdown(
     """
-
-    # Instead of a CSV on disk, you could read from an HTTP endpoint here too.
-    DATA_FILENAME = Path(__file__).parent/'data/gdp_data.csv'
-    raw_gdp_df = pd.read_csv(DATA_FILENAME)
-
-    MIN_YEAR = 1960
-    MAX_YEAR = 2022
-
-    # The data above has columns like:
-    # - Country Name
-    # - Country Code
-    # - [Stuff I don't care about]
-    # - GDP for 1960
-    # - GDP for 1961
-    # - GDP for 1962
-    # - ...
-    # - GDP for 2022
-    #
-    # ...but I want this instead:
-    # - Country Name
-    # - Country Code
-    # - Year
-    # - GDP
-    #
-    # So let's pivot all those year-columns into two: Year and GDP
-    gdp_df = raw_gdp_df.melt(
-        ['Country Code'],
-        [str(x) for x in range(MIN_YEAR, MAX_YEAR + 1)],
-        'Year',
-        'GDP',
-    )
-
-    # Convert years from string to integers
-    gdp_df['Year'] = pd.to_numeric(gdp_df['Year'])
-
-    return gdp_df
-
-gdp_df = get_gdp_data()
-
-# -----------------------------------------------------------------------------
-# Draw the actual page
-
-# Set the title that appears at the top of the page.
-'''
-# :earth_americas: GDP dashboard
-
-Browse GDP data from the [World Bank Open Data](https://data.worldbank.org/) website. As you'll
-notice, the data only goes to 2022 right now, and datapoints for certain years are often missing.
-But it's otherwise a great (and did I mention _free_?) source of data.
-'''
-
-# Add some spacing
-''
-''
-
-min_value = gdp_df['Year'].min()
-max_value = gdp_df['Year'].max()
-
-from_year, to_year = st.slider(
-    'Which years are you interested in?',
-    min_value=min_value,
-    max_value=max_value,
-    value=[min_value, max_value])
-
-countries = gdp_df['Country Code'].unique()
-
-if not len(countries):
-    st.warning("Select at least one country")
-
-selected_countries = st.multiselect(
-    'Which countries would you like to view?',
-    countries,
-    ['DEU', 'FRA', 'GBR', 'BRA', 'MEX', 'JPN'])
-
-''
-''
-''
-
-# Filter the data
-filtered_gdp_df = gdp_df[
-    (gdp_df['Country Code'].isin(selected_countries))
-    & (gdp_df['Year'] <= to_year)
-    & (from_year <= gdp_df['Year'])
-]
-
-st.header('GDP over time', divider='gray')
-
-''
-
-st.line_chart(
-    filtered_gdp_df,
-    x='Year',
-    y='GDP',
-    color='Country Code',
+    © 2025 GeoAI Repository  
+    📧 [dhadiwalshubh348@gmail.com](mailto:dhadiwalshubh348@gmail.com)
+    """
 )
 
-''
-''
+# ========================= #
+#       ABOUT SECTION       #
+# ========================= #
+if selected_tab == "About":
+    st.title("📘 About GeoAI Repository")
+    st.markdown("""
+    The **GeoAI Repository** is a free and open resource hub for students, researchers, and professionals 
+    working in geospatial analytics, machine learning, and urban/climate planning.
 
+    This repository curates:
+    - 🌐 **Public geospatial datasets**
+    - 🛠️ **Open-source tools and platforms**
+    - 📘 **Free learning tutorials**
+    - 💻 **Python codes (especially for Google Earth Engine)**
 
-first_year = gdp_df[gdp_df['Year'] == from_year]
-last_year = gdp_df[gdp_df['Year'] == to_year]
+    Our goal is to foster inclusive learning, open innovation, and rapid knowledge sharing in the geospatial-AI community.
+    """)
 
-st.header(f'GDP in {to_year}', divider='gray')
+    st.subheader("💡 Vision")
+    st.markdown("""
+    - Democratize access to GeoAI tools and knowledge  
+    - Promote open science and reproducibility  
+    - Connect learners with meaningful resources
+    """)
 
-''
+    st.subheader("📬 Contact / Feedback")
+    st.markdown("📧 Reach out at: [dhadiwalshubh348@gmail.com](mailto:dhadiwalshubh348@gmail.com)")
+    st.stop()
 
-cols = st.columns(4)
+# ========================= #
+#   SUBMIT NEW RESOURCE     #
+# ========================= #
+if selected_tab == "Submit New Resource":
+    st.title("📤 Submit a New Resource")
+    st.markdown("Help us grow this repository by contributing useful links and resources.")
 
-for i, country in enumerate(selected_countries):
-    col = cols[i % len(cols)]
+    with st.form("submit_form"):
+        title = st.text_input("📌 Title")
+        description = st.text_area("📝 Description")
+        link = st.text_input("🔗 Link")
+        category = st.selectbox("📁 Category", list(sheet_options.keys())[1:-1])
+        resource_type = st.text_input("📂 Type (e.g. Satellite, Tool, Course)")
+        purpose = st.text_input("🎯 Purpose or Use Case")
 
-    with col:
-        first_gdp = first_year[first_year['Country Code'] == country]['GDP'].iat[0] / 1000000000
-        last_gdp = last_year[last_year['Country Code'] == country]['GDP'].iat[0] / 1000000000
+        submitted = st.form_submit_button("Submit")
 
-        if math.isnan(first_gdp):
-            growth = 'n/a'
-            delta_color = 'off'
-        else:
-            growth = f'{last_gdp / first_gdp:,.2f}x'
-            delta_color = 'normal'
+        if submitted:
+            if title and description and link:
+                st.success("✅ Thank you! Your resource has been submitted for review.")
+            else:
+                st.error("⚠️ Please fill out all required fields.")
+    st.stop()
 
-        st.metric(
-            label=f'{country} GDP',
-            value=f'{last_gdp:,.0f}B',
-            delta=growth,
-            delta_color=delta_color
-        )
+# ========================= #
+#     LOAD DATA SECTION     #
+# ========================= #
+df = load_data(sheet_options[selected_tab])
+
+# ----- Search ----- #
+search_term = st.sidebar.text_input("🔍 Search")
+if search_term:
+    df = df[df.apply(lambda row: row.astype(str).str.contains(search_term, case=False, na=False).any(), axis=1)]
+
+# ----- Filter for "Data Sources" Type ----- #
+if selected_tab == "Data Sources" and "Type" in df.columns:
+    type_filter = st.sidebar.multiselect("📂 Filter by Type", df["Type"].dropna().unique())
+    if type_filter:
+        df = df[df["Type"].isin(type_filter)]
+
+# ========================= #
+#     MAIN CONTENT VIEW     #
+# ========================= #
+st.title(f"🌍 GeoAI Repository – {selected_tab}")
+
+# Show table in a scrollable container (fixed deprecated parameter)
+st.dataframe(df, use_container_width=True)
+
+# ----- Detailed View ----- #
+for _, row in df.iterrows():
+    title = row.get("Data Source") or row.get("Tools") or row.get("Title") or row.get("Tutorials") or "Unnamed Resource"
+    st.subheader(f"🔹 {title}")
+
+    if "Description" in row and pd.notna(row["Description"]):
+        st.write(row["Description"])
+
+    link = row.get("Links") or row.get("Link") or row.get("Link to the codes")
+    if pd.notna(link):
+        st.markdown(f"[🔗 Access Resource]({link})", unsafe_allow_html=True)
+
+    if selected_tab == "Data Sources":
+        if pd.notna(row.get("Type")):
+            st.markdown(f"**📂 Type:** {row['Type']}")
+        if pd.notna(row.get("Spatial Resolution")):
+            st.markdown(f"**📏 Spatial Resolution:** {row['Spatial Resolution']}")
+        if pd.notna(row.get("Version")):
+            st.markdown(f"**🧾 Version:** {row['Version']}")
+        if pd.notna(row.get("Year/Month of Data Availability")):
+            st.markdown(f"**📅 Year/Month:** {row['Year/Month of Data Availability']}")
+
+    elif selected_tab == "Tools":
+        if pd.notna(row.get("Applicability")):
+            st.markdown(f"**🛠️ Applicability:** {row['Applicability']}")
+        if pd.notna(row.get("Type")):
+            st.markdown(f"**📂 Type:** {row['Type']}")
+        if pd.notna(row.get("Datasets Availability")):
+            st.markdown(f"**📊 Datasets Availability:** {row['Datasets Availability']}")
+
+    if pd.notna(row.get("Purpose")):
+        st.markdown(f"**🎯 Purpose:** {row['Purpose']}")
+
+    st.markdown("---")
+
+# ========================= #
+#           FOOTER          #
+# ========================= #
+st.markdown("<hr style='border:1px solid #ddd'/>", unsafe_allow_html=True)
+st.markdown(
+    """
+    📘 Powered by [Streamlit](https://streamlit.io) | © 2025 GeoAI Repository  
+    📧 [dhadiwalshubh348@gmail.com](mailto:dhadiwalshubh348@gmail.com)
+    """
+)

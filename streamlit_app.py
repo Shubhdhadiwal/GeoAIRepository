@@ -43,25 +43,13 @@ if selected_tab == "About":
     st.markdown("""
     The **GeoAI Repository** is a free and open resource hub for students, researchers, and professionals 
     working in geospatial analytics, machine learning, and urban/climate planning.
-
-    This repository curates:
-    - 🌐 **Public geospatial datasets**
-    - 🛠️ **Open-source tools and platforms**
-    - 📘 **Free learning tutorials**
-    - 💻 **Python codes (especially for Google Earth Engine)**
-
-    Our goal is to foster inclusive learning, open innovation, and rapid knowledge sharing in the geospatial-AI community.
     """)
-
-    st.subheader("💡 Vision")
-    st.markdown("""
-    - Democratize access to GeoAI tools and knowledge  
-    - Promote open science and reproducibility  
-    - Connect learners with meaningful resources
+    st.info("""
+    - 🌐 Public geospatial datasets  
+    - 🛠️ Open-source tools  
+    - 📘 Free tutorials  
+    - 💻 Python codes for Google Earth Engine  
     """)
-
-    st.subheader("📬 Contact / Feedback")
-    st.markdown("📧 Reach out at: [dhadiwalshubh348@gmail.com](mailto:dhadiwalshubh348@gmail.com)")
     st.stop()
 
 # ===== SUBMIT RESOURCE ===== #
@@ -76,7 +64,6 @@ if selected_tab == "Submit New Resource":
         category = st.selectbox("📁 Category", list(sheet_options.keys())[1:-1])
         resource_type = st.text_input("📂 Type (e.g. Satellite, Tool, Course)")
         purpose = st.text_input("🎯 Purpose or Use Case")
-
         submitted = st.form_submit_button("Submit")
 
         if submitted:
@@ -89,18 +76,17 @@ if selected_tab == "Submit New Resource":
 # ===== LOAD DATA ===== #
 df = load_data(sheet_options[selected_tab])
 
-# ===== SEARCH ===== #
+# ===== INTERACTIVE SEARCH & FILTER ===== #
 search_term = st.sidebar.text_input("🔍 Search")
 if search_term:
     df = df[df.apply(lambda row: row.astype(str).str.contains(search_term, case=False, na=False).any(), axis=1)]
 
-# ===== FILTERS ===== #
 if selected_tab == "Data Sources" and "Type" in df.columns:
     type_filter = st.sidebar.multiselect("📂 Filter by Type", sorted(df["Type"].dropna().unique()))
     if type_filter:
         df = df[df["Type"].isin(type_filter)]
 
-# ===== TITLE COLUMN MAP ===== #
+# ===== TITLE MAPPING ===== #
 title_map = {
     "Data Sources": "Data Source",
     "Tools": "Tool Name",
@@ -113,39 +99,29 @@ title_col = title_map.get(selected_tab, df.columns[0])
 # ===== MAIN TITLE ===== #
 st.title(f"🌍 GeoAI Repository – {selected_tab}")
 
-# ===== SHOW DATAFRAME ===== #
-st.dataframe(df, use_container_width=True)
+# ===== VIEW MODE SWITCH ===== #
+view_mode = st.radio("Choose view mode:", ["📄 Table View", "📇 Card View"], horizontal=True)
 
-# ===== CARD VIEW ===== #
-for _, row in df.iterrows():
-    resource_title = str(row.get(title_col, "Unnamed Resource")).strip()
-    st.subheader(f"🔹 {resource_title}")
+if view_mode == "📄 Table View":
+    st.dataframe(df, use_container_width=True)
 
-    # Description
-    if "Description" in df.columns and pd.notna(row.get("Description")):
-        st.write(row["Description"])
+elif view_mode == "📇 Card View":
+    for _, row in df.iterrows():
+        with st.expander(f"🔹 {row.get(title_col, 'Unnamed Resource')}"):
+            if "Description" in df.columns and pd.notna(row.get("Description")):
+                st.write(row["Description"])
 
-    # Links
-    link_col = next((c for c in ["Links", "Link", "Link to the codes"] if c in df.columns), None)
-    if link_col and pd.notna(row.get(link_col)):
-        st.markdown(f"[🔗 Access Resource]({row[link_col]})", unsafe_allow_html=True)
+            link_col = next((c for c in ["Links", "Link", "Link to the codes"] if c in df.columns), None)
+            if link_col and pd.notna(row.get(link_col)):
+                st.markdown(f"[🔗 Access Resource]({row[link_col]})", unsafe_allow_html=True)
 
-    # Purpose
-    if "Purpose" in df.columns and pd.notna(row.get("Purpose")):
-        st.markdown(f"**🎯 Purpose:** {row['Purpose']}")
+            if "Purpose" in df.columns and pd.notna(row.get("Purpose")):
+                st.markdown(f"**🎯 Purpose:** {row['Purpose']}")
 
-    # Show all other non-empty relevant fields
-    for col in df.columns:
-        if col not in [title_col, "Description", link_col, "Purpose"] and pd.notna(row.get(col)):
-            st.markdown(f"**{col}:** {row[col]}")
-
-    st.markdown("---")
+            for col in df.columns:
+                if col not in [title_col, "Description", link_col, "Purpose"] and pd.notna(row.get(col)):
+                    st.markdown(f"**{col}:** {row[col]}")
 
 # ===== FOOTER ===== #
 st.markdown("<hr style='border:1px solid #ddd'/>", unsafe_allow_html=True)
-st.markdown(
-    """
-    📘 Powered by [Streamlit](https://streamlit.io) | © 2025 GeoAI Repository  
-    📧 [dhadiwalshubh348@gmail.com](mailto:dhadiwalshubh348@gmail.com)
-    """
-)
+st.caption("📘 Powered by Streamlit | © 2025 GeoAI Repository")

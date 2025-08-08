@@ -1,21 +1,22 @@
 import streamlit as st
 import pandas as pd
 
+# ----- Page Configuration ----- #
 st.set_page_config(page_title="GeoAI Repository", layout="wide")
 
+# ----- Load Excel Data ----- #
 @st.cache_data
 def load_data(sheet_name):
     df = pd.read_excel("Geospatial Data Repository (1).xlsx", sheet_name=sheet_name)
-    df.columns = df.iloc[0]  # First row becomes header
-    df = df[1:]  # Skip that first row from data
+    df.columns = df.iloc[0]  # First row as header
+    df = df[1:]  # Remove first row from data
     df = df.dropna(how="all")  # Drop fully empty rows
     df = df.dropna(subset=[df.columns[0]])  # Ensure first col not empty
-    df.columns = [str(c).strip() if not str(c).startswith("Unnamed") else f"Column_{i}"
-                  for i, c in enumerate(df.columns)]  # Remove Unnamed
+    df.columns = [str(c).strip() for c in df.columns if not str(c).startswith("Unnamed")]
     df.reset_index(drop=True, inplace=True)
     return df
 
-# Sidebar navigation
+# ----- Sidebar Navigation ----- #
 st.sidebar.header("🧭 GeoAI Repository")
 
 sheet_options = {
@@ -36,7 +37,7 @@ st.sidebar.markdown("""
 © 2025 GeoAI Repository
 """)
 
-# About section
+# ----- About Section ----- #
 if selected_tab == "About":
     st.title("📘 About GeoAI Repository")
     st.markdown("""
@@ -45,7 +46,7 @@ if selected_tab == "About":
     """)
     st.stop()
 
-# Submit form
+# ----- Submit Form ----- #
 if selected_tab == "Submit New Resource":
     st.title("📤 Submit a New Resource")
     with st.form("submit_form"):
@@ -61,51 +62,51 @@ if selected_tab == "Submit New Resource":
                 st.error("⚠️ Please fill out all required fields.")
     st.stop()
 
-# Load data
+# ----- Field Configuration Per Sheet ----- #
+FIELD_CONFIG = {
+    "Data Sources": ["Name of Source", "Link", "Description", "Year/Month", "Countries Covered", "Type", "Spatial Resolution", "Version", "Purpose"],
+    "Tools": ["Tool Name", "Description", "Link", "Datasets Availability", "Type", "Applicability", "Purpose", "Availability"],
+    "Free Tutorials": ["Tutorial Name", "Description", "Purpose", "Link"],
+    "Python Codes (GEE)": ["Title", "Purpose", "Link"],
+    "Courses": ["Course Name", "Description", "Purpose", "Version", "Link"]
+}
+
+# ----- Load Data ----- #
 df = load_data(sheet_options[selected_tab])
 
-# Search
+# ----- Search ----- #
 search_term = st.sidebar.text_input("🔍 Search")
 if search_term:
     df = df[df.apply(lambda row: row.astype(str).str.contains(search_term, case=False, na=False).any(), axis=1)]
 
-# Filter for Data Sources
+# ----- Filters for Data Sources ----- #
 if selected_tab == "Data Sources" and "Type" in df.columns:
     type_filter = st.sidebar.multiselect("📂 Filter by Type", df["Type"].dropna().unique())
     if type_filter:
         df = df[df["Type"].isin(type_filter)]
 
+# ----- Display Section Title ----- #
 st.title(f"🌍 GeoAI Repository – {selected_tab}")
 
-# Map sheet names to title columns
-title_map = {
-    "Data Sources": "Data Source",
-    "Tools": "Tool Name",
-    "Courses": "Course Name",
-    "Python Codes (GEE)": "Python Code Name",
-    "Free Tutorials": "Tutorial Name"
-}
+# ----- Render Cards Based on Config ----- #
+fields_to_display = FIELD_CONFIG.get(selected_tab, [df.columns[0]])
+title_field = fields_to_display[0] if fields_to_display else df.columns[0]
 
-title_col = title_map.get(selected_tab, df.columns[0])  # Default: first column
-
-# Render cards
 for _, row in df.iterrows():
-    resource_title = str(row[title_col]).strip() if title_col in row and pd.notna(row[title_col]) else "Unnamed Resource"
+    resource_title = str(row.get(title_field, "")).strip() if pd.notna(row.get(title_field)) else "Unnamed Resource"
     st.subheader(f"🔹 {resource_title}")
 
-    if "Description" in df.columns and pd.notna(row["Description"]):
-        st.write(row["Description"])
-
-    link_col = next((c for c in ["Links", "Link", "Link to the codes"] if c in df.columns), None)
-    if link_col and pd.notna(row[link_col]):
-        st.markdown(f"[🔗 Access Resource]({row[link_col]})", unsafe_allow_html=True)
-
-    if "Purpose" in df.columns and pd.notna(row["Purpose"]):
-        st.markdown(f"**🎯 Purpose:** {row['Purpose']}")
+    for field in fields_to_display[1:]:  # Skip title field
+        if field in df.columns and pd.notna(row.get(field)) and str(row.get(field)).strip():
+            value = row[field]
+            if "link" in field.lower():
+                st.markdown(f"[🔗 {field}]({value})")
+            else:
+                st.markdown(f"**{field}:** {value}")
 
     st.markdown("---")
 
-# Footer
+# ----- Footer ----- #
 st.markdown("<hr style='border:1px solid #ddd'/>", unsafe_allow_html=True)
 st.markdown("""
 **Developed by Shubh**  

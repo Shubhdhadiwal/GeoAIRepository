@@ -98,12 +98,19 @@ title_col = title_map.get(selected_tab, df.columns[0])
 st.title(f"🌍 GeoAI Repository – {selected_tab}")
 
 # ===== SHOW CARD VIEW ONLY ===== #
-for _, row in df.iterrows():
-    with st.expander(f"🔹 {row.get(title_col, 'Unnamed Resource')}"):
+exclude_cols = [title_col, "Description", "Purpose", "S.No"]  # Add more if needed
+link_col = next((c for c in ["Links", "Link", "Link to the codes"] if c in df.columns), None)
+
+for idx, row in df.iterrows():
+    resource_title = row.get(title_col)
+    # Safe fallback title
+    if not resource_title or str(resource_title).strip() == "":
+        resource_title = f"Resource-{idx+1}"
+
+    with st.expander(f"🔹 {resource_title}"):
         if "Description" in df.columns and pd.notna(row.get("Description")):
             st.write(row["Description"])
 
-        link_col = next((c for c in ["Links", "Link", "Link to the codes"] if c in df.columns), None)
         if link_col and pd.notna(row.get(link_col)):
             st.markdown(f"[🔗 Access Resource]({row[link_col]})", unsafe_allow_html=True)
 
@@ -111,7 +118,7 @@ for _, row in df.iterrows():
             st.markdown(f"**🎯 Purpose:** {row['Purpose']}")
 
         for col in df.columns:
-            if col not in [title_col, "Description", link_col, "Purpose"] and pd.notna(row.get(col)):
+            if col not in exclude_cols + ([link_col] if link_col else []) and pd.notna(row.get(col)):
                 st.markdown(f"**{col}:** {row[col]}")
 
 # ===== FOOTER ===== #

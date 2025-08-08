@@ -110,42 +110,27 @@ if selected_tab == "Data Sources" and "Type" in df.columns:
 # ========================= #
 st.title(f"🌍 GeoAI Repository – {selected_tab}")
 
-# Special handling for Data Sources
 if selected_tab == "Data Sources":
     st.markdown("### 📊 Explore Geospatial Data Sources")
 
-    # Interactive table
-    st.data_editor(
-        df,
-        use_container_width=True,
-        hide_index=True,
-        column_config={
-            "Links": st.column_config.LinkColumn("🔗 Access Link"),
-            "Type": st.column_config.SelectboxColumn("📂 Type", options=list(df["Type"].dropna().unique()))
-        }
-    )
-
-    # Detailed expandable view
-    st.markdown("### 📄 Detailed Information")
     for _, row in df.iterrows():
-        with st.expander(f"🔹 {row.get('Data Source', 'Unnamed Resource')}"):
-            if pd.notna(row.get("Description")):
-                st.write(row["Description"])
-            if pd.notna(row.get("Links")):
-                st.markdown(f"[🔗 Access Resource]({row['Links']})")
-            if pd.notna(row.get("Type")):
-                st.markdown(f"**📂 Type:** {row['Type']}")
-            if pd.notna(row.get("Spatial Resolution")):
-                st.markdown(f"**📏 Spatial Resolution:** {row['Spatial Resolution']}")
-            if pd.notna(row.get("Version")):
-                st.markdown(f"**🧾 Version:** {row['Version']}")
-            if pd.notna(row.get("Year/Month of Data Availability")):
-                st.markdown(f"**📅 Year/Month:** {row['Year/Month of Data Availability']}")
-            if pd.notna(row.get("Purpose")):
-                st.markdown(f"**🎯 Purpose:** {row['Purpose']}")
+        st.markdown(
+            f"""
+            <div style="border:1px solid #ddd; border-radius:10px; padding:15px; margin-bottom:15px; background-color:#fafafa;">
+                <h3 style="margin-bottom:5px;">🔹 {row.get('Data Source', 'Unnamed Resource')}</h3>
+                <p>{row.get('Description', '')}</p>
+                {'<p><a href="'+str(row.get('Links'))+'" target="_blank">🔗 Access Resource</a></p>' if pd.notna(row.get('Links')) else ''}
+                <p>📂 <b>Type:</b> {row.get('Type', 'N/A')}</p>
+                <p>🧾 <b>Version:</b> {row.get('Version', 'N/A')}</p>
+                <p>📅 <b>Year/Month:</b> {row.get('Year/Month of Data Availability', 'N/A')}</p>
+                <p>🎯 <b>Purpose:</b> {row.get('Purpose', '')}</p>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
     st.stop()
 
-# All other sections (Tools, Tutorials, etc.)
+# Other tabs: default table display
 st.dataframe(df, use_container_width=True)
 
 # ========================= #

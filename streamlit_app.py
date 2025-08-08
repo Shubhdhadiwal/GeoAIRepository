@@ -90,9 +90,9 @@ if selected_tab == "Data Sources" and "Type" in df.columns:
 title_map = {
     "Data Sources": "Data Source",
     "Tools": "Tool Name",
-    "Courses": "Course Name",
-    "Python Codes (GEE)": "Python Code Name",
-    "Free Tutorials": "Tutorial Name"
+    "Courses": "Tutorial Name",
+    "Python Codes (GEE)": "Title",
+    "Free Tutorials": "Tutorial"
 }
 title_col = title_map.get(selected_tab, df.columns[0])
 

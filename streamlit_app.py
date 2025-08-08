@@ -11,7 +11,9 @@ def load_data(sheet_name):
     df = pd.read_excel("Geospatial Data Repository (1).xlsx", sheet_name=sheet_name)
     df.columns = df.iloc[0]  # First row as header
     df = df[1:]  # Remove header row from data
-    df = df.dropna(subset=[df.columns[0]])  # Drop empty rows
+    df = df.dropna(how="all")  # Drop fully empty rows
+    df = df.dropna(subset=[df.columns[0]])  # Drop rows where first column is empty
+    df.reset_index(drop=True, inplace=True)
     return df
 
 # ----- Sidebar Navigation ----- #
@@ -116,10 +118,17 @@ resource_tabs = ["Data Sources", "Tools", "Courses", "Python Codes (GEE)", "Free
 if selected_tab in resource_tabs:
     st.title(f"📚 Explore Geospatial {selected_tab}")
 
+    # Possible title column names for different sheets
+    possible_title_cols = [
+        "Data Source", "Tool Name", "Course Name",
+        "Python Code Name", "Tutorial Name", "Name", "Title"
+    ]
+
     for _, row in df.iterrows():
-        # Find the correct title column based on tab
-        title_col = next((col for col in ["Data Source", "Tool Name", "Course Name", "Python Code Name", "Tutorial Name"] if col in df.columns), None)
-        resource_title = row.get(title_col) if title_col else "Unnamed Resource"
+        title_col = next((col for col in possible_title_cols if col in df.columns), None)
+        resource_title = row.get(title_col, "").strip() if title_col else ""
+        if not resource_title or resource_title.lower() == "nan":
+            resource_title = "Unnamed Resource"
 
         st.markdown(
             f"""

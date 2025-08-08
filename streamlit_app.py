@@ -12,7 +12,7 @@ def load_data(sheet_name):
     df = df[1:]  # Remove first row from data
     df = df.dropna(how="all")  # Drop fully empty rows
     df = df.dropna(subset=[df.columns[0]])  # Ensure first col not empty
-    df.columns = [str(c).strip() for c in df.columns if not str(c).startswith("Unnamed")]
+    df.columns = [str(c).strip() for c in df.columns]  # Keep all, just strip spaces
     df.reset_index(drop=True, inplace=True)
     return df
 
@@ -71,6 +71,15 @@ FIELD_CONFIG = {
     "Courses": ["Course Name", "Description", "Purpose", "Version", "Link"]
 }
 
+# ----- Map sheet names to title columns ----- #
+TITLE_MAP = {
+    "Data Sources": "Name of Source",
+    "Tools": "Tool Name",
+    "Courses": "Course Name",
+    "Python Codes (GEE)": "Title",
+    "Free Tutorials": "Tutorial Name"
+}
+
 # ----- Load Data ----- #
 df = load_data(sheet_options[selected_tab])
 
@@ -88,19 +97,20 @@ if selected_tab == "Data Sources" and "Type" in df.columns:
 # ----- Display Section Title ----- #
 st.title(f"🌍 GeoAI Repository – {selected_tab}")
 
-# ----- Render Cards Based on Config ----- #
-fields_to_display = FIELD_CONFIG.get(selected_tab, [df.columns[0]])
-title_field = fields_to_display[0] if fields_to_display else df.columns[0]
+# ----- Determine title column for this tab ----- #
+title_field = TITLE_MAP.get(selected_tab, df.columns[0])
+fields_to_display = FIELD_CONFIG.get(selected_tab, [title_field])
 
+# ----- Render Cards ----- #
 for _, row in df.iterrows():
     resource_title = str(row.get(title_field, "")).strip() if pd.notna(row.get(title_field)) else "Unnamed Resource"
     st.subheader(f"🔹 {resource_title}")
 
-    for field in fields_to_display[1:]:  # Skip title field
+    for field in fields_to_display[1:]:  # Skip title
         if field in df.columns and pd.notna(row.get(field)) and str(row.get(field)).strip():
             value = row[field]
             if "link" in field.lower():
-                st.markdown(f"[🔗 {field}]({value})")
+                st.markdown(f"[🔗 {field}]({value})", unsafe_allow_html=True)
             else:
                 st.markdown(f"**{field}:** {value}")
 

@@ -31,8 +31,9 @@ selected_tab = st.sidebar.radio("Select Section", list(sheet_options.keys()))
 st.sidebar.markdown("---")
 st.sidebar.markdown(
     """
-    © 2025 GeoAI Repository  
-    📧 [dhadiwalshubh348@gmail.com](mailto:dhadiwalshubh348@gmail.com)
+    **Developed by Shubh**  
+    📧 [dhadiwalshubh348@gmail.com](mailto:dhadiwalshubh348@gmail.com)  
+    © 2025 GeoAI Repository
     """
 )
 
@@ -130,7 +131,7 @@ if selected_tab == "Data Sources":
         )
     st.stop()
 
-# Other tabs: default table display
+# ----- Other Tabs: Show Table ----- #
 st.dataframe(df, use_container_width=True)
 
 # ========================= #
@@ -139,7 +140,8 @@ st.dataframe(df, use_container_width=True)
 st.markdown("<hr style='border:1px solid #ddd'/>", unsafe_allow_html=True)
 st.markdown(
     """
-    📘 Powered by [Streamlit](https://streamlit.io) | © 2025 GeoAI Repository  
-    📧 [dhadiwalshubh348@gmail.com](mailto:dhadiwalshubh348@gmail.com)
+    **Developed by Shubh**  
+    📧 [dhadiwalshubh348@gmail.com](mailto:dhadiwalshubh348@gmail.com)  
+    📘 Powered by [Streamlit](https://streamlit.io) | © 2025 GeoAI Repository
     """
 )

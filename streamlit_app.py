@@ -7,7 +7,7 @@ st.set_page_config(page_title="GeoAI Repository", layout="wide")
 # ===== LOAD DATA ===== #
 @st.cache_data
 def load_data(sheet_name):
-    df = pd.read_excel("Geospatial Data Repository (1).xlsx", sheet_name=sheet_name)
+    df = pd.read_excel("Geospatial Data Repository (2).xlsx", sheet_name=sheet_name)
     df.columns = df.iloc[0]  # Use first row as header
     df = df[1:]  # Skip header row from data
     df = df.dropna(subset=[df.columns[0]])  # Ensure first column is not empty

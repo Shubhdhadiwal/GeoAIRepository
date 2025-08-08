@@ -8,7 +8,7 @@ st.set_page_config(page_title="GeoAI Repository", layout="wide")
 @st.cache_data
 def load_data(sheet_name):
     df = pd.read_excel("Geospatial Data Repository (1).xlsx", sheet_name=sheet_name)
-    df.columns = df.iloc[0]  # Set first row as header
+    df.columns = df.iloc[0]  # First row as header
     df = df[1:]  # Skip header row
     df = df.dropna(subset=[df.columns[0]])  # Drop rows with empty first column
     return df
@@ -100,38 +100,38 @@ search_term = st.sidebar.text_input("🔍 Search")
 if search_term:
     df = df[df.apply(lambda row: row.astype(str).str.contains(search_term, case=False, na=False).any(), axis=1)]
 
-# ----- Filter for "Data Sources" Type ----- #
-if selected_tab == "Data Sources" and "Type" in df.columns:
+# ----- Filter for "Type" column ----- #
+if "Type" in df.columns:
     type_filter = st.sidebar.multiselect("📂 Filter by Type", df["Type"].dropna().unique())
     if type_filter:
         df = df[df["Type"].isin(type_filter)]
 
 # ========================= #
-#     MAIN CONTENT VIEW     #
+#  CARD LAYOUT FOR SECTIONS #
 # ========================= #
-st.title(f"🌍 GeoAI Repository – {selected_tab}")
+resource_tabs = ["Data Sources", "Tools", "Courses", "Python Codes (GEE)", "Free Tutorials"]
 
-if selected_tab == "Data Sources":
-    st.markdown("### 📊 Explore Geospatial Data Sources")
+if selected_tab in resource_tabs:
+    st.title(f"📚 Explore Geospatial {selected_tab}")
 
     for _, row in df.iterrows():
         st.markdown(
             f"""
             <div style="border:1px solid #ddd; border-radius:10px; padding:15px; margin-bottom:15px; background-color:#fafafa;">
-                <h3 style="margin-bottom:5px;">🔹 {row.get('Data Source', 'Unnamed Resource')}</h3>
+                <h3 style="margin-bottom:5px;">🔹 {row.get('Data Source') or row.get('Tool Name') or row.get('Course Name') or 'Unnamed Resource'}</h3>
                 <p>{row.get('Description', '')}</p>
                 {'<p><a href="'+str(row.get('Links'))+'" target="_blank">🔗 Access Resource</a></p>' if pd.notna(row.get('Links')) else ''}
-                <p>📂 <b>Type:</b> {row.get('Type', 'N/A')}</p>
-                <p>🧾 <b>Version:</b> {row.get('Version', 'N/A')}</p>
-                <p>📅 <b>Year/Month:</b> {row.get('Year/Month of Data Availability', 'N/A')}</p>
-                <p>🎯 <b>Purpose:</b> {row.get('Purpose', '')}</p>
+                {f"<p>📂 <b>Type:</b> {row.get('Type')}</p>" if 'Type' in df.columns else ''}
+                {f"<p>🧾 <b>Version:</b> {row.get('Version')}</p>" if 'Version' in df.columns else ''}
+                {f"<p>📅 <b>Year/Month:</b> {row.get('Year/Month of Data Availability')}</p>" if 'Year/Month of Data Availability' in df.columns else ''}
+                {f"<p>🎯 <b>Purpose:</b> {row.get('Purpose')}</p>" if 'Purpose' in df.columns else ''}
             </div>
             """,
             unsafe_allow_html=True
         )
     st.stop()
 
-# ----- Other Tabs: Show Table ----- #
+# ----- Default Table View ----- #
 st.dataframe(df, use_container_width=True)
 
 # ========================= #

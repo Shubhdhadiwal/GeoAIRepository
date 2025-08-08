@@ -92,7 +92,7 @@ title_map = {
     "Tools": "Tool Name",
     "Courses": "Tutorial Name",
     "Python Codes (GEE)": "Title",
-    "Free Tutorials": "Tutorial"
+    "Free Tutorials": "Tutorials"
 }
 title_col = title_map.get(selected_tab, df.columns[0])
 

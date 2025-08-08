@@ -126,20 +126,33 @@ if selected_tab in resource_tabs:
 
     for _, row in df.iterrows():
         title_col = next((col for col in possible_title_cols if col in df.columns), None)
-        resource_title = row.get(title_col, "").strip() if title_col else ""
-        if not resource_title or resource_title.lower() == "nan":
+
+        if title_col:
+            val = row[title_col]
+            resource_title = str(val).strip() if pd.notna(val) else "Unnamed Resource"
+        else:
             resource_title = "Unnamed Resource"
+
+        description = str(row["Description"]).strip() if "Description" in df.columns and pd.notna(row["Description"]) else ""
+        link_html = ""
+        if "Links" in df.columns and pd.notna(row["Links"]):
+            link_html = f'<p><a href="{row["Links"]}" target="_blank">🔗 Access Resource</a></p>'
+
+        type_html = f"<p>📂 <b>Type:</b> {row['Type']}</p>" if "Type" in df.columns and pd.notna(row["Type"]) else ""
+        version_html = f"<p>🧾 <b>Version:</b> {row['Version']}</p>" if "Version" in df.columns and pd.notna(row["Version"]) else ""
+        date_html = f"<p>📅 <b>Year/Month:</b> {row['Year/Month of Data Availability']}</p>" if "Year/Month of Data Availability" in df.columns and pd.notna(row["Year/Month of Data Availability"]) else ""
+        purpose_html = f"<p>🎯 <b>Purpose:</b> {row['Purpose']}</p>" if "Purpose" in df.columns and pd.notna(row["Purpose"]) else ""
 
         st.markdown(
             f"""
             <div style="border:1px solid #ddd; border-radius:10px; padding:15px; margin-bottom:15px; background-color:#fafafa;">
                 <h3 style="margin-bottom:5px;">🔹 {resource_title}</h3>
-                <p>{row.get('Description', '')}</p>
-                {'<p><a href="'+str(row.get('Links'))+'" target="_blank">🔗 Access Resource</a></p>' if pd.notna(row.get('Links')) else ''}
-                {f"<p>📂 <b>Type:</b> {row.get('Type')}</p>" if 'Type' in df.columns else ''}
-                {f"<p>🧾 <b>Version:</b> {row.get('Version')}</p>" if 'Version' in df.columns else ''}
-                {f"<p>📅 <b>Year/Month:</b> {row.get('Year/Month of Data Availability')}</p>" if 'Year/Month of Data Availability' in df.columns else ''}
-                {f"<p>🎯 <b>Purpose:</b> {row.get('Purpose')}</p>" if 'Purpose' in df.columns else ''}
+                <p>{description}</p>
+                {link_html}
+                {type_html}
+                {version_html}
+                {date_html}
+                {purpose_html}
             </div>
             """,
             unsafe_allow_html=True

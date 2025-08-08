@@ -119,3 +119,9 @@ for _, row in df.iterrows():
 # ===== FOOTER ===== #
 st.markdown("<hr style='border:1px solid #ddd'/>", unsafe_allow_html=True)
 st.caption("📘 Powered by Streamlit | © 2025 GeoAI Repository")
+st.markdown("""
+<p style='text-align:center; font-size:12px; color:gray;'>
+Developed by Shubh | 
+<a href='https://www.linkedin.com/in/shubh-dhadiwal/' target='_blank'>LinkedIn</a>
+</p>
+""", unsafe_allow_html=True)

@@ -33,7 +33,6 @@ st.sidebar.markdown("---")
 st.sidebar.markdown(
     """
     © 2025 GeoAI Repository  
-    📧 [dhadiwalshubh348@gmail.com](mailto:dhadiwalshubh348@gmail.com)
     """
 )
 

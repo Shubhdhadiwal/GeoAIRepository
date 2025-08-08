@@ -94,16 +94,25 @@ title_map = {
 }
 title_col = title_map.get(selected_tab, df.columns[0])
 
-# ===== MAIN TITLE ===== #
-st.title(f"🌍 GeoAI Repository – {selected_tab}")
-
 # ===== SHOW CARD VIEW ONLY ===== #
 exclude_cols = [title_col, "Description", "Purpose", "S.No"]  # Add more if needed
-link_col = next((c for c in ["Links", "Link", "Link to the codes"] if c in df.columns), None)
+
+# Define possible link column names per tab for better detection
+link_columns_map = {
+    "Data Sources": ["Links", "Link"],
+    "Tools": ["Tool Link", "Link", "Links"],
+    "Courses": ["Course Link", "Link", "Links"],
+    "Free Tutorials": ["Link", "Links", "Tutorial Link"],
+    "Python Codes (GEE)": ["Link", "Links", "Link to the codes"]
+}
+
+possible_links = link_columns_map.get(selected_tab, ["Links", "Link", "Link to the codes"])
+link_col = next((c for c in possible_links if c in df.columns), None)
+
+st.title(f"🌍 GeoAI Repository – {selected_tab}")
 
 for idx, row in df.iterrows():
     resource_title = row.get(title_col)
-    # Safe fallback title
     if not resource_title or str(resource_title).strip() == "":
         resource_title = f"Resource-{idx+1}"
 

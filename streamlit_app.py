@@ -99,28 +99,22 @@ title_col = title_map.get(selected_tab, df.columns[0])
 # ===== MAIN TITLE ===== #
 st.title(f"🌍 GeoAI Repository – {selected_tab}")
 
-# ===== VIEW MODE SWITCH ===== #
-view_mode = st.radio("Choose view mode:", ["📄 Table View", "📇 Card View"], horizontal=True)
+# ===== SHOW CARD VIEW ONLY ===== #
+for _, row in df.iterrows():
+    with st.expander(f"🔹 {row.get(title_col, 'Unnamed Resource')}"):
+        if "Description" in df.columns and pd.notna(row.get("Description")):
+            st.write(row["Description"])
 
-if view_mode == "📄 Table View":
-    st.dataframe(df, use_container_width=True)
+        link_col = next((c for c in ["Links", "Link", "Link to the codes"] if c in df.columns), None)
+        if link_col and pd.notna(row.get(link_col)):
+            st.markdown(f"[🔗 Access Resource]({row[link_col]})", unsafe_allow_html=True)
 
-elif view_mode == "📇 Card View":
-    for _, row in df.iterrows():
-        with st.expander(f"🔹 {row.get(title_col, 'Unnamed Resource')}"):
-            if "Description" in df.columns and pd.notna(row.get("Description")):
-                st.write(row["Description"])
+        if "Purpose" in df.columns and pd.notna(row.get("Purpose")):
+            st.markdown(f"**🎯 Purpose:** {row['Purpose']}")
 
-            link_col = next((c for c in ["Links", "Link", "Link to the codes"] if c in df.columns), None)
-            if link_col and pd.notna(row.get(link_col)):
-                st.markdown(f"[🔗 Access Resource]({row[link_col]})", unsafe_allow_html=True)
-
-            if "Purpose" in df.columns and pd.notna(row.get("Purpose")):
-                st.markdown(f"**🎯 Purpose:** {row['Purpose']}")
-
-            for col in df.columns:
-                if col not in [title_col, "Description", link_col, "Purpose"] and pd.notna(row.get(col)):
-                    st.markdown(f"**{col}:** {row[col]}")
+        for col in df.columns:
+            if col not in [title_col, "Description", link_col, "Purpose"] and pd.notna(row.get(col)):
+                st.markdown(f"**{col}:** {row[col]}")
 
 # ===== FOOTER ===== #
 st.markdown("<hr style='border:1px solid #ddd'/>", unsafe_allow_html=True)

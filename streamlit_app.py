@@ -96,7 +96,7 @@ if selected_tab == "Data Sources" and "Type" in df.columns:
 title_map = {
     "Data Sources": "Data Source",
     "Tools": "Tools",
-    "Courses": "Tutorial Name",
+    "Courses": "Tutorials",
     "Python Codes (GEE)": "Title",
     "Free Tutorials": "Tutorials"
 }

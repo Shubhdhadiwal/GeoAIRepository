@@ -7,10 +7,11 @@ st.set_page_config(page_title="GeoAI Repository", layout="wide")
 # ----- Load Excel Data ----- #
 @st.cache_data
 def load_data(sheet_name):
+    """Load data from a specific Excel sheet."""
     df = pd.read_excel("Geospatial Data Repository (1).xlsx", sheet_name=sheet_name)
     df.columns = df.iloc[0]  # First row as header
-    df = df[1:]  # Skip header row
-    df = df.dropna(subset=[df.columns[0]])  # Drop rows with empty first column
+    df = df[1:]  # Remove header row from data
+    df = df.dropna(subset=[df.columns[0]])  # Drop empty rows
     return df
 
 # ----- Sidebar Navigation ----- #
@@ -25,6 +26,7 @@ sheet_options = {
     "Courses": "Courses",
     "Submit New Resource": "Submit New Resource"
 }
+
 selected_tab = st.sidebar.radio("Select Section", list(sheet_options.keys()))
 
 # ----- Sidebar Footer ----- #
@@ -63,7 +65,7 @@ if selected_tab == "About":
     """)
 
     st.subheader("📬 Contact / Feedback")
-    st.markdown("📧 Reach out at: [dhadiwalshubh348@gmail.com](mailto:dhadiwalshubh348@gmail.com)")
+    st.markdown("📧 [dhadiwalshubh348@gmail.com](mailto:dhadiwalshubh348@gmail.com)")
     st.stop()
 
 # ========================= #
@@ -115,10 +117,14 @@ if selected_tab in resource_tabs:
     st.title(f"📚 Explore Geospatial {selected_tab}")
 
     for _, row in df.iterrows():
+        # Find the correct title column based on tab
+        title_col = next((col for col in ["Data Source", "Tool Name", "Course Name", "Python Code Name", "Tutorial Name"] if col in df.columns), None)
+        resource_title = row.get(title_col) if title_col else "Unnamed Resource"
+
         st.markdown(
             f"""
             <div style="border:1px solid #ddd; border-radius:10px; padding:15px; margin-bottom:15px; background-color:#fafafa;">
-                <h3 style="margin-bottom:5px;">🔹 {row.get('Data Source') or row.get('Tool Name') or row.get('Course Name') or 'Unnamed Resource'}</h3>
+                <h3 style="margin-bottom:5px;">🔹 {resource_title}</h3>
                 <p>{row.get('Description', '')}</p>
                 {'<p><a href="'+str(row.get('Links'))+'" target="_blank">🔗 Access Resource</a></p>' if pd.notna(row.get('Links')) else ''}
                 {f"<p>📂 <b>Type:</b> {row.get('Type')}</p>" if 'Type' in df.columns else ''}

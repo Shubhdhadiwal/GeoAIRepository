@@ -110,43 +110,43 @@ if selected_tab == "Data Sources" and "Type" in df.columns:
 # ========================= #
 st.title(f"🌍 GeoAI Repository – {selected_tab}")
 
-# Show table in a scrollable container (fixed deprecated parameter)
+# Special handling for Data Sources
+if selected_tab == "Data Sources":
+    st.markdown("### 📊 Explore Geospatial Data Sources")
+
+    # Interactive table
+    st.data_editor(
+        df,
+        use_container_width=True,
+        hide_index=True,
+        column_config={
+            "Links": st.column_config.LinkColumn("🔗 Access Link"),
+            "Type": st.column_config.SelectboxColumn("📂 Type", options=list(df["Type"].dropna().unique()))
+        }
+    )
+
+    # Detailed expandable view
+    st.markdown("### 📄 Detailed Information")
+    for _, row in df.iterrows():
+        with st.expander(f"🔹 {row.get('Data Source', 'Unnamed Resource')}"):
+            if pd.notna(row.get("Description")):
+                st.write(row["Description"])
+            if pd.notna(row.get("Links")):
+                st.markdown(f"[🔗 Access Resource]({row['Links']})")
+            if pd.notna(row.get("Type")):
+                st.markdown(f"**📂 Type:** {row['Type']}")
+            if pd.notna(row.get("Spatial Resolution")):
+                st.markdown(f"**📏 Spatial Resolution:** {row['Spatial Resolution']}")
+            if pd.notna(row.get("Version")):
+                st.markdown(f"**🧾 Version:** {row['Version']}")
+            if pd.notna(row.get("Year/Month of Data Availability")):
+                st.markdown(f"**📅 Year/Month:** {row['Year/Month of Data Availability']}")
+            if pd.notna(row.get("Purpose")):
+                st.markdown(f"**🎯 Purpose:** {row['Purpose']}")
+    st.stop()
+
+# All other sections (Tools, Tutorials, etc.)
 st.dataframe(df, use_container_width=True)
-
-# ----- Detailed View ----- #
-for _, row in df.iterrows():
-    title = row.get("Data Source") or row.get("Tools") or row.get("Title") or row.get("Tutorials") or "Unnamed Resource"
-    st.subheader(f"🔹 {title}")
-
-    if "Description" in row and pd.notna(row["Description"]):
-        st.write(row["Description"])
-
-    link = row.get("Links") or row.get("Link") or row.get("Link to the codes")
-    if pd.notna(link):
-        st.markdown(f"[🔗 Access Resource]({link})", unsafe_allow_html=True)
-
-    if selected_tab == "Data Sources":
-        if pd.notna(row.get("Type")):
-            st.markdown(f"**📂 Type:** {row['Type']}")
-        if pd.notna(row.get("Spatial Resolution")):
-            st.markdown(f"**📏 Spatial Resolution:** {row['Spatial Resolution']}")
-        if pd.notna(row.get("Version")):
-            st.markdown(f"**🧾 Version:** {row['Version']}")
-        if pd.notna(row.get("Year/Month of Data Availability")):
-            st.markdown(f"**📅 Year/Month:** {row['Year/Month of Data Availability']}")
-
-    elif selected_tab == "Tools":
-        if pd.notna(row.get("Applicability")):
-            st.markdown(f"**🛠️ Applicability:** {row['Applicability']}")
-        if pd.notna(row.get("Type")):
-            st.markdown(f"**📂 Type:** {row['Type']}")
-        if pd.notna(row.get("Datasets Availability")):
-            st.markdown(f"**📊 Datasets Availability:** {row['Datasets Availability']}")
-
-    if pd.notna(row.get("Purpose")):
-        st.markdown(f"**🎯 Purpose:** {row['Purpose']}")
-
-    st.markdown("---")
 
 # ========================= #
 #           FOOTER          #

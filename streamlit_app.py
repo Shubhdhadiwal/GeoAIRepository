@@ -2,9 +2,10 @@ import streamlit as st
 import pandas as pd
 import altair as alt
 import re
-
-import streamlit as st
 import hashlib
+
+# Replace this with your GitHub raw Excel file URL (note /raw/ in URL)
+GITHUB_RAW_URL = "https://github.com/Shubhdhadiwal/GeoAIRepository/raw/main/Geospatial%20Data%20Repository%20(2).xlsx"
 
 # Utility to hash password string
 def hash_password(password):
@@ -40,11 +41,9 @@ if not st.session_state['authenticated']:
 if st.sidebar.button("Logout"):
     st.session_state['authenticated'] = False
     st.session_state['username'] = None
+    st.experimental_rerun()
 
 st.sidebar.title(f"Welcome, {st.session_state['username']}!")
-
-# Your existing repository code below...
-
 
 # ===== PAGE CONFIG ===== #
 st.set_page_config(page_title="GeoAI Repository", layout="wide")
@@ -54,17 +53,17 @@ sheet_options = {
     "Data Sources": "Data Sources",
     "Tools": "Tools",
     "Free Tutorials": "Free Tutorials",
-    "Python Codes (GEE)": "Google Earth EnginePython Codes",
+    "Python Codes (GEE)": "Python Codes (GEE)",
     "Courses": "Courses",
     "Submit New Resource": "Submit New Resource",
     "Favorites": "Favorites",
     "FAQ": "FAQ"
 }
 
-@st.cache_data(show_spinner=False)
+# Note: No caching here to always fetch latest Excel from GitHub
 def load_data(sheet_name):
     try:
-        df = pd.read_excel("Geospatial Data Repository (2).xlsx", sheet_name=sheet_name)
+        df = pd.read_excel(GITHUB_RAW_URL, sheet_name=sheet_name)
         df.columns = df.iloc[0]  # Use first row as header
         df = df[1:]
         df = df.dropna(subset=[df.columns[0]])
@@ -174,13 +173,13 @@ if selected_tab == "Favorites":
 else:
     title_col = title_map.get(selected_tab, df.columns[0] if not df.empty else None)
 
-# Search term input (still here if you want)
+# Search term input
 search_term = st.sidebar.text_input("🔍 Search")
 
-# Add sorting option (still here if you want)
+# Sort option
 sort_order = st.sidebar.selectbox("Sort by Title", ["Ascending", "Descending"])
 
-# Remove dynamic categorical filters completely — no filters!
+# No dynamic categorical filters here
 
 if selected_tab not in ["Favorites", "About", "Submit New Resource", "FAQ"]:
     # Apply search filter
@@ -202,7 +201,7 @@ if df.empty:
     st.info("No resources to display.")
     st.stop()
 
-# Toggle between compact and detailed view
+# View mode toggle
 view_mode = st.sidebar.radio("View Mode", ["Detailed", "Compact"])
 
 exclude_cols = [title_col, "Description", "Purpose", "S.No", "Category"]

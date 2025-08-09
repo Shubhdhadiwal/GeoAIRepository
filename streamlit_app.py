@@ -9,26 +9,37 @@ import streamlit as st
 
 import streamlit as st
 
-# User credentials (demo only)
+import streamlit as st
+
 USER_CREDENTIALS = {
     "alice": "password123",
     "bob": "mypassword"
 }
 
+if 'authenticated' not in st.session_state:
+    st.session_state['authenticated'] = False
+    st.session_state['username'] = None
+    st.session_state['login_button_clicked'] = False  # Track button click safely
+
 def login():
     st.title("Please log in")
 
-    username = st.text_input("Username")
-    password = st.text_input("Password", type="password")
-    login_button = st.button("Login")
+    username = st.text_input("Username", key="username_input")
+    password = st.text_input("Password", type="password", key="password_input")
 
-    if login_button:
+    # Store login button press in session_state (to avoid multiple reruns)
+    if st.button("Login"):
+        st.session_state['login_button_clicked'] = True
+
+    if st.session_state['login_button_clicked']:
         if username in USER_CREDENTIALS and USER_CREDENTIALS[username] == password:
             st.session_state['authenticated'] = True
             st.session_state['username'] = username
+            st.session_state['login_button_clicked'] = False  # Reset
             st.experimental_rerun()
         else:
             st.error("Invalid username or password")
+            st.session_state['login_button_clicked'] = False  # Reset
 
 def logout():
     if st.sidebar.button("Logout"):
@@ -36,43 +47,33 @@ def logout():
         st.session_state['username'] = None
         st.experimental_rerun()
 
-# Initialize session state
-if 'authenticated' not in st.session_state:
-    st.session_state['authenticated'] = False
-    st.session_state['username'] = None
-
-# If not logged in, show login page and stop here
 if not st.session_state['authenticated']:
     login()
-    st.stop()  # STOP running below code until user logs in
+    st.stop()
 
-# From here on: user is authenticated, show full app
+# Authenticated: show app content
 
 st.sidebar.title(f"Welcome, {st.session_state['username']}!")
 logout()
 
-# Sidebar for repository categories
 category = st.sidebar.radio("Select a category", ["About", "Data Sources", "Tools", "Tutorials"])
 
-# Example content for each category
 if category == "About":
     st.header("About the GeoAI Repository")
-    st.write("This repository contains geospatial AI resources.")
+    st.write("Repository content for About")
 
 elif category == "Data Sources":
     st.header("Data Sources")
-    st.write("- Source 1")
-    st.write("- Source 2")
+    st.write("Repository content for Data Sources")
 
 elif category == "Tools":
     st.header("Tools")
-    st.write("- Tool A")
-    st.write("- Tool B")
+    st.write("Repository content for Tools")
 
 elif category == "Tutorials":
     st.header("Tutorials")
-    st.write("- Tutorial X")
-    st.write("- Tutorial Y")
+    st.write("Repository content for Tutorials")
+
 
 
 # ===== PAGE CONFIG ===== #

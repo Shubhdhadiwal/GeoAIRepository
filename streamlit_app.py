@@ -10,16 +10,42 @@ import streamlit_authenticator as stauth
 st.set_page_config(page_title="GeoAI Repository", layout="wide")
 
 # ===== LOAD LOGIN CONFIG ===== #
-with open('config.yaml') as file:
-    config = yaml.load(file, Loader=SafeLoader)
+def load_auth_config(config_path: str = "config.yaml"):
+    """Load and validate authentication configuration from YAML."""
+    try:
+        with open(config_path) as file:
+            config = yaml.load(file, Loader=SafeLoader)
+    except FileNotFoundError:
+        raise FileNotFoundError(f"Config file not found: {config_path}")
+    except yaml.YAMLError as e:
+        raise ValueError(f"Error parsing YAML file: {e}")
 
-# Create authenticator
-authenticator = stauth.Authenticate(
-    config['credentials'],
-    config['cookie']['name'],
-    config['cookie']['key'],
-    config['cookie']['expiry_days']
-)
+    credentials = config.get("credentials")
+    cookie = config.get("cookie", {})
+    cookie_name = cookie.get("name")
+    cookie_key = cookie.get("key")
+    expiry_days = cookie.get("expiry_days")
+
+    if not all([credentials, cookie_name, cookie_key, expiry_days]):
+        raise ValueError(
+            "Authentication config missing required fields. "
+            "Check 'credentials', 'cookie.name', 'cookie.key', and 'cookie.expiry_days' in config.yaml."
+        )
+
+    return credentials, cookie_name, cookie_key, expiry_days
+
+# Initialize authenticator
+try:
+    credentials, cookie_name, cookie_key, expiry_days = load_auth_config()
+    authenticator = stauth.Authenticate(
+        credentials,
+        cookie_name,
+        cookie_key,
+        expiry_days
+    )
+except Exception as e:
+    st.error(f"Authentication configuration error: {e}")
+    st.stop()
 
 # ===== LOGIN ===== #
 name, authentication_status, username = authenticator.login('Login', 'sidebar')
@@ -28,7 +54,7 @@ if authentication_status:
     st.sidebar.success(f"Welcome {name} 👋")
     authenticator.logout('Logout', 'sidebar')
 
-    # ===== YOUR EXISTING CODE STARTS HERE ===== #
+    # ===== MAIN APP ===== #
     sheet_options = {
         "About": "About",
         "Data Sources": "Data Sources",

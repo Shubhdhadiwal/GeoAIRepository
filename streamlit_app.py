@@ -168,6 +168,29 @@ def toggle_favorite(res_id, resource_title, selected_tab, link):
         }
     st.experimental_rerun()
 
+# ===== HELPER FUNCTION TO EMBED URL ===== #
+def embed_resource(url):
+    if not url or not isinstance(url, str):
+        return
+    # Support YouTube embeds
+    if "youtube.com/watch" in url or "youtu.be/" in url:
+        if "youtu.be/" in url:
+            video_id = url.split("youtu.be/")[1].split("?")[0]
+        else:
+            import urllib.parse
+            parsed = urllib.parse.urlparse(url)
+            query = urllib.parse.parse_qs(parsed.query)
+            video_id = query.get("v", [""])[0]
+        embed_url = f"https://www.youtube.com/embed/{video_id}"
+        st.video(embed_url)
+    # Support generic iframe embed for other URLs (if allowed)
+    else:
+        # Basic iframe embed (width and height can be adjusted)
+        iframe_code = f"""
+        <iframe src="{url}" width="700" height="400" frameborder="0" allowfullscreen></iframe>
+        """
+        st.markdown(iframe_code, unsafe_allow_html=True)
+
 # ===== MAIN TITLE & RESOURCE DISPLAY ===== #
 if selected_tab not in ["Favorites", "Submit New Resource", "About", "FAQ & Help"]:
     st.title(f"🌍 GeoAI Repository – {selected_tab}")
@@ -203,6 +226,10 @@ if selected_tab not in ["Favorites", "Submit New Resource", "About", "FAQ & Help
                 for col in df.columns:
                     if col not in exclude_cols + ([link_col] if link_col else []) and pd.notna(row.get(col)):
                         st.markdown(f"**{col}:** {row[col]}")
+
+                # Embed the resource link (if possible)
+                if link_col and pd.notna(row.get(link_col)):
+                    embed_resource(row[link_col])
 
                 # Favorite toggle button
                 res_id = f"{selected_tab}_{idx}"

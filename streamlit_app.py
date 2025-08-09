@@ -38,10 +38,11 @@ if not st.session_state['authenticated']:
     login()
     st.stop()
 
+# Logout button - UPDATED to remove st.experimental_rerun()
 if st.sidebar.button("Logout"):
     st.session_state['authenticated'] = False
     st.session_state['username'] = None
-    st.experimental_rerun()
+    # Removed st.experimental_rerun() to avoid rerun error
 
 st.sidebar.title(f"Welcome, {st.session_state['username']}!")
 
@@ -53,14 +54,13 @@ sheet_options = {
     "Data Sources": "Data Sources",
     "Tools": "Tools",
     "Free Tutorials": "Free Tutorials",
-    "Python Codes (GEE)": "Google Earth EnginePython Codes",  # Friendly name : Exact sheet name
+    "Google Earth Engine/Python Codes": "Google Earth Engine/Python Codes",
     "Courses": "Courses",
     "Submit New Resource": "Submit New Resource",
     "Favorites": "Favorites",
     "FAQ": "FAQ"
 }
 
-# Note: No caching here to always fetch latest Excel from GitHub
 def load_data(sheet_name):
     try:
         df = pd.read_excel(GITHUB_RAW_URL, sheet_name=sheet_name)
@@ -101,7 +101,7 @@ if selected_tab == "About":
     - 📘 Free tutorials  
     - 💻 Python codes for Google Earth Engine  
     """)
-    categories_to_check = ["Data Sources", "Tools", "Courses", "Free Tutorials", "Python Codes (GEE)"]
+    categories_to_check = ["Data Sources", "Tools", "Courses", "Free Tutorials", "Google Earth Engine/Python Codes"]
     counts = {}
     for cat in categories_to_check:
         df_cat = load_data(sheet_options[cat])
@@ -144,7 +144,7 @@ title_map = {
     "Data Sources": "Data Source",
     "Tools": "Tools",
     "Courses": "Tutorials",
-    "Python Codes (GEE)": "Title",
+    "Google Earth Engine/Python Codes": "Title",
     "Free Tutorials": "Tutorials",
     "Favorites": "Title"
 }
@@ -179,8 +179,6 @@ search_term = st.sidebar.text_input("🔍 Search")
 # Sort option
 sort_order = st.sidebar.selectbox("Sort by Title", ["Ascending", "Descending"])
 
-# No dynamic categorical filters here
-
 if selected_tab not in ["Favorites", "About", "Submit New Resource", "FAQ"]:
     # Apply search filter
     if search_term:
@@ -211,7 +209,7 @@ link_columns_map = {
     "Tools": ["Tool Link", "Link", "Links"],
     "Courses": ["Course Link", "Link", "Links"],
     "Free Tutorials": ["Link", "Links", "Tutorial Link"],
-    "Python Codes (GEE)": ["Link", "Links", "Link to the codes"],
+    "Google Earth Engine/Python Codes": ["Link", "Links", "Link to the codes"],
     "Favorites": ["Link", "Links", "Link to the codes", "Tool Link", "Course Link", "Tutorial Link"]
 }
 

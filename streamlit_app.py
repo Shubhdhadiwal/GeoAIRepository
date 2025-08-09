@@ -4,16 +4,6 @@ import pandas as pd
 # ===== PAGE CONFIG ===== #
 st.set_page_config(page_title="GeoAI Repository", layout="wide")
 
-# ===== LOAD DATA ===== #
-# Removed caching temporarily for debugging
-def load_data(sheet_name):
-    df = pd.read_excel("Geospatial Data Repository (2).xlsx", sheet_name=sheet_name)
-    df.columns = df.iloc[0]  # Use first row as header
-    df = df[1:]  # Skip header row from data
-    df = df.dropna(subset=[df.columns[0]])  # Ensure first column is not empty
-    df = df.loc[:, ~df.columns.str.contains("^Unnamed")]  # Drop unnamed columns
-    return df
-
 sheet_options = {
     "About": "About",
     "Data Sources": "Data Sources",
@@ -24,19 +14,18 @@ sheet_options = {
     "Submit New Resource": "Submit New Resource"
 }
 
-# ===== FUNCTION TO GET COUNTS FOR ABOUT PAGE ===== #
-def get_counts():
-    counts = {}
-    keys_to_count = ["Data Sources", "Tools", "Courses", "Free Tutorials", "Python Codes (GEE)"]
-    for key in keys_to_count:
-        try:
-            df_tmp = load_data(sheet_options[key])
-            counts[key] = len(df_tmp)
-            # st.write(f"Loaded {key}: {len(df_tmp)} rows")  # Uncomment to debug
-        except Exception as e:
-            counts[key] = 0
-            # st.write(f"Error loading {key}: {e}")  # Uncomment to debug
-    return counts
+# ===== LOAD DATA ===== #
+def load_data(sheet_name):
+    try:
+        df = pd.read_excel("Geospatial Data Repository (2).xlsx", sheet_name=sheet_name)
+        df.columns = df.iloc[0]  # Use first row as header
+        df = df[1:]  # Skip header row from data
+        df = df.dropna(subset=[df.columns[0]])  # Ensure first column is not empty
+        df = df.loc[:, ~df.columns.str.contains("^Unnamed")]  # Drop unnamed columns
+        return df
+    except Exception as e:
+        st.error(f"Error loading sheet '{sheet_name}': {e}")
+        return pd.DataFrame()  # return empty dataframe on error
 
 # ===== SIDEBAR NAV ===== #
 st.sidebar.header("🧭 GeoAI Repository")
@@ -44,11 +33,7 @@ selected_tab = st.sidebar.radio("Select Section", list(sheet_options.keys()))
 
 # Sidebar footer
 st.sidebar.markdown("---")
-st.sidebar.markdown(
-    """
-    © 2025 GeoAI Repository  
-    """
-)
+st.sidebar.markdown("© 2025 GeoAI Repository")
 
 # ===== ABOUT PAGE ===== #
 if selected_tab == "About":
@@ -64,8 +49,15 @@ if selected_tab == "About":
     - 💻 Python codes for Google Earth Engine  
     """)
 
-    # Show interactive counts
-    counts = get_counts()
+    # Calculate counts per category
+    categories_to_check = ["Data Sources", "Tools", "Courses", "Free Tutorials", "Python Codes (GEE)"]
+    counts = {}
+    for cat in categories_to_check:
+        df_cat = load_data(sheet_options[cat])
+        counts[cat] = len(df_cat)
+        st.write(f"Loaded {cat}: {counts[cat]} entries")  # DEBUG: display counts
+
+    # Display metrics in columns
     col1, col2, col3, col4, col5 = st.columns(5)
     col1.metric("Data Sources", counts.get("Data Sources", 0))
     col2.metric("Tools", counts.get("Tools", 0))
@@ -82,13 +74,11 @@ if selected_tab == "About":
     """, unsafe_allow_html=True)
     st.stop()
 
-# ===== SUBMIT NEW RESOURCE (Redirect to Google Form) ===== #
+# ===== SUBMIT NEW RESOURCE ===== #
 if selected_tab == "Submit New Resource":
     st.title("📤 Submit a New Resource")
     st.markdown("Help us grow this repository by contributing useful links and resources.")
-    
     google_form_url = "https://forms.gle/FZZpvr4xQyon5nDs6"
-    
     if st.button("Open Google Submission Form"):
         st.markdown(f"[Click here to submit your resource]({google_form_url})", unsafe_allow_html=True)
     else:
@@ -124,7 +114,6 @@ st.title(f"🌍 GeoAI Repository – {selected_tab}")
 # ===== SHOW CARD VIEW ONLY ===== #
 exclude_cols = [title_col, "Description", "Purpose", "S.No"]  # Add more if needed
 
-# Define possible link column names per tab for better detection
 link_columns_map = {
     "Data Sources": ["Links", "Link"],
     "Tools": ["Tool Link", "Link", "Links"],

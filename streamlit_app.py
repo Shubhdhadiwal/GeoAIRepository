@@ -131,33 +131,18 @@ if selected_tab == "Favorites":
 else:
     title_col = title_map.get(selected_tab, df.columns[0] if not df.empty else None)
 
-# Search term input
+# Search term input (still here if you want)
 search_term = st.sidebar.text_input("🔍 Search")
 
-# Add sorting option
+# Add sorting option (still here if you want)
 sort_order = st.sidebar.selectbox("Sort by Title", ["Ascending", "Descending"])
 
-# Dynamic filters for categorical columns
-def get_categorical_columns(df):
-    cat_cols = []
-    for col in df.columns:
-        if df[col].dtype == 'object' and df[col].nunique() < 30:
-            cat_cols.append(col)
-    return cat_cols
+# Remove dynamic categorical filters completely — no filters!
 
 if selected_tab not in ["Favorites", "About", "Submit New Resource", "FAQ"]:
     # Apply search filter
     if search_term:
         df = df[df.apply(lambda row: row.astype(str).str.contains(search_term, case=False, na=False).any(), axis=1)]
-    
-    # Dynamic filters
-    cat_cols = get_categorical_columns(df)
-    for col in cat_cols:
-        options = sorted(df[col].dropna().unique())
-        selected_options = st.sidebar.multiselect(f"Filter by {col}", options, default=options)
-        if selected_options:
-            df = df[df[col].isin(selected_options)]
-    
     # Sort dataframe
     if title_col in df.columns:
         df = df.sort_values(by=title_col, ascending=(sort_order == "Ascending"))
@@ -245,7 +230,6 @@ for idx, row in df.iterrows():
             st.markdown(f"🔹 {displayed_title}")
         with compact_col2:
             if links:
-                # Show all links as clickable badges/buttons
                 for link_name, link_url in links:
                     st.markdown(f"[🔗 {link_name}]({link_url})", unsafe_allow_html=True)
         with compact_col3:

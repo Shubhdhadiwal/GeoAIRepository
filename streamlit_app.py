@@ -21,8 +21,8 @@ authenticator = stauth.Authenticate(
     config['cookie']['expiry_days']
 )
 
-# Login form
-name, authentication_status, username = authenticator.login('Login', 'main')
+# Login form (in sidebar)
+name, authentication_status, username = authenticator.login('Login', location='sidebar')
 
 if authentication_status:
     st.sidebar.success(f"Welcome {name} 👋")
@@ -87,7 +87,6 @@ if authentication_status:
         for cat in categories_to_check:
             df_cat = load_data(sheet_options[cat])
             counts[cat] = len(df_cat)
-        st.subheader("📊 Repository Content Overview")
         cols = st.columns(len(categories_to_check))
         for i, cat in enumerate(categories_to_check):
             cols[i].metric(label=cat, value=counts.get(cat, 0))

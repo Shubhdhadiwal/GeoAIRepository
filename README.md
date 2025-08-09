@@ -1,6 +1,6 @@
-# :earth_americas: GDP dashboard template
+# :earth_americas: GeoAI Repository
 
-A simple Streamlit app showing the GDP of different countries in the world.
+A simple dashboard showing the GeoAI data sources, tools and manymore.
 
 [![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://gdp-dashboard-template.streamlit.app/)
 

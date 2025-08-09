@@ -58,20 +58,10 @@ if selected_tab == "About":
 
     st.subheader("📊 Repository Content Overview")
     
-    # Horizontal radio buttons to select category (just for user to select, no data shown)
-    selected_metric = st.radio(
-        "Select category:",
-        categories_to_check,
-        index=0,
-        horizontal=True
-    )
-
-    # Show counts as metrics in columns
+    # Show counts as metrics in columns without any selection
     cols = st.columns(len(categories_to_check))
     for i, cat in enumerate(categories_to_check):
-        # Highlight the selected metric label by adding a small visual clue
-        label = f"➡️ {cat}" if cat == selected_metric else cat
-        cols[i].metric(label=label, value=counts.get(cat, 0))
+        cols[i].metric(label=cat, value=counts.get(cat, 0))
 
     st.markdown("---")
     st.markdown("""

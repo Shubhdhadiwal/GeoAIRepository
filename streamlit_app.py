@@ -4,10 +4,15 @@ import altair as alt
 import re
 
 import streamlit as st
+import hashlib
 
+# Utility to hash password string
+def hash_password(password):
+    return hashlib.sha256(password.encode()).hexdigest()
+
+# Store username and hashed password
 USER_CREDENTIALS = {
-    "alice": "password123",
-    "bob": "mypassword"
+    "Shubh4016": hash_password("Shubh9834421314")
 }
 
 if 'authenticated' not in st.session_state:
@@ -21,7 +26,8 @@ def login():
     login_pressed = st.button("Login")
 
     if login_pressed:
-        if username in USER_CREDENTIALS and USER_CREDENTIALS[username] == password:
+        hashed_input = hash_password(password)
+        if username in USER_CREDENTIALS and USER_CREDENTIALS[username] == hashed_input:
             st.session_state['authenticated'] = True
             st.session_state['username'] = username
         else:
@@ -29,7 +35,7 @@ def login():
 
 if not st.session_state['authenticated']:
     login()
-    st.stop()  # Prevent app from showing content if not logged in
+    st.stop()
 
 if st.sidebar.button("Logout"):
     st.session_state['authenticated'] = False
@@ -37,8 +43,9 @@ if st.sidebar.button("Logout"):
 
 st.sidebar.title(f"Welcome, {st.session_state['username']}!")
 
-# Below this line, put your entire existing repository app code
-# ...
+# Your existing repository code below...
+
+
 # ===== PAGE CONFIG ===== #
 st.set_page_config(page_title="GeoAI Repository", layout="wide")
 

@@ -6,4 +6,4 @@ PyJWT==2.3.0
 pytest==7.0.0
 PyYAML==5.3.1
 streamlit==1.37.0
-streamlit-authenticator==0.4.2
+streamlit-authenticator==0.5.0

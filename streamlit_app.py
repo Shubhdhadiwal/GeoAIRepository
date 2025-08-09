@@ -1,6 +1,5 @@
 import streamlit as st
 import pandas as pd
-import os
 
 # ===== PAGE CONFIG ===== #
 st.set_page_config(page_title="GeoAI Repository", layout="wide")
@@ -14,12 +13,24 @@ sheet_options = {
     "Python Codes (GEE)": "Google Earth EnginePython Codes",
     "Courses": "Courses",
     "Submit New Resource": "Submit New Resource",
-    "Favorites": None  # Add Favorites tab here
+    "Favorites": None,
+    "Discussion": None,
+    "FAQ & Help": None
 }
 
 # ===== INIT SESSION STATE ===== #
 if "favorites" not in st.session_state:
     st.session_state.favorites = {}
+if "rerun_flag" not in st.session_state:
+    st.session_state.rerun_flag = False
+if "chat_messages" not in st.session_state:
+    st.session_state.chat_messages = []
+if "faq_questions" not in st.session_state:
+    st.session_state.faq_questions = [
+        {"q": "What is GeoAI Repository?", "a": "It is a free resource hub for geospatial analytics, machine learning, and urban/climate planning."},
+        {"q": "How to submit a new resource?", "a": "Use the Submit New Resource tab or the Google Form linked there."},
+        {"q": "Can I favorite resources?", "a": "Yes! Use the star buttons to favorite/unfavorite and view them in the Favorites tab."}
+    ]
 
 # ===== LOAD DATA FUNCTION ===== #
 def load_data(sheet_name):
@@ -61,7 +72,6 @@ if selected_tab == "About":
         counts[cat] = len(df_cat)
 
     st.subheader("📊 Repository Content Overview")
-    
     cols = st.columns(len(categories_to_check))
     for i, cat in enumerate(categories_to_check):
         cols[i].metric(label=cat, value=counts.get(cat, 0))
@@ -106,11 +116,45 @@ if selected_tab == "Favorites":
                     st.markdown(f"- {item['title']}")
     st.stop()
 
+# ===== DISCUSSION CHAT ===== #
+if selected_tab == "Discussion":
+    st.title("💬 Discussion Chat")
+    st.markdown("Chat with other users or leave your thoughts here. (Note: Chat history is per session only.)")
+
+    for message in st.session_state.chat_messages:
+        st.write(f"**User:** {message}")
+
+    new_msg = st.text_input("Enter message", key="chat_input")
+    if st.button("Send", key="send_button"):
+        if new_msg.strip() != "":
+            st.session_state.chat_messages.append(new_msg.strip())
+            st.experimental_rerun()
+    st.stop()
+
+# ===== FAQ & HELP ===== #
+if selected_tab == "FAQ & Help":
+    st.title("❓ FAQ & Help")
+
+    st.subheader("Frequently Asked Questions")
+    for faq in st.session_state.faq_questions:
+        with st.expander(faq["q"]):
+            st.write(faq["a"])
+
+    st.markdown("---")
+    st.subheader("Submit a Question or Suggestion")
+    new_question = st.text_area("Your Question or Suggestion", key="faq_input")
+    if st.button("Submit Question"):
+        if new_question.strip() != "":
+            st.session_state.faq_questions.append({"q": new_question.strip(), "a": "Awaiting answer..."})
+            st.success("Thanks! Your question has been added.")
+            st.experimental_rerun()
+    st.stop()
+
 # ===== LOAD DATA FOR OTHER TABS ===== #
 if selected_tab in sheet_options and sheet_options[selected_tab]:
     df = load_data(sheet_options[selected_tab])
 else:
-    df = pd.DataFrame()  # empty dataframe for custom tabs or Favorites
+    df = pd.DataFrame()
 
 # ===== INTERACTIVE SEARCH & FILTER ===== #
 search_term = st.sidebar.text_input("🔍 Search")
@@ -131,6 +175,18 @@ title_map = {
     "Free Tutorials": "Tutorials"
 }
 title_col = title_map.get(selected_tab, df.columns[0] if not df.empty else None)
+
+# ===== FUNCTION TO TOGGLE FAVORITE ===== #
+def toggle_favorite(res_id, resource_title, selected_tab, link):
+    if res_id in st.session_state.favorites:
+        st.session_state.favorites.pop(res_id)
+    else:
+        st.session_state.favorites[res_id] = {
+            "title": resource_title,
+            "category": selected_tab,
+            "link": link
+        }
+    st.session_state.rerun_flag = True
 
 # ===== MAIN TITLE ===== #
 st.title(f"🌍 GeoAI Repository – {selected_tab}")
@@ -174,21 +230,21 @@ if not df.empty:
             with col1:
                 if is_fav:
                     if st.button("⭐ Unfavorite", key=f"fav_{res_id}"):
-                        st.session_state.favorites.pop(res_id)
-                        st.experimental_rerun()
+                        toggle_favorite(res_id, resource_title, selected_tab, row[link_col] if link_col and pd.notna(row.get(link_col)) else None)
                 else:
                     if st.button("☆ Favorite", key=f"fav_{res_id}"):
-                        st.session_state.favorites[res_id] = {
-                            "title": resource_title,
-                            "category": selected_tab,
-                            "link": row[link_col] if link_col and pd.notna(row.get(link_col)) else None
-                        }
-                        st.experimental_rerun()
+                        toggle_favorite(res_id, resource_title, selected_tab, row[link_col] if link_col and pd.notna(row.get(link_col)) else None)
             with col2:
                 st.write("❤️ Favorited" if is_fav else "")
 
 else:
-    st.info("No data available to display.")
+    if selected_tab not in ["Favorites", "Discussion", "FAQ & Help", "Submit New Resource", "About"]:
+        st.info("No data available to display.")
+
+# ===== HANDLE SAFE RERUN ===== #
+if st.session_state.rerun_flag:
+    st.session_state.rerun_flag = False
+    st.experimental_rerun()
 
 # ===== FOOTER ===== #
 st.markdown("<hr style='border:1px solid #ddd'/>", unsafe_allow_html=True)

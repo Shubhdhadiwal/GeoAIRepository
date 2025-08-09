@@ -1,6 +1,8 @@
 import streamlit as st
 import pandas as pd
 import altair as alt
+import json
+import os
 
 # ===== PAGE CONFIG ===== #
 st.set_page_config(page_title="GeoAI Repository", layout="wide")
@@ -13,9 +15,26 @@ sheet_options = {
     "Python Codes (GEE)": "Google Earth EnginePython Codes",
     "Courses": "Courses",
     "Submit New Resource": "Submit New Resource",
-    "Favorites": "Favorites",  # Added Favorites tab
-    "FAQ": "FAQ"               # Added FAQ tab
+    "User Showcase": "User Showcase",  # NEW TAB
+    "Favorites": "Favorites",
+    "FAQ": "FAQ"
 }
+
+# ===== PATH FOR USER SHOWCASE DATA ===== #
+USER_SHOWCASE_FILE = "user_showcase.json"
+
+def load_showcase_data():
+    if os.path.exists(USER_SHOWCASE_FILE):
+        with open(USER_SHOWCASE_FILE, "r") as f:
+            try:
+                return json.load(f)
+            except json.JSONDecodeError:
+                return []
+    return []
+
+def save_showcase_data(data):
+    with open(USER_SHOWCASE_FILE, "w") as f:
+        json.dump(data, f, indent=2)
 
 # ===== LOAD DATA ===== #
 @st.cache_data(show_spinner=False)
@@ -29,7 +48,6 @@ def load_data(sheet_name):
 
         # Fix: Rename any "Column X" column to "Link" if sheet is Tools
         if sheet_name == "Tools":
-            # Find columns named like "Column 10", "Column 9", etc. and rename to "Link"
             new_columns = {}
             for col in df.columns:
                 if isinstance(col, str) and col.startswith("Column"):
@@ -75,8 +93,6 @@ if selected_tab == "About":
         counts[cat] = len(df_cat)
 
     st.subheader("📊 Repository Content Overview")
-    
-    # Show counts as metrics in columns without any selection
     cols = st.columns(len(categories_to_check))
     for i, cat in enumerate(categories_to_check):
         cols[i].metric(label=cat, value=counts.get(cat, 0))
@@ -113,11 +129,53 @@ if selected_tab == "FAQ":
             st.write(answer)
     st.stop()
 
+# ===== USER SHOWCASE TAB ===== #
+if selected_tab == "User Showcase":
+    st.title("🎨 User Showcase")
+
+    with st.form("showcase_form", clear_on_submit=True):
+        st.write("Submit your work to be displayed here!")
+        title = st.text_input("Title of your work")
+        description = st.text_area("Description")
+        link = st.text_input("Link (optional)")
+        image_url = st.text_input("Image URL (optional)")
+        submitted = st.form_submit_button("Submit")
+
+        if submitted:
+            if not title.strip():
+                st.error("Please enter a title for your work.")
+            else:
+                data = load_showcase_data()
+                new_entry = {
+                    "title": title.strip(),
+                    "description": description.strip(),
+                    "link": link.strip(),
+                    "image_url": image_url.strip()
+                }
+                data.append(new_entry)
+                save_showcase_data(data)
+                st.success("Thank you! Your work has been submitted.")
+
+    data = load_showcase_data()
+    if data:
+        st.markdown("---")
+        st.header("All Submitted Works")
+        for idx, entry in enumerate(data):
+            st.subheader(f"{idx + 1}. {entry.get('title', 'Untitled')}")
+            st.write(entry.get("description", ""))
+            if entry.get("link"):
+                st.markdown(f"[🔗 View Link]({entry['link']})")
+            if entry.get("image_url"):
+                st.image(entry["image_url"], use_column_width=True)
+            st.markdown("---")
+    else:
+        st.info("No submissions yet. Be the first to share your work!")
+    st.stop()
+
 # ===== LOAD DATA FOR OTHER TABS INCLUDING FAVORITES ===== #
 if selected_tab != "Favorites":
     df = load_data(sheet_options[selected_tab])
 else:
-    # For favorites, combine favorites from all categories
     all_fav_items = []
     for key, items in st.session_state.favorites.items():
         df_cat = load_data(sheet_options.get(key, key))
@@ -133,7 +191,7 @@ else:
 
 # ===== INTERACTIVE SEARCH & FILTER ===== #
 search_term = st.sidebar.text_input("🔍 Search")
-if selected_tab not in ["Favorites", "About", "Submit New Resource", "FAQ"] and search_term:
+if selected_tab not in ["Favorites", "About", "Submit New Resource", "FAQ", "User Showcase"] and search_term:
     df = df[df.apply(lambda row: row.astype(str).str.contains(search_term, case=False, na=False).any(), axis=1)]
 
 if selected_tab == "Data Sources" and "Type" in df.columns:
@@ -178,7 +236,6 @@ for idx, row in df.iterrows():
     if not resource_title or str(resource_title).strip() == "":
         resource_title = f"Resource-{idx+1}"
 
-    # Find first valid link column for this row
     link_val = None
     for col in possible_links:
         if col in df.columns and pd.notna(row.get(col)):
@@ -187,7 +244,6 @@ for idx, row in df.iterrows():
                 link_val = val
                 break
 
-    # Determine category key for favorites
     category_key = selected_tab
     if selected_tab == "Favorites" and "Category" in row:
         category_key = row["Category"]
@@ -213,7 +269,6 @@ for idx, row in df.iterrows():
                     if col not in possible_links:
                         st.markdown(f"**{col}:** {row[col]}")
 
-        # Update favorites based on checkbox toggle
         if fav_checkbox and idx not in st.session_state.favorites.get(category_key, []):
             st.session_state.favorites.setdefault(category_key, []).append(idx)
         elif not fav_checkbox and idx in st.session_state.favorites.get(category_key, []):

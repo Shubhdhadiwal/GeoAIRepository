@@ -1,8 +1,6 @@
 import streamlit as st
 import pandas as pd
 import altair as alt
-import json
-import os
 
 # ===== PAGE CONFIG ===== #
 st.set_page_config(page_title="GeoAI Repository", layout="wide")
@@ -15,26 +13,9 @@ sheet_options = {
     "Python Codes (GEE)": "Google Earth EnginePython Codes",
     "Courses": "Courses",
     "Submit New Resource": "Submit New Resource",
-    "User Showcase": "User Showcase",  # NEW TAB
-    "Favorites": "Favorites",
-    "FAQ": "FAQ"
+    "Favorites": "Favorites",  # Added Favorites tab
+    "FAQ": "FAQ"               # Added FAQ tab
 }
-
-# ===== PATH FOR USER SHOWCASE DATA ===== #
-USER_SHOWCASE_FILE = "user_showcase.json"
-
-def load_showcase_data():
-    if os.path.exists(USER_SHOWCASE_FILE):
-        with open(USER_SHOWCASE_FILE, "r") as f:
-            try:
-                return json.load(f)
-            except json.JSONDecodeError:
-                return []
-    return []
-
-def save_showcase_data(data):
-    with open(USER_SHOWCASE_FILE, "w") as f:
-        json.dump(data, f, indent=2)
 
 # ===== LOAD DATA ===== #
 @st.cache_data(show_spinner=False)
@@ -93,6 +74,7 @@ if selected_tab == "About":
         counts[cat] = len(df_cat)
 
     st.subheader("📊 Repository Content Overview")
+    
     cols = st.columns(len(categories_to_check))
     for i, cat in enumerate(categories_to_check):
         cols[i].metric(label=cat, value=counts.get(cat, 0))
@@ -129,76 +111,6 @@ if selected_tab == "FAQ":
             st.write(answer)
     st.stop()
 
-# ===== USER SHOWCASE TAB ===== #
-if selected_tab == "User Showcase":
-    st.title("🎨 User Showcase")
-
-    with st.form("showcase_form", clear_on_submit=True):
-        st.write("Submit your work to be displayed here!")
-        title = st.text_input("Title of your work")
-        description = st.text_area("Description")
-        link = st.text_input("Link (optional)")
-        image_url = st.text_input("Image URL (optional)")
-        submitted = st.form_submit_button("Submit")
-
-        if submitted:
-            if not title.strip():
-                st.error("Please enter a title for your work.")
-            else:
-                data = load_showcase_data()
-                new_entry = {
-                    "title": title.strip(),
-                    "description": description.strip(),
-                    "link": link.strip(),
-                    "image_url": image_url.strip()
-                }
-                data.append(new_entry)
-                save_showcase_data(data)
-                st.success("Thank you! Your work has been submitted.")
-
-    data = load_showcase_data()
-    if data:
-        st.markdown("---")
-        st.header("All Submitted Works")
-        for idx, entry in enumerate(data):
-            st.subheader(f"{idx + 1}. {entry.get('title', 'Untitled')}")
-            st.write(entry.get("description", ""))
-            if entry.get("link"):
-                st.markdown(f"[🔗 View Link]({entry['link']})")
-            if entry.get("image_url"):
-                st.image(entry["image_url"], use_column_width=True)
-            st.markdown("---")
-    else:
-        st.info("No submissions yet. Be the first to share your work!")
-    st.stop()
-
-# ===== LOAD DATA FOR OTHER TABS INCLUDING FAVORITES ===== #
-if selected_tab != "Favorites":
-    df = load_data(sheet_options[selected_tab])
-else:
-    all_fav_items = []
-    for key, items in st.session_state.favorites.items():
-        df_cat = load_data(sheet_options.get(key, key))
-        if df_cat.empty:
-            continue
-        fav_rows = df_cat.loc[df_cat.index.isin(items)].copy()
-        fav_rows["Category"] = key
-        all_fav_items.append(fav_rows)
-    if all_fav_items:
-        df = pd.concat(all_fav_items)
-    else:
-        df = pd.DataFrame()
-
-# ===== INTERACTIVE SEARCH & FILTER ===== #
-search_term = st.sidebar.text_input("🔍 Search")
-if selected_tab not in ["Favorites", "About", "Submit New Resource", "FAQ", "User Showcase"] and search_term:
-    df = df[df.apply(lambda row: row.astype(str).str.contains(search_term, case=False, na=False).any(), axis=1)]
-
-if selected_tab == "Data Sources" and "Type" in df.columns:
-    type_filter = st.sidebar.multiselect("📂 Filter by Type", sorted(df["Type"].dropna().unique()))
-    if type_filter:
-        df = df[df["Type"].isin(type_filter)]
-
 # ===== TITLE MAPPING ===== #
 title_map = {
     "Data Sources": "Data Source",
@@ -206,9 +118,45 @@ title_map = {
     "Courses": "Tutorials",
     "Python Codes (GEE)": "Title",
     "Free Tutorials": "Tutorials",
-    "Favorites": "Title"
+    "Favorites": "Title"  # We'll override for Favorites below
 }
-title_col = title_map.get(selected_tab, df.columns[0] if not df.empty else None)
+
+# ===== LOAD DATA FOR OTHER TABS INCLUDING FAVORITES ===== #
+if selected_tab != "Favorites":
+    df = load_data(sheet_options[selected_tab])
+else:
+    # Combine favorites from all categories into one DataFrame
+    all_fav_items = []
+    for key, items in st.session_state.favorites.items():
+        df_cat = load_data(sheet_options.get(key, key))
+        if df_cat.empty:
+            continue
+        fav_rows = df_cat.loc[df_cat.index.isin(items)].copy()
+        fav_rows["Category"] = key
+        # Add unified title column for favorites using the right title column per category
+        title_col_fav = title_map.get(key, df_cat.columns[0])
+        fav_rows["Fav_Title"] = fav_rows[title_col_fav]
+        all_fav_items.append(fav_rows)
+    if all_fav_items:
+        df = pd.concat(all_fav_items)
+    else:
+        df = pd.DataFrame()
+
+# Set title_col correctly (use Fav_Title for Favorites)
+if selected_tab == "Favorites":
+    title_col = "Fav_Title"
+else:
+    title_col = title_map.get(selected_tab, df.columns[0] if not df.empty else None)
+
+# ===== INTERACTIVE SEARCH & FILTER ===== #
+search_term = st.sidebar.text_input("🔍 Search")
+if selected_tab not in ["Favorites", "About", "Submit New Resource", "FAQ"] and search_term:
+    df = df[df.apply(lambda row: row.astype(str).str.contains(search_term, case=False, na=False).any(), axis=1)]
+
+if selected_tab == "Data Sources" and "Type" in df.columns:
+    type_filter = st.sidebar.multiselect("📂 Filter by Type", sorted(df["Type"].dropna().unique()))
+    if type_filter:
+        df = df[df["Type"].isin(type_filter)]
 
 # ===== MAIN TITLE ===== #
 st.title(f"🌍 GeoAI Repository – {selected_tab}")
@@ -236,6 +184,7 @@ for idx, row in df.iterrows():
     if not resource_title or str(resource_title).strip() == "":
         resource_title = f"Resource-{idx+1}"
 
+    # Find first valid link column for this row
     link_val = None
     for col in possible_links:
         if col in df.columns and pd.notna(row.get(col)):
@@ -244,6 +193,7 @@ for idx, row in df.iterrows():
                 link_val = val
                 break
 
+    # Determine category key for favorites
     category_key = selected_tab
     if selected_tab == "Favorites" and "Category" in row:
         category_key = row["Category"]
@@ -269,6 +219,7 @@ for idx, row in df.iterrows():
                     if col not in possible_links:
                         st.markdown(f"**{col}:** {row[col]}")
 
+        # Update favorites based on checkbox toggle
         if fav_checkbox and idx not in st.session_state.favorites.get(category_key, []):
             st.session_state.favorites.setdefault(category_key, []).append(idx)
         elif not fav_checkbox and idx in st.session_state.favorites.get(category_key, []):

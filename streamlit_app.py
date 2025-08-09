@@ -54,7 +54,7 @@ sheet_options = {
     "Data Sources": "Data Sources",
     "Tools": "Tools",
     "Free Tutorials": "Free Tutorials",
-    "Google Earth Engine/Python Codes": "Google Earth Engine/Python Codes",
+    "Google Earth Engine/Python Codes": "Codes",
     "Courses": "Courses",
     "Submit New Resource": "Submit New Resource",
     "Favorites": "Favorites",
@@ -144,7 +144,7 @@ title_map = {
     "Data Sources": "Data Source",
     "Tools": "Tools",
     "Courses": "Tutorials",
-    "Google Earth Engine/Python Codes": "Title",
+    "Google Earth Engine/Python Codes": "Codes",
     "Free Tutorials": "Tutorials",
     "Favorites": "Title"
 }

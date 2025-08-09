@@ -227,9 +227,10 @@ if selected_tab not in ["Favorites", "Submit New Resource", "About", "FAQ & Help
                     if col not in exclude_cols + ([link_col] if link_col else []) and pd.notna(row.get(col)):
                         st.markdown(f"**{col}:** {row[col]}")
 
-                # Embed the resource link (if possible)
-                if link_col and pd.notna(row.get(link_col)):
-                    embed_resource(row[link_col])
+                # Embed only for Data Sources and Tools
+                if selected_tab in ["Data Sources", "Tools"]:
+                    if link_col and pd.notna(row.get(link_col)):
+                        embed_resource(row[link_col])
 
                 # Favorite toggle button
                 res_id = f"{selected_tab}_{idx}"

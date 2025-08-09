@@ -1,12 +1,11 @@
 import streamlit as st
 import pandas as pd
-import json
 import os
 
 # ===== PAGE CONFIG ===== #
 st.set_page_config(page_title="GeoAI Repository", layout="wide")
 
-# Add new tabs
+# ===== SIDEBAR OPTIONS ===== #
 sheet_options = {
     "About": "About",
     "Data Sources": "Data Sources",
@@ -14,28 +13,15 @@ sheet_options = {
     "Free Tutorials": "Free Tutorials",
     "Python Codes (GEE)": "Google Earth EnginePython Codes",
     "Courses": "Courses",
-    "User Embeds": None,   # Custom tab (no sheet)
-    "Discussion": None,    # Chat tab
-    "FAQ & Help": None,    # FAQ tab
-    "Submit New Resource": "Submit New Resource"
+    "Submit New Resource": "Submit New Resource",
+    "Favorites": None  # Add Favorites tab here
 }
 
-# ===== PERSISTENT VOTES FILE ===== #
-VOTES_FILE = "votes.json"
+# ===== INIT SESSION STATE ===== #
+if "favorites" not in st.session_state:
+    st.session_state.favorites = {}
 
-def load_votes():
-    if os.path.exists(VOTES_FILE):
-        with open(VOTES_FILE, "r") as f:
-            return json.load(f)
-    return {}
-
-def save_votes(votes):
-    with open(VOTES_FILE, "w") as f:
-        json.dump(votes, f)
-
-votes = load_votes()
-
-# ===== LOAD DATA ===== #
+# ===== LOAD DATA FUNCTION ===== #
 def load_data(sheet_name):
     try:
         df = pd.read_excel("Geospatial Data Repository (2).xlsx", sheet_name=sheet_name)
@@ -46,13 +32,11 @@ def load_data(sheet_name):
         return df
     except Exception as e:
         st.error(f"Error loading sheet '{sheet_name}': {e}")
-        return pd.DataFrame()  # return empty dataframe on error
+        return pd.DataFrame()
 
 # ===== SIDEBAR NAV ===== #
 st.sidebar.header("🧭 GeoAI Repository")
 selected_tab = st.sidebar.radio("Select Section", list(sheet_options.keys()))
-
-# Sidebar footer
 st.sidebar.markdown("---")
 st.sidebar.markdown("© 2025 GeoAI Repository")
 
@@ -78,7 +62,6 @@ if selected_tab == "About":
 
     st.subheader("📊 Repository Content Overview")
     
-    # Show counts as metrics in columns without any selection
     cols = st.columns(len(categories_to_check))
     for i, cat in enumerate(categories_to_check):
         cols[i].metric(label=cat, value=counts.get(cat, 0))
@@ -103,66 +86,31 @@ if selected_tab == "Submit New Resource":
         st.markdown(f"Or you can submit your resource using [this Google Form]({google_form_url})")
     st.stop()
 
-# ===== USER EMBEDS PAGE (placeholder) ===== #
-if selected_tab == "User Embeds":
-    st.title("🌐 User Submitted Embeds")
-    st.info("This section will showcase user-submitted interactive embeds like maps, dashboards, etc.")
-    # You can add actual embeds loading & display here later
-    st.stop()
-
-# ===== DISCUSSION CHAT ===== #
-if selected_tab == "Discussion":
-    st.title("💬 Discussion Chat")
-    if "messages" not in st.session_state:
-        st.session_state.messages = []
-
-    def submit_message():
-        if st.session_state.user_input.strip():
-            st.session_state.messages.append(st.session_state.user_input.strip())
-            st.session_state.user_input = ""
-
-    st.text_input("Type your message and press Enter:", key="user_input", on_change=submit_message)
-
-    if st.session_state.messages:
-        for msg in st.session_state.messages:
-            st.chat_message("user").write(msg)
+# ===== FAVORITES PAGE ===== #
+if selected_tab == "Favorites":
+    st.title("⭐ Your Favorite Resources")
+    if not st.session_state.favorites:
+        st.info("You have not favorited any resources yet.")
     else:
-        st.info("Start the conversation by typing a message above.")
-    st.stop()
+        from collections import defaultdict
+        fav_by_cat = defaultdict(list)
+        for fav in st.session_state.favorites.values():
+            fav_by_cat[fav["category"]].append(fav)
 
-# ===== FAQ & HELP PAGE ===== #
-if selected_tab == "FAQ & Help":
-    st.title("❓ FAQ & Help")
-
-    # Example FAQ list - replace with persistent data source if needed
-    faq_list = [
-        {"q": "How to use the GeoAI Repository?", "a": "Simply select a category and browse resources."},
-        {"q": "How to submit new data?", "a": "Go to Submit New Resource tab and fill the form."},
-    ]
-
-    for faq in faq_list:
-        with st.expander(faq["q"]):
-            st.write(faq["a"])
-
-    st.subheader("Ask a Question")
-    user_question = st.text_area("Your question here:")
-
-    if st.button("Submit Question"):
-        if user_question.strip():
-            # Save user questions to a file for admin review (optional)
-            questions_file = "user_questions.txt"
-            with open(questions_file, "a") as f:
-                f.write(user_question.strip() + "\n")
-            st.success("Thanks for your question! We'll review and answer soon.")
-        else:
-            st.error("Please enter a question.")
+        for cat, items in fav_by_cat.items():
+            st.subheader(cat)
+            for item in items:
+                if item["link"]:
+                    st.markdown(f"- [{item['title']}]({item['link']})")
+                else:
+                    st.markdown(f"- {item['title']}")
     st.stop()
 
 # ===== LOAD DATA FOR OTHER TABS ===== #
 if selected_tab in sheet_options and sheet_options[selected_tab]:
     df = load_data(sheet_options[selected_tab])
 else:
-    df = pd.DataFrame()  # empty df for custom tabs
+    df = pd.DataFrame()  # empty dataframe for custom tabs or Favorites
 
 # ===== INTERACTIVE SEARCH & FILTER ===== #
 search_term = st.sidebar.text_input("🔍 Search")
@@ -188,8 +136,7 @@ title_col = title_map.get(selected_tab, df.columns[0] if not df.empty else None)
 st.title(f"🌍 GeoAI Repository – {selected_tab}")
 
 if not df.empty:
-    # ===== SHOW CARD VIEW WITH UPVOTES ===== #
-    exclude_cols = [title_col, "Description", "Purpose", "S.No"]  # Add more if needed
+    exclude_cols = [title_col, "Description", "Purpose", "S.No"]
 
     link_columns_map = {
         "Data Sources": ["Links", "Link"],
@@ -198,7 +145,6 @@ if not df.empty:
         "Free Tutorials": ["Link", "Links", "Tutorial Link"],
         "Python Codes (GEE)": ["Link", "Links", "Link to the codes"]
     }
-
     possible_links = link_columns_map.get(selected_tab, ["Links", "Link", "Link to the codes"])
     link_col = next((c for c in possible_links if c in df.columns), None)
 
@@ -217,26 +163,29 @@ if not df.empty:
             if "Purpose" in df.columns and pd.notna(row.get("Purpose")):
                 st.markdown(f"**🎯 Purpose:** {row['Purpose']}")
 
-            # Show other columns
             for col in df.columns:
                 if col not in exclude_cols + ([link_col] if link_col else []) and pd.notna(row.get(col)):
                     st.markdown(f"**{col}:** {row[col]}")
 
-            # Upvote button & count
+            # Favorite toggle button
             res_id = f"{selected_tab}_{idx}"
-            current_votes = votes.get(res_id, 0)
+            is_fav = res_id in st.session_state.favorites
             col1, col2 = st.columns([1, 5])
             with col1:
-                if st.button("👍 Upvote", key=res_id):
-                    if f"voted_{res_id}" not in st.session_state:
-                        votes[res_id] = current_votes + 1
-                        save_votes(votes)
-                        st.session_state[f"voted_{res_id}"] = True
+                if is_fav:
+                    if st.button("⭐ Unfavorite", key=f"fav_{res_id}"):
+                        st.session_state.favorites.pop(res_id)
                         st.experimental_rerun()
-                    else:
-                        st.warning("You already voted!")
+                else:
+                    if st.button("☆ Favorite", key=f"fav_{res_id}"):
+                        st.session_state.favorites[res_id] = {
+                            "title": resource_title,
+                            "category": selected_tab,
+                            "link": row[link_col] if link_col and pd.notna(row.get(link_col)) else None
+                        }
+                        st.experimental_rerun()
             with col2:
-                st.write(f"Votes: {current_votes}")
+                st.write("❤️ Favorited" if is_fav else "")
 
 else:
     st.info("No data available to display.")

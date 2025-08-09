@@ -11,7 +11,7 @@ names = ['Shubh']
 usernames = ['shubh']
 passwords = ['mypassword']  # Change this to your own secure password
 
-hashed_passwords = stauth.Hasher(passwords).generate()
+hashed_passwords = stauth.HashedPasswords(passwords).generate()
 
 authenticator = stauth.Authenticate(
     dict(zip(usernames, [{"name": n, "password": p} for n, p in zip(names, hashed_passwords)])),

@@ -1,46 +1,10 @@
 import streamlit as st
 import pandas as pd
-import streamlit_authenticator as stauth
+import altair as alt
 
 # ===== PAGE CONFIG ===== #
 st.set_page_config(page_title="GeoAI Repository", layout="wide")
 
-# ===== USER AUTH SETUP ===== #
-users = {
-    "usernames": {
-        "shubh": {
-            "name": "Shubh Dhadiwal",
-            "password": "$2b$12$BQchssu9cu0xmCEuPKfhUeajfp65WeXQ/3qB04kjdxIGb6QkIQ5Ba"  # hashed 'shubh@130100'
-        }
-    }
-}
-
-usernames = list(users["usernames"].keys())
-names = [users["usernames"][u]["name"] for u in usernames]
-passwords = [users["usernames"][u]["password"] for u in usernames]
-
-authenticator = stauth.Authenticate(
-    names,
-    usernames,
-    passwords,
-    "geoai_dashboard_cookie",        # cookie name
-    "random_signature_key_1234567",  # change this to a secure secret key
-    cookie_expiry_days=1
-)
-
-name, authentication_status, username = authenticator.login("Login", "main")
-
-if not authentication_status:
-    if authentication_status is False:
-        st.error("Username/password is incorrect")
-    elif authentication_status is None:
-        st.warning("Please enter your username and password")
-    st.stop()
-
-authenticator.logout("Logout", "sidebar")
-st.sidebar.write(f"Welcome *{name}*")
-
-# ===== DATA AND OPTIONS ===== #
 sheet_options = {
     "About": "About",
     "Data Sources": "Data Sources",
@@ -51,6 +15,7 @@ sheet_options = {
     "Submit New Resource": "Submit New Resource"
 }
 
+# ===== LOAD DATA ===== #
 def load_data(sheet_name):
     try:
         df = pd.read_excel("Geospatial Data Repository (2).xlsx", sheet_name=sheet_name)
@@ -61,11 +26,13 @@ def load_data(sheet_name):
         return df
     except Exception as e:
         st.error(f"Error loading sheet '{sheet_name}': {e}")
-        return pd.DataFrame()
+        return pd.DataFrame()  # return empty dataframe on error
 
+# ===== SIDEBAR NAV ===== #
 st.sidebar.header("🧭 GeoAI Repository")
 selected_tab = st.sidebar.radio("Select Section", list(sheet_options.keys()))
 
+# Sidebar footer
 st.sidebar.markdown("---")
 st.sidebar.markdown("© 2025 GeoAI Repository")
 
@@ -91,6 +58,7 @@ if selected_tab == "About":
 
     st.subheader("📊 Repository Content Overview")
     
+    # Horizontal radio buttons to select category (just for user to select, no data shown)
     selected_metric = st.radio(
         "Select category:",
         categories_to_check,
@@ -98,8 +66,10 @@ if selected_tab == "About":
         horizontal=True
     )
 
+    # Show counts as metrics in columns
     cols = st.columns(len(categories_to_check))
     for i, cat in enumerate(categories_to_check):
+        # Highlight the selected metric label by adding a small visual clue
         label = f"➡️ {cat}" if cat == selected_metric else cat
         cols[i].metric(label=label, value=counts.get(cat, 0))
 
@@ -150,7 +120,7 @@ title_col = title_map.get(selected_tab, df.columns[0])
 st.title(f"🌍 GeoAI Repository – {selected_tab}")
 
 # ===== SHOW CARD VIEW ONLY ===== #
-exclude_cols = [title_col, "Description", "Purpose", "S.No"]
+exclude_cols = [title_col, "Description", "Purpose", "S.No"]  # Add more if needed
 
 link_columns_map = {
     "Data Sources": ["Links", "Link"],

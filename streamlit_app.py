@@ -6,6 +6,9 @@ import hashlib
 # GitHub raw Excel file URL
 GITHUB_RAW_URL = "https://github.com/Shubhdhadiwal/GeoAIRepository/raw/main/Geospatial%20Data%20Repository%20(2).xlsx"
 
+import streamlit as st
+import hashlib
+
 # Utility to hash password string
 def hash_password(password):
     return hashlib.sha256(password.encode()).hexdigest()
@@ -18,12 +21,6 @@ USER_CREDENTIALS = {
 if 'authenticated' not in st.session_state:
     st.session_state['authenticated'] = False
     st.session_state['username'] = None
-
-# --- Logout button handler must be at top ---
-if st.sidebar.button("Logout"):
-    st.session_state['authenticated'] = False
-    st.session_state['username'] = None
-    st.experimental_rerun()  # Only called inside event handler
 
 def login():
     st.title("🔐 Login to GeoAI Repository")
@@ -43,7 +40,13 @@ if not st.session_state['authenticated']:
     login()
     st.stop()
 
+if st.sidebar.button("Logout"):
+    st.session_state['authenticated'] = False
+    st.session_state['username'] = None
+
 st.sidebar.title(f"Welcome, {st.session_state['username']}!")
+
+# Your existing repository code below...
 
 # ===== PAGE CONFIG ===== #
 st.set_page_config(page_title="GeoAI Repository", layout="wide")

@@ -1,10 +1,12 @@
 import streamlit as st
 import pandas as pd
-import altair as alt
+import json
+import os
 
 # ===== PAGE CONFIG ===== #
 st.set_page_config(page_title="GeoAI Repository", layout="wide")
 
+# Add new tabs
 sheet_options = {
     "About": "About",
     "Data Sources": "Data Sources",
@@ -12,8 +14,26 @@ sheet_options = {
     "Free Tutorials": "Free Tutorials",
     "Python Codes (GEE)": "Google Earth EnginePython Codes",
     "Courses": "Courses",
+    "User Embeds": None,   # Custom tab (no sheet)
+    "Discussion": None,    # Chat tab
+    "FAQ & Help": None,    # FAQ tab
     "Submit New Resource": "Submit New Resource"
 }
+
+# ===== PERSISTENT VOTES FILE ===== #
+VOTES_FILE = "votes.json"
+
+def load_votes():
+    if os.path.exists(VOTES_FILE):
+        with open(VOTES_FILE, "r") as f:
+            return json.load(f)
+    return {}
+
+def save_votes(votes):
+    with open(VOTES_FILE, "w") as f:
+        json.dump(votes, f)
+
+votes = load_votes()
 
 # ===== LOAD DATA ===== #
 def load_data(sheet_name):
@@ -83,12 +103,70 @@ if selected_tab == "Submit New Resource":
         st.markdown(f"Or you can submit your resource using [this Google Form]({google_form_url})")
     st.stop()
 
+# ===== USER EMBEDS PAGE (placeholder) ===== #
+if selected_tab == "User Embeds":
+    st.title("🌐 User Submitted Embeds")
+    st.info("This section will showcase user-submitted interactive embeds like maps, dashboards, etc.")
+    # You can add actual embeds loading & display here later
+    st.stop()
+
+# ===== DISCUSSION CHAT ===== #
+if selected_tab == "Discussion":
+    st.title("💬 Discussion Chat")
+    if "messages" not in st.session_state:
+        st.session_state.messages = []
+
+    def submit_message():
+        if st.session_state.user_input.strip():
+            st.session_state.messages.append(st.session_state.user_input.strip())
+            st.session_state.user_input = ""
+
+    st.text_input("Type your message and press Enter:", key="user_input", on_change=submit_message)
+
+    if st.session_state.messages:
+        for msg in st.session_state.messages:
+            st.chat_message("user").write(msg)
+    else:
+        st.info("Start the conversation by typing a message above.")
+    st.stop()
+
+# ===== FAQ & HELP PAGE ===== #
+if selected_tab == "FAQ & Help":
+    st.title("❓ FAQ & Help")
+
+    # Example FAQ list - replace with persistent data source if needed
+    faq_list = [
+        {"q": "How to use the GeoAI Repository?", "a": "Simply select a category and browse resources."},
+        {"q": "How to submit new data?", "a": "Go to Submit New Resource tab and fill the form."},
+    ]
+
+    for faq in faq_list:
+        with st.expander(faq["q"]):
+            st.write(faq["a"])
+
+    st.subheader("Ask a Question")
+    user_question = st.text_area("Your question here:")
+
+    if st.button("Submit Question"):
+        if user_question.strip():
+            # Save user questions to a file for admin review (optional)
+            questions_file = "user_questions.txt"
+            with open(questions_file, "a") as f:
+                f.write(user_question.strip() + "\n")
+            st.success("Thanks for your question! We'll review and answer soon.")
+        else:
+            st.error("Please enter a question.")
+    st.stop()
+
 # ===== LOAD DATA FOR OTHER TABS ===== #
-df = load_data(sheet_options[selected_tab])
+if selected_tab in sheet_options and sheet_options[selected_tab]:
+    df = load_data(sheet_options[selected_tab])
+else:
+    df = pd.DataFrame()  # empty df for custom tabs
 
 # ===== INTERACTIVE SEARCH & FILTER ===== #
 search_term = st.sidebar.text_input("🔍 Search")
-if search_term:
+if search_term and not df.empty:
     df = df[df.apply(lambda row: row.astype(str).str.contains(search_term, case=False, na=False).any(), axis=1)]
 
 if selected_tab == "Data Sources" and "Type" in df.columns:
@@ -104,43 +182,64 @@ title_map = {
     "Python Codes (GEE)": "Title",
     "Free Tutorials": "Tutorials"
 }
-title_col = title_map.get(selected_tab, df.columns[0])
+title_col = title_map.get(selected_tab, df.columns[0] if not df.empty else None)
 
 # ===== MAIN TITLE ===== #
 st.title(f"🌍 GeoAI Repository – {selected_tab}")
 
-# ===== SHOW CARD VIEW ONLY ===== #
-exclude_cols = [title_col, "Description", "Purpose", "S.No"]  # Add more if needed
+if not df.empty:
+    # ===== SHOW CARD VIEW WITH UPVOTES ===== #
+    exclude_cols = [title_col, "Description", "Purpose", "S.No"]  # Add more if needed
 
-link_columns_map = {
-    "Data Sources": ["Links", "Link"],
-    "Tools": ["Tool Link", "Link", "Links"],
-    "Courses": ["Course Link", "Link", "Links"],
-    "Free Tutorials": ["Link", "Links", "Tutorial Link"],
-    "Python Codes (GEE)": ["Link", "Links", "Link to the codes"]
-}
+    link_columns_map = {
+        "Data Sources": ["Links", "Link"],
+        "Tools": ["Tool Link", "Link", "Links"],
+        "Courses": ["Course Link", "Link", "Links"],
+        "Free Tutorials": ["Link", "Links", "Tutorial Link"],
+        "Python Codes (GEE)": ["Link", "Links", "Link to the codes"]
+    }
 
-possible_links = link_columns_map.get(selected_tab, ["Links", "Link", "Link to the codes"])
-link_col = next((c for c in possible_links if c in df.columns), None)
+    possible_links = link_columns_map.get(selected_tab, ["Links", "Link", "Link to the codes"])
+    link_col = next((c for c in possible_links if c in df.columns), None)
 
-for idx, row in df.iterrows():
-    resource_title = row.get(title_col)
-    if not resource_title or str(resource_title).strip() == "":
-        resource_title = f"Resource-{idx+1}"
+    for idx, row in df.iterrows():
+        resource_title = row.get(title_col)
+        if not resource_title or str(resource_title).strip() == "":
+            resource_title = f"Resource-{idx+1}"
 
-    with st.expander(f"🔹 {resource_title}"):
-        if "Description" in df.columns and pd.notna(row.get("Description")):
-            st.write(row["Description"])
+        with st.expander(f"🔹 {resource_title}"):
+            if "Description" in df.columns and pd.notna(row.get("Description")):
+                st.write(row["Description"])
 
-        if link_col and pd.notna(row.get(link_col)):
-            st.markdown(f"[🔗 Access Resource]({row[link_col]})", unsafe_allow_html=True)
+            if link_col and pd.notna(row.get(link_col)):
+                st.markdown(f"[🔗 Access Resource]({row[link_col]})", unsafe_allow_html=True)
 
-        if "Purpose" in df.columns and pd.notna(row.get("Purpose")):
-            st.markdown(f"**🎯 Purpose:** {row['Purpose']}")
+            if "Purpose" in df.columns and pd.notna(row.get("Purpose")):
+                st.markdown(f"**🎯 Purpose:** {row['Purpose']}")
 
-        for col in df.columns:
-            if col not in exclude_cols + ([link_col] if link_col else []) and pd.notna(row.get(col)):
-                st.markdown(f"**{col}:** {row[col]}")
+            # Show other columns
+            for col in df.columns:
+                if col not in exclude_cols + ([link_col] if link_col else []) and pd.notna(row.get(col)):
+                    st.markdown(f"**{col}:** {row[col]}")
+
+            # Upvote button & count
+            res_id = f"{selected_tab}_{idx}"
+            current_votes = votes.get(res_id, 0)
+            col1, col2 = st.columns([1, 5])
+            with col1:
+                if st.button("👍 Upvote", key=res_id):
+                    if f"voted_{res_id}" not in st.session_state:
+                        votes[res_id] = current_votes + 1
+                        save_votes(votes)
+                        st.session_state[f"voted_{res_id}"] = True
+                        st.experimental_rerun()
+                    else:
+                        st.warning("You already voted!")
+            with col2:
+                st.write(f"Votes: {current_votes}")
+
+else:
+    st.info("No data available to display.")
 
 # ===== FOOTER ===== #
 st.markdown("<hr style='border:1px solid #ddd'/>", unsafe_allow_html=True)

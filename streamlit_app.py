@@ -5,7 +5,6 @@ import re
 
 import streamlit as st
 
-# --- Simple user login setup ---
 USER_CREDENTIALS = {
     "alice": "password123",
     "bob": "mypassword"
@@ -19,25 +18,27 @@ def login():
     st.title("🔐 Login to GeoAI Repository")
     username = st.text_input("Username", key="username_input")
     password = st.text_input("Password", type="password", key="password_input")
+    login_pressed = st.button("Login")
 
-    if st.button("Login"):
+    if login_pressed:
         if username in USER_CREDENTIALS and USER_CREDENTIALS[username] == password:
             st.session_state['authenticated'] = True
             st.session_state['username'] = username
-            st.experimental_rerun()
         else:
             st.error("Invalid username or password")
 
 if not st.session_state['authenticated']:
     login()
-    st.stop()  # Stop executing the rest until logged in
+    st.stop()  # Prevent app from showing content if not logged in
 
-# Add a logout button in the sidebar
 if st.sidebar.button("Logout"):
     st.session_state['authenticated'] = False
     st.session_state['username'] = None
-    st.experimental_rerun()
 
+st.sidebar.title(f"Welcome, {st.session_state['username']}!")
+
+# Below this line, put your entire existing repository app code
+# ...
 # ===== PAGE CONFIG ===== #
 st.set_page_config(page_title="GeoAI Repository", layout="wide")
 

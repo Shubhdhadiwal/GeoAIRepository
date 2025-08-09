@@ -275,4 +275,5 @@ st.markdown("""
 Developed by Shubh | 
 <a href='https://www.linkedin.com/in/shubh-dhadiwal/' target='_blank'>LinkedIn</a>
 </p>
-""", unsafe_allow_html=True
+""", unsafe_allow_html=True)
+

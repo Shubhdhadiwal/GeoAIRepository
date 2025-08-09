@@ -58,9 +58,9 @@ if selected_tab == "About":
 
     st.subheader("📊 Repository Content Overview")
     
-    # Horizontal radio buttons to select category
+    # Horizontal radio buttons to select category (just for user to select, no data shown)
     selected_metric = st.radio(
-        "Select category to preview details:",
+        "Select category:",
         categories_to_check,
         index=0,
         horizontal=True
@@ -69,15 +69,9 @@ if selected_tab == "About":
     # Show counts as metrics in columns
     cols = st.columns(len(categories_to_check))
     for i, cat in enumerate(categories_to_check):
-        cols[i].metric(label=cat, value=counts.get(cat, 0))
-
-    # Show preview of selected category data
-    st.markdown(f"### Preview of **{selected_metric}**")
-    df_preview = load_data(sheet_options[selected_metric])
-    if not df_preview.empty:
-        st.dataframe(df_preview.head(10))
-    else:
-        st.write("No data available for this category.")
+        # Highlight the selected metric label by adding a small visual clue
+        label = f"➡️ {cat}" if cat == selected_metric else cat
+        cols[i].metric(label=label, value=counts.get(cat, 0))
 
     st.markdown("---")
     st.markdown("""

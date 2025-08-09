@@ -5,7 +5,7 @@ import pandas as pd
 st.set_page_config(page_title="GeoAI Repository", layout="wide")
 
 # ===== LOAD DATA ===== #
-@st.cache_data
+# Removed caching temporarily for debugging
 def load_data(sheet_name):
     df = pd.read_excel("Geospatial Data Repository (2).xlsx", sheet_name=sheet_name)
     df.columns = df.iloc[0]  # Use first row as header
@@ -13,9 +13,6 @@ def load_data(sheet_name):
     df = df.dropna(subset=[df.columns[0]])  # Ensure first column is not empty
     df = df.loc[:, ~df.columns.str.contains("^Unnamed")]  # Drop unnamed columns
     return df
-
-# ===== SIDEBAR NAV ===== #
-st.sidebar.header("🧭 GeoAI Repository")
 
 sheet_options = {
     "About": "About",
@@ -26,6 +23,23 @@ sheet_options = {
     "Courses": "Courses",
     "Submit New Resource": "Submit New Resource"
 }
+
+# ===== FUNCTION TO GET COUNTS FOR ABOUT PAGE ===== #
+def get_counts():
+    counts = {}
+    keys_to_count = ["Data Sources", "Tools", "Courses", "Free Tutorials", "Python Codes (GEE)"]
+    for key in keys_to_count:
+        try:
+            df_tmp = load_data(sheet_options[key])
+            counts[key] = len(df_tmp)
+            # st.write(f"Loaded {key}: {len(df_tmp)} rows")  # Uncomment to debug
+        except Exception as e:
+            counts[key] = 0
+            # st.write(f"Error loading {key}: {e}")  # Uncomment to debug
+    return counts
+
+# ===== SIDEBAR NAV ===== #
+st.sidebar.header("🧭 GeoAI Repository")
 selected_tab = st.sidebar.radio("Select Section", list(sheet_options.keys()))
 
 # Sidebar footer
@@ -36,21 +50,7 @@ st.sidebar.markdown(
     """
 )
 
-# ===== PRELOAD COUNTS FOR ABOUT PAGE ===== #
-def get_counts():
-    counts = {}
-    keys_to_count = ["Data Sources", "Tools", "Courses", "Free Tutorials", "Python Codes (GEE)"]
-    for key in keys_to_count:
-        try:
-            df_tmp = load_data(sheet_options[key])
-            counts[key] = len(df_tmp)
-        except Exception:
-            counts[key] = 0
-    return counts
-
-counts = get_counts()
-
-# ===== ABOUT ===== #
+# ===== ABOUT PAGE ===== #
 if selected_tab == "About":
     st.title("📘 About GeoAI Repository")
     st.markdown("""
@@ -63,14 +63,15 @@ if selected_tab == "About":
     - 📘 Free tutorials  
     - 💻 Python codes for Google Earth Engine  
     """)
-    
-    # Display counts in columns
+
+    # Show interactive counts
+    counts = get_counts()
     col1, col2, col3, col4, col5 = st.columns(5)
-    col1.metric("📊 Data Sources", counts.get("Data Sources", 0))
-    col2.metric("🛠️ Tools", counts.get("Tools", 0))
-    col3.metric("🎓 Courses", counts.get("Courses", 0))
-    col4.metric("📚 Free Tutorials", counts.get("Free Tutorials", 0))
-    col5.metric("💻 Python Codes", counts.get("Python Codes (GEE)", 0))
+    col1.metric("Data Sources", counts.get("Data Sources", 0))
+    col2.metric("Tools", counts.get("Tools", 0))
+    col3.metric("Courses", counts.get("Courses", 0))
+    col4.metric("Free Tutorials", counts.get("Free Tutorials", 0))
+    col5.metric("Python Codes", counts.get("Python Codes (GEE)", 0))
 
     st.markdown("""
     ---
@@ -94,7 +95,7 @@ if selected_tab == "Submit New Resource":
         st.markdown(f"Or you can submit your resource using [this Google Form]({google_form_url})")
     st.stop()
 
-# ===== LOAD DATA ===== #
+# ===== LOAD DATA FOR OTHER TABS ===== #
 df = load_data(sheet_options[selected_tab])
 
 # ===== INTERACTIVE SEARCH & FILTER ===== #
@@ -117,9 +118,13 @@ title_map = {
 }
 title_col = title_map.get(selected_tab, df.columns[0])
 
+# ===== MAIN TITLE ===== #
+st.title(f"🌍 GeoAI Repository – {selected_tab}")
+
 # ===== SHOW CARD VIEW ONLY ===== #
 exclude_cols = [title_col, "Description", "Purpose", "S.No"]  # Add more if needed
 
+# Define possible link column names per tab for better detection
 link_columns_map = {
     "Data Sources": ["Links", "Link"],
     "Tools": ["Tool Link", "Link", "Links"],
@@ -130,8 +135,6 @@ link_columns_map = {
 
 possible_links = link_columns_map.get(selected_tab, ["Links", "Link", "Link to the codes"])
 link_col = next((c for c in possible_links if c in df.columns), None)
-
-st.title(f"🌍 GeoAI Repository – {selected_tab}")
 
 for idx, row in df.iterrows():
     resource_title = row.get(title_col)

@@ -121,18 +121,22 @@ if selected_tab == "Discussion":
     st.title("💬 Discussion Chat")
     st.markdown("Let's have a discussion and get your queries solved")
 
-    # Show chat messages
     for message in st.session_state.chat_messages:
         st.write(f"**User:** {message}")
 
-    # Input form for sending message
+    rerun_needed = False  # Flag to control rerun outside form
+
     with st.form("chat_form", clear_on_submit=True):
         new_msg = st.text_input("Enter message", key="chat_input")
         submitted = st.form_submit_button("Send")
 
         if submitted and new_msg.strip() != "":
             st.session_state.chat_messages.append(new_msg.strip())
-            st.experimental_rerun()
+            rerun_needed = True
+
+    if rerun_needed:
+        st.experimental_rerun()
+
     st.stop()
 
 # ===== FAQ & HELP ===== #

@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+import altair as alt
 
 # ===== PAGE CONFIG ===== #
 st.set_page_config(page_title="GeoAI Repository", layout="wide")
@@ -49,13 +50,14 @@ if selected_tab == "About":
     - 💻 Python codes for Google Earth Engine  
     """)
 
-    # Calculate counts per category
     categories_to_check = ["Data Sources", "Tools", "Courses", "Free Tutorials", "Python Codes (GEE)"]
     counts = {}
     for cat in categories_to_check:
         df_cat = load_data(sheet_options[cat])
         counts[cat] = len(df_cat)
-        st.write(f"Loaded {cat}: {counts[cat]} entries")  # DEBUG: display counts
+
+    # Convert counts dict to DataFrame for plotting
+    counts_df = pd.DataFrame(list(counts.items()), columns=["Category", "Count"])
 
     # Display metrics in columns
     col1, col2, col3, col4, col5 = st.columns(5)
@@ -64,6 +66,20 @@ if selected_tab == "About":
     col3.metric("Courses", counts.get("Courses", 0))
     col4.metric("Free Tutorials", counts.get("Free Tutorials", 0))
     col5.metric("Python Codes", counts.get("Python Codes (GEE)", 0))
+
+    st.markdown("---")
+    st.subheader("📊 Repository Content Overview")
+
+    # Bar chart
+    st.bar_chart(data=counts_df.set_index("Category"))
+
+    # Pie chart with Altair
+    pie_chart = alt.Chart(counts_df).mark_arc().encode(
+        theta=alt.Theta(field="Count", type="quantitative"),
+        color=alt.Color(field="Category", type="nominal"),
+        tooltip=["Category", "Count"]
+    ).properties(width=400, height=400)
+    st.altair_chart(pie_chart)
 
     st.markdown("""
     ---

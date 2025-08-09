@@ -56,33 +56,31 @@ if selected_tab == "About":
         df_cat = load_data(sheet_options[cat])
         counts[cat] = len(df_cat)
 
-    # Convert counts dict to DataFrame for plotting
-    counts_df = pd.DataFrame(list(counts.items()), columns=["Category", "Count"])
+    st.subheader("📊 Repository Content Overview")
+    
+    # Horizontal radio buttons to select category
+    selected_metric = st.radio(
+        "Select category to preview details:",
+        categories_to_check,
+        index=0,
+        horizontal=True
+    )
 
-    # Display metrics in columns
-    col1, col2, col3, col4, col5 = st.columns(5)
-    col1.metric("Data Sources", counts.get("Data Sources", 0))
-    col2.metric("Tools", counts.get("Tools", 0))
-    col3.metric("Courses", counts.get("Courses", 0))
-    col4.metric("Free Tutorials", counts.get("Free Tutorials", 0))
-    col5.metric("Python Codes", counts.get("Python Codes (GEE)", 0))
+    # Show counts as metrics in columns
+    cols = st.columns(len(categories_to_check))
+    for i, cat in enumerate(categories_to_check):
+        cols[i].metric(label=cat, value=counts.get(cat, 0))
+
+    # Show preview of selected category data
+    st.markdown(f"### Preview of **{selected_metric}**")
+    df_preview = load_data(sheet_options[selected_metric])
+    if not df_preview.empty:
+        st.dataframe(df_preview.head(10))
+    else:
+        st.write("No data available for this category.")
 
     st.markdown("---")
-    st.subheader("📊 Repository Content Overview")
-
-    # Bar chart
-    st.bar_chart(data=counts_df.set_index("Category"))
-
-    # Pie chart with Altair
-    pie_chart = alt.Chart(counts_df).mark_arc().encode(
-        theta=alt.Theta(field="Count", type="quantitative"),
-        color=alt.Color(field="Category", type="nominal"),
-        tooltip=["Category", "Count"]
-    ).properties(width=400, height=400)
-    st.altair_chart(pie_chart)
-
     st.markdown("""
-    ---
     <p style='text-align:center; font-size:12px; color:gray;'>
     Developed by Shubh | 
     <a href='https://www.linkedin.com/in/shubh-dhadiwal/' target='_blank'>LinkedIn</a>

@@ -26,6 +26,17 @@ def load_data(sheet_name):
         df = df[1:]  # Skip header row from data
         df = df.dropna(subset=[df.columns[0]])  # Ensure first column is not empty
         df = df.loc[:, ~df.columns.str.contains("^Unnamed")]  # Drop unnamed columns
+
+        # Fix: Rename any "Column X" column to "Link" if sheet is Tools
+        if sheet_name == "Tools":
+            # Find columns named like "Column 10", "Column 9", etc. and rename to "Link"
+            new_columns = {}
+            for col in df.columns:
+                if isinstance(col, str) and col.startswith("Column"):
+                    new_columns[col] = "Link"
+            if new_columns:
+                df = df.rename(columns=new_columns)
+
         return df
     except Exception as e:
         st.error(f"Error loading sheet '{sheet_name}': {e}")
@@ -183,14 +194,13 @@ for idx, row in df.iterrows():
     category_key = selected_tab
     if selected_tab == "Favorites" and "Category" in row:
         category_key = row["Category"]
-    unique_key = f"{category_key}_{idx}"
     is_fav = st.session_state.favorites.get(category_key, [])
     checked = idx in is_fav
 
     with st.expander(f"🔹 {resource_title}"):
         col1, col2 = st.columns([0.9, 0.1])
         with col2:
-            fav_checkbox = st.checkbox("⭐", value=checked, key=unique_key)
+            fav_checkbox = st.checkbox("⭐", value=checked, key=f"{category_key}_{idx}")
         with col1:
             if "Description" in df.columns and pd.notna(row.get("Description")):
                 st.write(row["Description"])

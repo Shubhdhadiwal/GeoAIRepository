@@ -14,15 +14,12 @@ sheet_options = {
     "Courses": "Courses",
     "Submit New Resource": "Submit New Resource",
     "Favorites": None,
-    "Discussion": None,
     "FAQ & Help": None
 }
 
 # ===== INIT SESSION STATE ===== #
 if "favorites" not in st.session_state:
     st.session_state.favorites = {}
-if "chat_messages" not in st.session_state:
-    st.session_state.chat_messages = []
 if "faq_questions" not in st.session_state:
     st.session_state.faq_questions = [
         {"q": "What is GeoAI Repository?", "a": "It is a free resource hub for geospatial analytics, machine learning, and urban/climate planning."},
@@ -114,38 +111,6 @@ if selected_tab == "Favorites":
                     st.markdown(f"- {item['title']}")
     st.stop()
 
-# ===== DISCUSSION CHAT ===== #
-if selected_tab == "Discussion":
-    st.title("💬 Discussion Chat")
-    st.markdown("Ask your questions and discuss — press **Enter** to send.")
-
-    def message_bubble(msg):
-        return f"""
-        <div style="
-            background-color:#DCF8C6; 
-            padding:10px 15px; 
-            border-radius:15px; 
-            margin:8px 0; 
-            max-width:70%; 
-            font-family:sans-serif;
-            box-shadow: 1px 1px 3px #ccc;
-            ">
-            <b>User:</b> {msg}
-        </div>
-        """
-
-    for message in st.session_state.chat_messages:
-        st.markdown(message_bubble(message), unsafe_allow_html=True)
-
-    def add_message():
-        msg = st.session_state.chat_input.strip()
-        if msg:
-            st.session_state.chat_messages.append(msg)
-        st.session_state.chat_input = ""
-
-    st.text_input("Type your message here...", key="chat_input", on_change=add_message)
-    st.stop()
-
 # ===== FAQ & HELP ===== #
 if selected_tab == "FAQ & Help":
     st.title("❓ FAQ & Help")
@@ -203,8 +168,8 @@ def toggle_favorite(res_id, resource_title, selected_tab, link):
         }
     st.experimental_rerun()
 
-# ===== MAIN TITLE ===== #
-if selected_tab not in ["Favorites", "Discussion", "FAQ & Help", "Submit New Resource", "About"]:
+# ===== MAIN TITLE & RESOURCE DISPLAY ===== #
+if selected_tab not in ["Favorites", "Submit New Resource", "About", "FAQ & Help"]:
     st.title(f"🌍 GeoAI Repository – {selected_tab}")
 
     if not df.empty:

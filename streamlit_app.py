@@ -119,7 +119,7 @@ if selected_tab == "Favorites":
 # ===== DISCUSSION CHAT ===== #
 if selected_tab == "Discussion":
     st.title("💬 Discussion Chat")
-    st.markdown("Chat with other users or leave your thoughts here. (Note: Chat history is per session only.)")
+    st.markdown("Let's have a discussion and get you queries Solved")
 
     for message in st.session_state.chat_messages:
         st.write(f"**User:** {message}")

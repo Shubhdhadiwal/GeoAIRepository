@@ -15,18 +15,15 @@ USER_CREDENTIALS = {
     "Shubh4016": hash_password("Shubh9834421314")
 }
 
-# Initialize session state vars
 if 'authenticated' not in st.session_state:
     st.session_state['authenticated'] = False
     st.session_state['username'] = None
-if 'favorites' not in st.session_state:
-    st.session_state['favorites'] = {}
 
-# --- Logout button ---
+# --- Logout button handler must be at top ---
 if st.sidebar.button("Logout"):
     st.session_state['authenticated'] = False
     st.session_state['username'] = None
-    st.experimental_rerun()  # Correctly placed inside button event handler
+    st.experimental_rerun()  # Only called inside event handler
 
 def login():
     st.title("🔐 Login to GeoAI Repository")
@@ -39,7 +36,6 @@ def login():
         if username in USER_CREDENTIALS and USER_CREDENTIALS[username] == hashed_input:
             st.session_state['authenticated'] = True
             st.session_state['username'] = username
-            st.experimental_rerun()  # rerun to update UI after login
         else:
             st.error("Invalid username or password")
 
@@ -57,7 +53,7 @@ sheet_options = {
     "Data Sources": "Data Sources",
     "Tools": "Tools",
     "Free Tutorials": "Free Tutorials",
-    "Codes": "Google Earth EnginePython Codes",  # display as Codes but load this sheet
+    "Codes": "Google Earth EnginePython Codes",  # show as Codes but load this exact sheet
     "Courses": "Courses",
     "Submit New Resource": "Submit New Resource",
     "Favorites": "Favorites",
@@ -67,7 +63,7 @@ sheet_options = {
 def load_data(sheet_name):
     try:
         df = pd.read_excel(GITHUB_RAW_URL, sheet_name=sheet_name)
-        df.columns = df.iloc[0]
+        df.columns = df.iloc[0]  # Use first row as header
         df = df[1:]
         df = df.dropna(subset=[df.columns[0]])
         df = df.loc[:, ~df.columns.str.contains("^Unnamed")]
@@ -83,6 +79,10 @@ def load_data(sheet_name):
         st.error(f"Error loading sheet '{sheet_name}': {e}")
         return pd.DataFrame()
 
+if "favorites" not in st.session_state:
+    st.session_state.favorites = {}
+
+st.sidebar.header("🧭 GeoAI Repository")
 selected_tab = st.sidebar.radio("Select Section", list(sheet_options.keys()))
 
 st.sidebar.markdown("---")
@@ -100,15 +100,15 @@ if selected_tab == "About":
     - 📘 Free tutorials  
     - 💻 Python codes for Google Earth Engine  
     """)
-    categories_to_check = ["Data Sources", "Tools", "Courses", "Free Tutorials", "Google Earth EnginePython Codes"]
+    categories_to_check = ["Data Sources", "Tools", "Courses", "Free Tutorials", "Codes"]
     counts = {}
     for cat in categories_to_check:
-        df_cat = load_data(cat)
+        df_cat = load_data(sheet_options[cat])
         counts[cat] = len(df_cat)
     st.subheader("📊 Repository Content Overview")
     cols = st.columns(len(categories_to_check))
     for i, cat in enumerate(categories_to_check):
-        cols[i].metric(label=cat if cat != "Google Earth EnginePython Codes" else "Codes", value=counts.get(cat, 0))
+        cols[i].metric(label=cat, value=counts.get(cat, 0))
     st.markdown("---")
     st.markdown("""
     <p style='text-align:center; font-size:12px; color:gray;'>
@@ -139,27 +139,6 @@ if selected_tab == "FAQ":
             st.write(answer)
     st.stop()
 
-# Load data for the selected tab (handle "Codes" mapping to exact sheet name)
-sheet_name_to_load = sheet_options[selected_tab]
-
-if selected_tab != "Favorites":
-    with st.spinner(f"Loading {selected_tab} data..."):
-        df = load_data(sheet_name_to_load)
-else:
-    # Favorites tab: load favorites from all categories
-    all_fav_items = []
-    for key, items in st.session_state.favorites.items():
-        df_cat = load_data(sheet_options.get(key, key))
-        if df_cat.empty:
-            continue
-        fav_rows = df_cat.loc[df_cat.index.isin(items)].copy()
-        fav_rows["Category"] = key
-        all_fav_items.append(fav_rows)
-    if all_fav_items:
-        df = pd.concat(all_fav_items)
-    else:
-        df = pd.DataFrame()
-
 title_map = {
     "Data Sources": "Data Source",
     "Tools": "Tools",
@@ -169,8 +148,27 @@ title_map = {
     "Favorites": "Title"
 }
 
+if selected_tab != "Favorites":
+    with st.spinner(f"Loading {selected_tab} data..."):
+        df = load_data(sheet_options[selected_tab])
+else:
+    all_fav_items = []
+    for key, items in st.session_state.favorites.items():
+        df_cat = load_data(sheet_options.get(key, key))
+        if df_cat.empty:
+            continue
+        fav_rows = df_cat.loc[df_cat.index.isin(items)].copy()
+        fav_rows["Category"] = key
+        title_col_fav = title_map.get(key, df_cat.columns[0])
+        fav_rows["Fav_Title"] = fav_rows[title_col_fav]
+        all_fav_items.append(fav_rows)
+    if all_fav_items:
+        df = pd.concat(all_fav_items)
+    else:
+        df = pd.DataFrame()
+
 if selected_tab == "Favorites":
-    title_col = "Title" if "Title" in df.columns else (df.columns[0] if not df.empty else None)
+    title_col = "Fav_Title"
 else:
     title_col = title_map.get(selected_tab, df.columns[0] if not df.empty else None)
 
@@ -207,7 +205,7 @@ link_columns_map = {
     "Favorites": ["Link", "Links", "Link to the codes", "Tool Link", "Course Link", "Tutorial Link"]
 }
 
-possible_links = link_columns_map.get(selected_tab, ["Links", "Link"])
+possible_links = link_columns_map.get(selected_tab, ["Links", "Link", "Link to the codes", "Tool Link", "Course Link", "Tutorial Link"])
 
 def highlight_search(text, term):
     if not term:
@@ -219,7 +217,7 @@ for idx, row in df.iterrows():
     resource_title = row.get(title_col)
     if not resource_title or str(resource_title).strip() == "":
         resource_title = f"Resource-{idx+1}"
-
+    
     displayed_title = highlight_search(resource_title, search_term)
 
     links = []
@@ -228,7 +226,7 @@ for idx, row in df.iterrows():
             val = str(row[col]).strip()
             if val.lower().startswith(("http://", "https://", "www.")):
                 links.append((col, val))
-
+    
     category_key = selected_tab
     if selected_tab == "Favorites" and "Category" in row:
         category_key = row["Category"]

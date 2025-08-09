@@ -101,7 +101,7 @@ if selected_tab == "About":
     - 📘 Free tutorials  
     - 💻 Python codes for Google Earth Engine  
     """)
-    categories_to_check = ["Data Sources", "Tools", "Courses", "Free Tutorials", "Python Codes (GEE)"]
+    categories_to_check = ["Data Sources", "Tools", "Courses", "Free Tutorials", "Google Earth Engine/Python Codes"]
     counts = {}
     for cat in categories_to_check:
         df_cat = load_data(sheet_options[cat])
@@ -144,7 +144,7 @@ title_map = {
     "Data Sources": "Data Source",
     "Tools": "Tools",
     "Courses": "Tutorials",
-    "Python Codes (GEE)": "Title",
+    "Google Earth Engine/Python Codes": "Title",
     "Free Tutorials": "Tutorials",
     "Favorites": "Title"
 }
@@ -211,7 +211,7 @@ link_columns_map = {
     "Tools": ["Tool Link", "Link", "Links"],
     "Courses": ["Course Link", "Link", "Links"],
     "Free Tutorials": ["Link", "Links", "Tutorial Link"],
-    "Python Codes (GEE)": ["Link", "Links", "Link to the codes"],
+    "Google Earth Engine/Python Codes": ["Link", "Links", "Link to the codes"],
     "Favorites": ["Link", "Links", "Link to the codes", "Tool Link", "Course Link", "Tutorial Link"]
 }
 

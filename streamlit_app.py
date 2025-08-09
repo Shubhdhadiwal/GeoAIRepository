@@ -3,57 +3,6 @@ import pandas as pd
 import altair as alt
 import re
 
-USER_CREDENTIALS = {
-    "alice": "password123",
-    "bob": "mypassword"
-}
-
-if 'authenticated' not in st.session_state:
-    st.session_state['authenticated'] = False
-    st.session_state['username'] = None
-
-def login():
-    st.title("Please log in")
-    username = st.text_input("Username", key="username_input")
-    password = st.text_input("Password", type="password", key="password_input")
-
-    login_pressed = st.button("Login")
-    if login_pressed:
-        if username in USER_CREDENTIALS and USER_CREDENTIALS[username] == password:
-            st.session_state['authenticated'] = True
-            st.session_state['username'] = username
-        else:
-            st.error("Invalid username or password")
-
-if not st.session_state['authenticated']:
-    login()
-    st.stop()
-
-if st.sidebar.button("Logout"):
-    st.session_state['authenticated'] = False
-    st.session_state['username'] = None
-    st.experimental_rerun()
-
-st.sidebar.title(f"Welcome, {st.session_state['username']}!")
-
-category = st.sidebar.radio("Select a category", ["About", "Data Sources", "Tools", "Tutorials"])
-
-if category == "About":
-    st.header("About the GeoAI Repository")
-    st.write("Repository content for About")
-
-elif category == "Data Sources":
-    st.header("Data Sources")
-    st.write("Repository content for Data Sources")
-
-elif category == "Tools":
-    st.header("Tools")
-    st.write("Repository content for Tools")
-
-elif category == "Tutorials":
-    st.header("Tutorials")
-    st.write("Repository content for Tutorials")
-
 # ===== PAGE CONFIG ===== #
 st.set_page_config(page_title="GeoAI Repository", layout="wide")
 

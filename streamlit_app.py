@@ -7,7 +7,9 @@ import streamlit as st
 
 import streamlit as st
 
-# Hardcoded user credentials (for demo only)
+import streamlit as st
+
+# User credentials (demo only)
 USER_CREDENTIALS = {
     "alice": "password123",
     "bob": "mypassword"
@@ -24,44 +26,54 @@ def login():
         if username in USER_CREDENTIALS and USER_CREDENTIALS[username] == password:
             st.session_state['authenticated'] = True
             st.session_state['username'] = username
-            st.experimental_rerun()  # Refresh to show repo after login
+            st.experimental_rerun()
         else:
             st.error("Invalid username or password")
 
 def logout():
-    if st.button("Logout"):
+    if st.sidebar.button("Logout"):
         st.session_state['authenticated'] = False
         st.session_state['username'] = None
-        st.experimental_rerun()  # Refresh to show login again
+        st.experimental_rerun()
 
-def show_repository():
-    st.title("Welcome to the GeoAI Repository!")
-    st.write(f"Hello, {st.session_state['username']}! Here's the repository content:")
-
-    # Example repository content (replace with your actual content)
-    repo_data = {
-        "Data Sources": ["Source 1", "Source 2", "Source 3"],
-        "Tools": ["Tool A", "Tool B", "Tool C"],
-        "Tutorials": ["Tutorial X", "Tutorial Y"],
-    }
-
-    for section, items in repo_data.items():
-        st.subheader(section)
-        for item in items:
-            st.write(f"- {item}")
-
-    logout()
-
-# Initialize session state variables if not set
+# Initialize session state
 if 'authenticated' not in st.session_state:
     st.session_state['authenticated'] = False
     st.session_state['username'] = None
 
-# Show login page or repository based on authentication status
+# If not logged in, show login page and stop here
 if not st.session_state['authenticated']:
     login()
-else:
-    show_repository()
+    st.stop()  # STOP running below code until user logs in
+
+# From here on: user is authenticated, show full app
+
+st.sidebar.title(f"Welcome, {st.session_state['username']}!")
+logout()
+
+# Sidebar for repository categories
+category = st.sidebar.radio("Select a category", ["About", "Data Sources", "Tools", "Tutorials"])
+
+# Example content for each category
+if category == "About":
+    st.header("About the GeoAI Repository")
+    st.write("This repository contains geospatial AI resources.")
+
+elif category == "Data Sources":
+    st.header("Data Sources")
+    st.write("- Source 1")
+    st.write("- Source 2")
+
+elif category == "Tools":
+    st.header("Tools")
+    st.write("- Tool A")
+    st.write("- Tool B")
+
+elif category == "Tutorials":
+    st.header("Tutorials")
+    st.write("- Tutorial X")
+    st.write("- Tutorial Y")
+
 
 # ===== PAGE CONFIG ===== #
 st.set_page_config(page_title="GeoAI Repository", layout="wide")

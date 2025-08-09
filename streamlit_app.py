@@ -1,14 +1,12 @@
-import os
-import sys
-import subprocess
+# ===== Ensure dependencies installed if using requirement_1.txt ===== #
+import os, sys, subprocess
 
-# ===== Install packages from requirement_1.txt if needed ===== #
 try:
     import streamlit_authenticator
 except ImportError:
     subprocess.check_call([sys.executable, "-m", "pip", "install", "-r", "requirement_1.txt"])
 
-# ===== Now safe to import ===== #
+# ===== Imports ===== #
 import streamlit as st
 import pandas as pd
 import altair as alt
@@ -18,7 +16,7 @@ from yaml.loader import SafeLoader
 import streamlit_authenticator as stauth
 import pkg_resources
 
-# Show version in sidebar (optional debug)
+# Debug: show authenticator version in sidebar
 st.sidebar.write("Authenticator version:", pkg_resources.get_distribution("streamlit-authenticator").version)
 
 # ===== PAGE CONFIG ===== #
@@ -60,7 +58,7 @@ if authentication_status:
     def load_data(sheet_name):
         try:
             df = pd.read_excel("Geospatial Data Repository (2).xlsx", sheet_name=sheet_name)
-            df.columns = df.iloc[0]  # Use first row as header
+            df.columns = df.iloc[0]
             df = df[1:]
             df = df.dropna(subset=[df.columns[0]])
             df = df.loc[:, ~df.columns.str.contains("^Unnamed")]
@@ -81,7 +79,6 @@ if authentication_status:
 
     st.sidebar.header("🧭 GeoAI Repository")
     selected_tab = st.sidebar.radio("Select Section", list(sheet_options.keys()))
-
     st.sidebar.markdown("---")
     st.sidebar.markdown("© 2025 GeoAI Repository")
 
@@ -172,17 +169,12 @@ if authentication_status:
     sort_order = st.sidebar.selectbox("Sort by Title", ["Ascending", "Descending"])
 
     def get_categorical_columns(df):
-        cat_cols = []
-        for col in df.columns:
-            if df[col].dtype == 'object' and df[col].nunique() < 30:
-                cat_cols.append(col)
-        return cat_cols
+        return [col for col in df.columns if df[col].dtype == 'object' and df[col].nunique() < 30]
 
     if selected_tab not in ["Favorites", "About", "Submit New Resource", "FAQ"]:
         if search_term:
             df = df[df.apply(lambda row: row.astype(str).str.contains(search_term, case=False, na=False).any(), axis=1)]
-        cat_cols = get_categorical_columns(df)
-        for col in cat_cols:
+        for col in get_categorical_columns(df):
             options = sorted(df[col].dropna().unique())
             selected_options = st.sidebar.multiselect(f"Filter by {col}", options, default=options)
             if selected_options:
@@ -190,10 +182,9 @@ if authentication_status:
         if title_col in df.columns:
             df = df.sort_values(by=title_col, ascending=(sort_order == "Ascending"))
 
-    if selected_tab == "Favorites":
-        if st.sidebar.button("Clear All Favorites"):
-            st.session_state.favorites = {}
-            st.experimental_rerun()
+    if selected_tab == "Favorites" and st.sidebar.button("Clear All Favorites"):
+        st.session_state.favorites = {}
+        st.experimental_rerun()
 
     st.title(f"🌍 GeoAI Repository – {selected_tab}")
 
@@ -222,19 +213,10 @@ if authentication_status:
         return regex.sub(lambda match: f"**:yellow[{match.group(0)}]**", str(text))
 
     for idx, row in df.iterrows():
-        resource_title = row.get(title_col)
-        if not resource_title or str(resource_title).strip() == "":
-            resource_title = f"Resource-{idx+1}"
+        resource_title = row.get(title_col) or f"Resource-{idx+1}"
         displayed_title = highlight_search(resource_title, search_term)
-        links = []
-        for col in possible_links:
-            if col in df.columns and pd.notna(row.get(col)):
-                val = str(row[col]).strip()
-                if val.lower().startswith(("http://", "https://", "www.")):
-                    links.append((col, val))
-        category_key = selected_tab
-        if selected_tab == "Favorites" and "Category" in row:
-            category_key = row["Category"]
+        links = [(col, str(row[col]).strip()) for col in possible_links if col in df.columns and pd.notna(row.get(col)) and str(row[col]).strip().lower().startswith(("http://", "https://", "www."))]
+        category_key = selected_tab if selected_tab != "Favorites" or "Category" not in row else row["Category"]
         is_fav = st.session_state.favorites.get(category_key, [])
         checked = idx in is_fav
 
@@ -258,14 +240,13 @@ if authentication_status:
                 elif not fav_checkbox and idx in st.session_state.favorites.get(category_key, []):
                     st.session_state.favorites[category_key].remove(idx)
         else:
-            compact_col1, compact_col2, compact_col3 = st.columns([6, 3, 1])
-            with compact_col1:
+            c1, c2, c3 = st.columns([6, 3, 1])
+            with c1:
                 st.markdown(f"🔹 {displayed_title}")
-            with compact_col2:
-                if links:
-                    for link_name, link_url in links:
-                        st.markdown(f"[🔗 {link_name}]({link_url})", unsafe_allow_html=True)
-            with compact_col3:
+            with c2:
+                for link_name, link_url in links:
+                    st.markdown(f"[🔗 {link_name}]({link_url})", unsafe_allow_html=True)
+            with c3:
                 fav_checkbox = st.checkbox("⭐", value=checked, key=f"compact_{category_key}_{idx}")
                 if fav_checkbox and idx not in st.session_state.favorites.get(category_key, []):
                     st.session_state.favorites.setdefault(category_key, []).append(idx)

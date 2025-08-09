@@ -5,7 +5,9 @@ import re
 
 import streamlit as st
 
-# Hardcoded user credentials (insecure for production!)
+import streamlit as st
+
+# Hardcoded user credentials (for demo only)
 USER_CREDENTIALS = {
     "alice": "password123",
     "bob": "mypassword"
@@ -22,7 +24,7 @@ def login():
         if username in USER_CREDENTIALS and USER_CREDENTIALS[username] == password:
             st.session_state['authenticated'] = True
             st.session_state['username'] = username
-            st.experimental_rerun()
+            st.experimental_rerun()  # Refresh to show repo after login
         else:
             st.error("Invalid username or password")
 
@@ -30,18 +32,36 @@ def logout():
     if st.button("Logout"):
         st.session_state['authenticated'] = False
         st.session_state['username'] = None
-        st.experimental_rerun()
+        st.experimental_rerun()  # Refresh to show login again
 
+def show_repository():
+    st.title("Welcome to the GeoAI Repository!")
+    st.write(f"Hello, {st.session_state['username']}! Here's the repository content:")
+
+    # Example repository content (replace with your actual content)
+    repo_data = {
+        "Data Sources": ["Source 1", "Source 2", "Source 3"],
+        "Tools": ["Tool A", "Tool B", "Tool C"],
+        "Tutorials": ["Tutorial X", "Tutorial Y"],
+    }
+
+    for section, items in repo_data.items():
+        st.subheader(section)
+        for item in items:
+            st.write(f"- {item}")
+
+    logout()
+
+# Initialize session state variables if not set
 if 'authenticated' not in st.session_state:
     st.session_state['authenticated'] = False
     st.session_state['username'] = None
 
+# Show login page or repository based on authentication status
 if not st.session_state['authenticated']:
     login()
 else:
-    st.write(f"Welcome {st.session_state['username']}!")
-    st.write("Your app content here...")
-    logout()
+    show_repository()
 
 # ===== PAGE CONFIG ===== #
 st.set_page_config(page_title="GeoAI Repository", layout="wide")

@@ -119,14 +119,18 @@ if selected_tab == "Favorites":
 # ===== DISCUSSION CHAT ===== #
 if selected_tab == "Discussion":
     st.title("💬 Discussion Chat")
-    st.markdown("Let's have a discussion and get you queries Solved")
+    st.markdown("Let's have a discussion and get your queries solved")
 
+    # Show chat messages
     for message in st.session_state.chat_messages:
         st.write(f"**User:** {message}")
 
-    new_msg = st.text_input("Enter message", key="chat_input")
-    if st.button("Send", key="send_button"):
-        if new_msg.strip() != "":
+    # Input form for sending message
+    with st.form("chat_form", clear_on_submit=True):
+        new_msg = st.text_input("Enter message", key="chat_input")
+        submitted = st.form_submit_button("Send")
+
+        if submitted and new_msg.strip() != "":
             st.session_state.chat_messages.append(new_msg.strip())
             st.experimental_rerun()
     st.stop()

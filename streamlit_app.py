@@ -1,10 +1,73 @@
+# ===== Force install packages from requirement_1.txt ===== #
+import sys, subprocess
+try:
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "-r", "requirement_1.txt"])
+except Exception as e:
+    print(f"Warning: Could not install from requirement_1.txt: {e}")
+
+# ===== Imports after installing dependencies ===== #
 import streamlit as st
 import pandas as pd
 import altair as alt
 import re
+import yaml
+from yaml.loader import SafeLoader
+import streamlit_authenticator as stauth
 
 # ===== PAGE CONFIG ===== #
 st.set_page_config(page_title="GeoAI Repository", layout="wide")
+
+# ===== LOAD LOGIN CONFIG ===== #
+def load_auth_config(config_path: str = "config.yaml"):
+    """Load and validate authentication configuration from YAML."""
+    try:
+        with open(config_path) as file:
+            config = yaml.load(file, Loader=SafeLoader)
+    except FileNotFoundError:
+        raise FileNotFoundError(f"Config file not found: {config_path}")
+    except yaml.YAMLError as e:
+        raise ValueError(f"Error parsing YAML file: {e}")
+
+    credentials = config.get("credentials")
+    cookie = config.get("cookie", {})
+    cookie_name = cookie.get("name")
+    cookie_key = cookie.get("key")
+    expiry_days = cookie.get("expiry_days")
+
+    if not all([credentials, cookie_name, cookie_key, expiry_days]):
+        raise ValueError(
+            "Authentication config missing required fields. "
+            "Check 'credentials', 'cookie.name', 'cookie.key', and 'cookie.expiry_days' in config.yaml."
+        )
+
+    return credentials, cookie_name, cookie_key, expiry_days
+
+# Initialize authenticator
+try:
+    credentials, cookie_name, cookie_key, expiry_days = load_auth_config()
+    authenticator = stauth.Authenticate(
+        credentials,
+        cookie_name,
+        cookie_key,
+        expiry_days
+    )
+except Exception as e:
+    st.error(f"Authentication configuration error: {e}")
+    st.stop()
+
+# ===== LOGIN ===== #
+name, authentication_status, username = authenticator.login('Login', 'sidebar')
+
+if not authentication_status:
+    if authentication_status is False:
+        st.error('Username/password is incorrect')
+    elif authentication_status is None:
+        st.warning('Please enter your username and password')
+    st.stop()
+
+# ===== LOGGED-IN CONTENT ===== #
+st.sidebar.success(f"Welcome {name} 👋")
+authenticator.logout('Logout', 'sidebar')
 
 sheet_options = {
     "About": "About",
@@ -79,9 +142,8 @@ if selected_tab == "About":
 
 if selected_tab == "Submit New Resource":
     st.title("📤 Submit a New Resource")
-    st.markdown("Help us grow this repository by contributing useful links and resources.")
     google_form_url = "https://forms.gle/FZZpvr4xQyon5nDs6"
-    st.markdown(f"You can submit your resource using [this Google Form]({google_form_url}).")
+    st.markdown(f"Help us grow this repository by contributing useful links and resources using [this Google Form]({google_form_url}).")
     st.stop()
 
 if selected_tab == "FAQ":
@@ -121,49 +183,36 @@ else:
         title_col_fav = title_map.get(key, df_cat.columns[0])
         fav_rows["Fav_Title"] = fav_rows[title_col_fav]
         all_fav_items.append(fav_rows)
-    if all_fav_items:
-        df = pd.concat(all_fav_items)
-    else:
-        df = pd.DataFrame()
+    df = pd.concat(all_fav_items) if all_fav_items else pd.DataFrame()
 
 if selected_tab == "Favorites":
     title_col = "Fav_Title"
 else:
     title_col = title_map.get(selected_tab, df.columns[0] if not df.empty else None)
 
-# Search term input
 search_term = st.sidebar.text_input("🔍 Search")
-
-# Add sorting option
 sort_order = st.sidebar.selectbox("Sort by Title", ["Ascending", "Descending"])
 
-# Dynamic filters for categorical columns
+# ✅ Only allow filters for these columns
 def get_categorical_columns(df):
-    cat_cols = []
-    for col in df.columns:
-        if df[col].dtype == 'object' and df[col].nunique() < 30:
-            cat_cols.append(col)
-    return cat_cols
+    allowed_filter_cols = ["Category", "Type", "Source", "Region"]
+    return [
+        col for col in allowed_filter_cols
+        if col in df.columns and df[col].dtype == 'object' and df[col].nunique() < 30
+    ]
 
 if selected_tab not in ["Favorites", "About", "Submit New Resource", "FAQ"]:
-    # Apply search filter
     if search_term:
         df = df[df.apply(lambda row: row.astype(str).str.contains(search_term, case=False, na=False).any(), axis=1)]
-    
-    # Dynamic filters
-    cat_cols = get_categorical_columns(df)
-    for col in cat_cols:
+    for col in get_categorical_columns(df):
         options = sorted(df[col].dropna().unique())
         selected_options = st.sidebar.multiselect(f"Filter by {col}", options, default=options)
         if selected_options:
             df = df[df[col].isin(selected_options)]
-    
-    # Sort dataframe
     if title_col in df.columns:
         df = df.sort_values(by=title_col, ascending=(sort_order == "Ascending"))
 
 if selected_tab == "Favorites":
-    # Clear all favorites button
     if st.sidebar.button("Clear All Favorites"):
         st.session_state.favorites = {}
         st.experimental_rerun()
@@ -174,9 +223,7 @@ if df.empty:
     st.info("No resources to display.")
     st.stop()
 
-# Toggle between compact and detailed view
 view_mode = st.sidebar.radio("View Mode", ["Detailed", "Compact"])
-
 exclude_cols = [title_col, "Description", "Purpose", "S.No", "Category"]
 
 link_columns_map = {
@@ -193,28 +240,20 @@ possible_links = link_columns_map.get(selected_tab, ["Links", "Link", "Link to t
 def highlight_search(text, term):
     if not term:
         return text
+    import re
     regex = re.compile(re.escape(term), re.IGNORECASE)
     return regex.sub(lambda match: f"**:yellow[{match.group(0)}]**", str(text))
 
 for idx, row in df.iterrows():
-    resource_title = row.get(title_col)
-    if not resource_title or str(resource_title).strip() == "":
-        resource_title = f"Resource-{idx+1}"
-    
-    # Highlight search term in title
+    resource_title = row.get(title_col) or f"Resource-{idx+1}"
     displayed_title = highlight_search(resource_title, search_term)
-
-    # Collect all valid links
     links = []
     for col in possible_links:
         if col in df.columns and pd.notna(row.get(col)):
             val = str(row[col]).strip()
             if val.lower().startswith(("http://", "https://", "www.")):
                 links.append((col, val))
-    
-    category_key = selected_tab
-    if selected_tab == "Favorites" and "Category" in row:
-        category_key = row["Category"]
+    category_key = selected_tab if not (selected_tab == "Favorites" and "Category" in row) else row["Category"]
     is_fav = st.session_state.favorites.get(category_key, [])
     checked = idx in is_fav
 
@@ -232,22 +271,18 @@ for idx, row in df.iterrows():
                     st.markdown(f"**🎯 Purpose:** {highlight_search(row['Purpose'], search_term)}")
                 for col in df.columns:
                     if col not in exclude_cols and col not in possible_links and pd.notna(row.get(col)):
-                        st.markdown(f"**{col}:** {highlight_search(row[col], search_term)}")
-            # Update favorites
+                        st.markdown(f"**{col}:** {highlight_search(row[col], search_term)])
             if fav_checkbox and idx not in st.session_state.favorites.get(category_key, []):
                 st.session_state.favorites.setdefault(category_key, []).append(idx)
             elif not fav_checkbox and idx in st.session_state.favorites.get(category_key, []):
                 st.session_state.favorites[category_key].remove(idx)
     else:
-        # Compact view: single line with title + first link + favorite star
         compact_col1, compact_col2, compact_col3 = st.columns([6, 3, 1])
         with compact_col1:
             st.markdown(f"🔹 {displayed_title}")
         with compact_col2:
-            if links:
-                # Show all links as clickable badges/buttons
-                for link_name, link_url in links:
-                    st.markdown(f"[🔗 {link_name}]({link_url})", unsafe_allow_html=True)
+            for link_name, link_url in links:
+                st.markdown(f"[🔗 {link_name}]({link_url})", unsafe_allow_html=True)
         with compact_col3:
             fav_checkbox = st.checkbox("⭐", value=checked, key=f"compact_{category_key}_{idx}")
             if fav_checkbox and idx not in st.session_state.favorites.get(category_key, []):

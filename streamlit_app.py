@@ -4,35 +4,12 @@ import pandas as pd
 # ===== PAGE CONFIG ===== #
 st.set_page_config(page_title="GeoAI Repository", layout="wide")
 
-# ===== SIDEBAR OPTIONS ===== #
-sheet_options = {
-    "About": "About",
-    "Data Sources": "Data Sources",
-    "Tools": "Tools",
-    "Free Tutorials": "Free Tutorials",
-    "Python Codes (GEE)": "Google Earth EnginePython Codes",
-    "Courses": "Courses",
-    "Submit New Resource": "Submit New Resource",
-    "Favorites": None,
-    "Discussion": None,
-    "FAQ & Help": None
-}
-
-# ===== INIT SESSION STATE ===== #
-if "favorites" not in st.session_state:
-    st.session_state.favorites = {}
-if "rerun_flag" not in st.session_state:
-    st.session_state.rerun_flag = False
+# ===== SESSION STATE ===== #
 if "chat_messages" not in st.session_state:
     st.session_state.chat_messages = []
-if "faq_questions" not in st.session_state:
-    st.session_state.faq_questions = [
-        {"q": "What is GeoAI Repository?", "a": "It is a free resource hub for geospatial analytics, machine learning, and urban/climate planning."},
-        {"q": "How to submit a new resource?", "a": "Use the Submit New Resource tab or the Google Form linked there."},
-        {"q": "Can I favorite resources?", "a": "Yes! Use the star buttons to favorite/unfavorite and view them in the Favorites tab."}
-    ]
 
 # ===== LOAD DATA FUNCTION ===== #
+@st.cache_data
 def load_data(sheet_name):
     try:
         df = pd.read_excel("Geospatial Data Repository (2).xlsx", sheet_name=sheet_name)
@@ -45,13 +22,25 @@ def load_data(sheet_name):
         st.error(f"Error loading sheet '{sheet_name}': {e}")
         return pd.DataFrame()
 
-# ===== SIDEBAR NAV ===== #
+# ===== SIDEBAR ===== #
 st.sidebar.header("🧭 GeoAI Repository")
+sheet_options = {
+    "About": "About",
+    "Data Sources": "Data Sources",
+    "Tools": "Tools",
+    "Free Tutorials": "Free Tutorials",
+    "Python Codes (GEE)": "Python Codes (GEE)",
+    "Courses": "Courses",
+    "Submit New Resource": "Submit New Resource",
+    "Favorites": None,
+    "Discussion": None,
+    "FAQ & Help": None
+}
 selected_tab = st.sidebar.radio("Select Section", list(sheet_options.keys()))
 st.sidebar.markdown("---")
 st.sidebar.markdown("© 2025 GeoAI Repository")
 
-# ===== ABOUT PAGE ===== #
+# ===== ABOUT ===== #
 if selected_tab == "About":
     st.title("📘 About GeoAI Repository")
     st.markdown("""
@@ -65,194 +54,52 @@ if selected_tab == "About":
     - 💻 Python codes for Google Earth Engine  
     """)
 
-    categories_to_check = ["Data Sources", "Tools", "Courses", "Free Tutorials", "Python Codes (GEE)"]
-    counts = {}
-    for cat in categories_to_check:
-        df_cat = load_data(sheet_options[cat])
-        counts[cat] = len(df_cat)
-
-    st.subheader("📊 Repository Content Overview")
-    cols = st.columns(len(categories_to_check))
-    for i, cat in enumerate(categories_to_check):
-        cols[i].metric(label=cat, value=counts.get(cat, 0))
-
-    st.markdown("---")
-    st.markdown("""
-    <p style='text-align:center; font-size:12px; color:gray;'>
-    Developed by Shubh | 
-    <a href='https://www.linkedin.com/in/shubh-dhadiwal/' target='_blank'>LinkedIn</a>
-    </p>
-    """, unsafe_allow_html=True)
-    st.stop()
-
-# ===== SUBMIT NEW RESOURCE ===== #
-if selected_tab == "Submit New Resource":
-    st.title("📤 Submit a New Resource")
-    st.markdown("Help us grow this repository by contributing useful links and resources.")
-    google_form_url = "https://forms.gle/FZZpvr4xQyon5nDs6"
-    if st.button("Open Google Submission Form"):
-        st.markdown(f"[Click here to submit your resource]({google_form_url})", unsafe_allow_html=True)
-    else:
-        st.markdown(f"Or you can submit your resource using [this Google Form]({google_form_url})")
-    st.stop()
-
-# ===== FAVORITES PAGE ===== #
-if selected_tab == "Favorites":
-    st.title("⭐ Your Favorite Resources")
-    if not st.session_state.favorites:
-        st.info("You have not favorited any resources yet.")
-    else:
-        from collections import defaultdict
-        fav_by_cat = defaultdict(list)
-        for fav in st.session_state.favorites.values():
-            fav_by_cat[fav["category"]].append(fav)
-
-        for cat, items in fav_by_cat.items():
-            st.subheader(cat)
-            for item in items:
-                if item["link"]:
-                    st.markdown(f"- [{item['title']}]({item['link']})")
-                else:
-                    st.markdown(f"- {item['title']}")
-    st.stop()
-
 # ===== DISCUSSION CHAT ===== #
-if selected_tab == "Discussion":
+elif selected_tab == "Discussion":
     st.title("💬 Discussion Chat")
-    st.markdown("Let's have a discussion and get your queries solved")
+    st.markdown("Ask your questions and discuss — press **Enter** to send.")
 
+    # Styled message bubble HTML
+    def message_bubble(msg):
+        return f"""
+        <div style="
+            background-color:#DCF8C6; 
+            padding:10px 15px; 
+            border-radius:15px; 
+            margin:8px 0; 
+            max-width:70%; 
+            font-family:sans-serif;
+            box-shadow: 1px 1px 3px #ccc;
+            ">
+            <b>User:</b> {msg}
+        </div>
+        """
+
+    # Display all chat messages
     for message in st.session_state.chat_messages:
-        st.write(f"**User:** {message}")
+        st.markdown(message_bubble(message), unsafe_allow_html=True)
 
-    rerun_needed = False  # Flag to control rerun outside form
+    # Append message on Enter press
+    def add_message():
+        msg = st.session_state.chat_input.strip()
+        if msg:
+            st.session_state.chat_messages.append(msg)
+        st.session_state.chat_input = ""
 
-    with st.form("chat_form", clear_on_submit=True):
-        new_msg = st.text_input("Enter message", key="chat_input")
-        submitted = st.form_submit_button("Send")
+    st.text_input("Type your message here...", key="chat_input", on_change=add_message)
 
-        if submitted and new_msg.strip() != "":
-            st.session_state.chat_messages.append(new_msg.strip())
-            rerun_needed = True
-
-    if rerun_needed:
-        st.experimental_rerun()
-
-    st.stop()
-
-# ===== FAQ & HELP ===== #
-if selected_tab == "FAQ & Help":
-    st.title("❓ FAQ & Help")
-
-    st.subheader("Frequently Asked Questions")
-    for faq in st.session_state.faq_questions:
-        with st.expander(faq["q"]):
-            st.write(faq["a"])
-
-    st.markdown("---")
-    st.subheader("Submit a Question or Suggestion")
-    new_question = st.text_area("Your Question or Suggestion", key="faq_input")
-    if st.button("Submit Question"):
-        if new_question.strip() != "":
-            st.session_state.faq_questions.append({"q": new_question.strip(), "a": "Awaiting answer..."})
-            st.success("Thanks! Your question has been added.")
-            st.experimental_rerun()
-    st.stop()
-
-# ===== LOAD DATA FOR OTHER TABS ===== #
-if selected_tab in sheet_options and sheet_options[selected_tab]:
-    df = load_data(sheet_options[selected_tab])
+# ===== Other tabs simplified example ===== #
 else:
-    df = pd.DataFrame()
-
-# ===== INTERACTIVE SEARCH & FILTER ===== #
-search_term = st.sidebar.text_input("🔍 Search")
-if search_term and not df.empty:
-    df = df[df.apply(lambda row: row.astype(str).str.contains(search_term, case=False, na=False).any(), axis=1)]
-
-if selected_tab == "Data Sources" and "Type" in df.columns:
-    type_filter = st.sidebar.multiselect("📂 Filter by Type", sorted(df["Type"].dropna().unique()))
-    if type_filter:
-        df = df[df["Type"].isin(type_filter)]
-
-# ===== TITLE MAPPING ===== #
-title_map = {
-    "Data Sources": "Data Source",
-    "Tools": "Tools",
-    "Courses": "Tutorials",
-    "Python Codes (GEE)": "Title",
-    "Free Tutorials": "Tutorials"
-}
-title_col = title_map.get(selected_tab, df.columns[0] if not df.empty else None)
-
-# ===== FUNCTION TO TOGGLE FAVORITE ===== #
-def toggle_favorite(res_id, resource_title, selected_tab, link):
-    if res_id in st.session_state.favorites:
-        st.session_state.favorites.pop(res_id)
+    sheet_name = sheet_options.get(selected_tab)
+    if sheet_name:
+        df = load_data(sheet_name)
+        if not df.empty:
+            st.title(f"📂 {selected_tab}")
+            st.dataframe(df)
+        else:
+            st.info("No data available to display.")
     else:
-        st.session_state.favorites[res_id] = {
-            "title": resource_title,
-            "category": selected_tab,
-            "link": link
-        }
-    st.session_state.rerun_flag = True
-
-# ===== MAIN TITLE ===== #
-st.title(f"🌍 GeoAI Repository – {selected_tab}")
-
-if not df.empty:
-    exclude_cols = [title_col, "Description", "Purpose", "S.No"]
-
-    link_columns_map = {
-        "Data Sources": ["Links", "Link"],
-        "Tools": ["Tool Link", "Link", "Links"],
-        "Courses": ["Course Link", "Link", "Links"],
-        "Free Tutorials": ["Link", "Links", "Tutorial Link"],
-        "Python Codes (GEE)": ["Link", "Links", "Link to the codes"]
-    }
-    possible_links = link_columns_map.get(selected_tab, ["Links", "Link", "Link to the codes"])
-    link_col = next((c for c in possible_links if c in df.columns), None)
-
-    for idx, row in df.iterrows():
-        resource_title = row.get(title_col)
-        if not resource_title or str(resource_title).strip() == "":
-            resource_title = f"Resource-{idx+1}"
-
-        with st.expander(f"🔹 {resource_title}"):
-            if "Description" in df.columns and pd.notna(row.get("Description")):
-                st.write(row["Description"])
-
-            if link_col and pd.notna(row.get(link_col)):
-                st.markdown(f"[🔗 Access Resource]({row[link_col]})", unsafe_allow_html=True)
-
-            if "Purpose" in df.columns and pd.notna(row.get("Purpose")):
-                st.markdown(f"**🎯 Purpose:** {row['Purpose']}")
-
-            for col in df.columns:
-                if col not in exclude_cols + ([link_col] if link_col else []) and pd.notna(row.get(col)):
-                    st.markdown(f"**{col}:** {row[col]}")
-
-            # Favorite toggle button
-            res_id = f"{selected_tab}_{idx}"
-            is_fav = res_id in st.session_state.favorites
-            col1, col2 = st.columns([1, 5])
-            with col1:
-                if is_fav:
-                    if st.button("⭐ Unfavorite", key=f"fav_{res_id}"):
-                        toggle_favorite(res_id, resource_title, selected_tab, row[link_col] if link_col and pd.notna(row.get(link_col)) else None)
-                else:
-                    if st.button("☆ Favorite", key=f"fav_{res_id}"):
-                        toggle_favorite(res_id, resource_title, selected_tab, row[link_col] if link_col and pd.notna(row.get(link_col)) else None)
-            with col2:
-                st.write("❤️ Favorited" if is_fav else "")
-
-else:
-    if selected_tab not in ["Favorites", "Discussion", "FAQ & Help", "Submit New Resource", "About"]:
-        st.info("No data available to display.")
-
-# ===== HANDLE SAFE RERUN ===== #
-if st.session_state.rerun_flag:
-    st.session_state.rerun_flag = False
-    st.experimental_rerun()
+        st.info("Select a valid section from the sidebar.")
 
 # ===== FOOTER ===== #
 st.markdown("<hr style='border:1px solid #ddd'/>", unsafe_allow_html=True)

@@ -12,10 +12,13 @@ sheet_options = {
     "Free Tutorials": "Free Tutorials",
     "Python Codes (GEE)": "Google Earth EnginePython Codes",
     "Courses": "Courses",
-    "Submit New Resource": "Submit New Resource"
+    "Submit New Resource": "Submit New Resource",
+    "Favorites": "Favorites",  # Added Favorites tab
+    "FAQ": "FAQ"               # Added FAQ tab
 }
 
 # ===== LOAD DATA ===== #
+@st.cache_data(show_spinner=False)
 def load_data(sheet_name):
     try:
         df = pd.read_excel("Geospatial Data Repository (2).xlsx", sheet_name=sheet_name)
@@ -27,6 +30,10 @@ def load_data(sheet_name):
     except Exception as e:
         st.error(f"Error loading sheet '{sheet_name}': {e}")
         return pd.DataFrame()  # return empty dataframe on error
+
+# ===== INITIALIZE FAVORITES IN SESSION STATE ===== #
+if "favorites" not in st.session_state:
+    st.session_state.favorites = {}
 
 # ===== SIDEBAR NAV ===== #
 st.sidebar.header("🧭 GeoAI Repository")
@@ -83,12 +90,45 @@ if selected_tab == "Submit New Resource":
         st.markdown(f"Or you can submit your resource using [this Google Form]({google_form_url})")
     st.stop()
 
-# ===== LOAD DATA FOR OTHER TABS ===== #
-df = load_data(sheet_options[selected_tab])
+# ===== FAQ SECTION ===== #
+if selected_tab == "FAQ":
+    st.title("❓ Frequently Asked Questions")
+    faqs = {
+        "What is GeoAI Repository?": "It is a free and open resource hub for geospatial analytics, ML, and planning.",
+        "How can I contribute resources?": "Use the 'Submit New Resource' tab to add new links and resources.",
+        "Are the datasets free to use?": "Yes, all datasets listed here are publicly accessible and free.",
+        "Can I save favorite resources?": "Yes, use the 'Favorites' tab to view and manage your favorite items.",
+        "Who developed this repository?": "This repository is developed and maintained by Shubh Dhadiwal."
+    }
+    for question, answer in faqs.items():
+        with st.expander(question):
+            st.write(answer)
+    st.stop()
 
+# ===== LOAD DATA FOR OTHER TABS INCLUDING FAVORITES ===== #
+if selected_tab != "Favorites":
+    df = load_data(sheet_options[selected_tab])
+else:
+    # For favorites, we need to gather favorited items from session state
+    # We'll combine favorites from all categories for simplicity
+    all_fav_items = []
+    for key, items in st.session_state.favorites.items():
+        # items is a list of indices saved for that category
+        df_cat = load_data(sheet_options.get(key, key))
+        if df_cat.empty:
+            continue
+        # Filter dataframe for favorite indices
+        fav_rows = df_cat.loc[df_cat.index.isin(items)]
+        fav_rows["Category"] = key  # Mark category for display
+        all_fav_items.append(fav_rows)
+    if all_fav_items:
+        df = pd.concat(all_fav_items)
+    else:
+        df = pd.DataFrame()
+        
 # ===== INTERACTIVE SEARCH & FILTER ===== #
 search_term = st.sidebar.text_input("🔍 Search")
-if search_term:
+if selected_tab not in ["Favorites", "About", "Submit New Resource", "FAQ"] and search_term:
     df = df[df.apply(lambda row: row.astype(str).str.contains(search_term, case=False, na=False).any(), axis=1)]
 
 if selected_tab == "Data Sources" and "Type" in df.columns:
@@ -102,45 +142,77 @@ title_map = {
     "Tools": "Tools",
     "Courses": "Tutorials",
     "Python Codes (GEE)": "Title",
-    "Free Tutorials": "Tutorials"
+    "Free Tutorials": "Tutorials",
+    "Favorites": "Title"  # Using "Title" as default for favorites (fall back)
 }
-title_col = title_map.get(selected_tab, df.columns[0])
+title_col = title_map.get(selected_tab, df.columns[0] if not df.empty else None)
 
 # ===== MAIN TITLE ===== #
 st.title(f"🌍 GeoAI Repository – {selected_tab}")
 
-# ===== SHOW CARD VIEW ONLY ===== #
-exclude_cols = [title_col, "Description", "Purpose", "S.No"]  # Add more if needed
+if df.empty:
+    st.info("No resources to display.")
+    st.stop()
+
+# ===== SHOW CARD VIEW WITH FAVORITE BUTTONS ===== #
+exclude_cols = [title_col, "Description", "Purpose", "S.No", "Category"]  # Add more if needed
 
 link_columns_map = {
     "Data Sources": ["Links", "Link"],
     "Tools": ["Tool Link", "Link", "Links"],
     "Courses": ["Course Link", "Link", "Links"],
     "Free Tutorials": ["Link", "Links", "Tutorial Link"],
-    "Python Codes (GEE)": ["Link", "Links", "Link to the codes"]
+    "Python Codes (GEE)": ["Link", "Links", "Link to the codes"],
+    "Favorites": ["Link", "Links", "Link to the codes", "Tool Link", "Course Link", "Tutorial Link"]  # More flexible for favorites
 }
 
 possible_links = link_columns_map.get(selected_tab, ["Links", "Link", "Link to the codes"])
 link_col = next((c for c in possible_links if c in df.columns), None)
 
 for idx, row in df.iterrows():
-    resource_title = row.get(title_col)
+    # Determine resource title, fallback if missing
+    resource_title = row.get(title_col, f"Resource-{idx+1}")
     if not resource_title or str(resource_title).strip() == "":
         resource_title = f"Resource-{idx+1}"
 
+    # Unique key for favorites storage: combine category + index (index unique per sheet)
+    # For Favorites tab, the 'Category' column indicates original category
+    category_key = selected_tab
+    if selected_tab == "Favorites" and "Category" in row:
+        category_key = row["Category"]
+        
+    unique_key = f"{category_key}_{idx}"
+
+    # Favorite checkbox state
+    is_fav = st.session_state.favorites.get(category_key, [])
+    checked = idx in is_fav
+
     with st.expander(f"🔹 {resource_title}"):
-        if "Description" in df.columns and pd.notna(row.get("Description")):
-            st.write(row["Description"])
+        col1, col2 = st.columns([0.9, 0.1])
+        with col2:
+            # Favorite toggle button (checkbox)
+            fav_checkbox = st.checkbox("⭐", value=checked, key=unique_key)
+        with col1:
+            if "Description" in df.columns and pd.notna(row.get("Description")):
+                st.write(row["Description"])
 
-        if link_col and pd.notna(row.get(link_col)):
-            st.markdown(f"[🔗 Access Resource]({row[link_col]})", unsafe_allow_html=True)
+            if link_col and pd.notna(row.get(link_col)):
+                st.markdown(f"[🔗 Access Resource]({row[link_col]})", unsafe_allow_html=True)
 
-        if "Purpose" in df.columns and pd.notna(row.get("Purpose")):
-            st.markdown(f"**🎯 Purpose:** {row['Purpose']}")
+            if "Purpose" in df.columns and pd.notna(row.get("Purpose")):
+                st.markdown(f"**🎯 Purpose:** {row['Purpose']}")
 
-        for col in df.columns:
-            if col not in exclude_cols + ([link_col] if link_col else []) and pd.notna(row.get(col)):
-                st.markdown(f"**{col}:** {row[col]}")
+            for col in df.columns:
+                if col not in exclude_cols + ([link_col] if link_col else []) and pd.notna(row.get(col)):
+                    st.markdown(f"**{col}:** {row[col]}")
+
+        # Update favorites based on checkbox toggle
+        if fav_checkbox and idx not in st.session_state.favorites.get(category_key, []):
+            # Add to favorites
+            st.session_state.favorites.setdefault(category_key, []).append(idx)
+        elif not fav_checkbox and idx in st.session_state.favorites.get(category_key, []):
+            # Remove from favorites
+            st.session_state.favorites[category_key].remove(idx)
 
 # ===== FOOTER ===== #
 st.markdown("<hr style='border:1px solid #ddd'/>", unsafe_allow_html=True)

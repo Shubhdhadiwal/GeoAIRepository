@@ -1,15 +1,21 @@
 import streamlit as st
 import pandas as pd
+import altair as alt
 
 # ===== PAGE CONFIG ===== #
 st.set_page_config(page_title="GeoAI Repository", layout="wide")
 
-# ===== SESSION STATE ===== #
-if "chat_messages" not in st.session_state:
-    st.session_state.chat_messages = []
+sheet_options = {
+    "About": "About",
+    "Data Sources": "Data Sources",
+    "Tools": "Tools",
+    "Free Tutorials": "Free Tutorials",
+    "Python Codes (GEE)": "Google Earth EnginePython Codes",
+    "Courses": "Courses",
+    "Submit New Resource": "Submit New Resource"
+}
 
-# ===== LOAD DATA FUNCTION ===== #
-@st.cache_data
+# ===== LOAD DATA ===== #
 def load_data(sheet_name):
     try:
         df = pd.read_excel("Geospatial Data Repository (2).xlsx", sheet_name=sheet_name)
@@ -20,27 +26,17 @@ def load_data(sheet_name):
         return df
     except Exception as e:
         st.error(f"Error loading sheet '{sheet_name}': {e}")
-        return pd.DataFrame()
+        return pd.DataFrame()  # return empty dataframe on error
 
-# ===== SIDEBAR ===== #
+# ===== SIDEBAR NAV ===== #
 st.sidebar.header("🧭 GeoAI Repository")
-sheet_options = {
-    "About": "About",
-    "Data Sources": "Data Sources",
-    "Tools": "Tools",
-    "Free Tutorials": "Free Tutorials",
-    "Python Codes (GEE)": "Python Codes (GEE)",
-    "Courses": "Courses",
-    "Submit New Resource": "Submit New Resource",
-    "Favorites": None,
-    "Discussion": None,
-    "FAQ & Help": None
-}
 selected_tab = st.sidebar.radio("Select Section", list(sheet_options.keys()))
+
+# Sidebar footer
 st.sidebar.markdown("---")
 st.sidebar.markdown("© 2025 GeoAI Repository")
 
-# ===== ABOUT ===== #
+# ===== ABOUT PAGE ===== #
 if selected_tab == "About":
     st.title("📘 About GeoAI Repository")
     st.markdown("""
@@ -54,52 +50,97 @@ if selected_tab == "About":
     - 💻 Python codes for Google Earth Engine  
     """)
 
-# ===== DISCUSSION CHAT ===== #
-elif selected_tab == "Discussion":
-    st.title("💬 Discussion Chat")
-    st.markdown("Ask your questions and discuss — press **Enter** to send.")
+    categories_to_check = ["Data Sources", "Tools", "Courses", "Free Tutorials", "Python Codes (GEE)"]
+    counts = {}
+    for cat in categories_to_check:
+        df_cat = load_data(sheet_options[cat])
+        counts[cat] = len(df_cat)
 
-    # Styled message bubble HTML
-    def message_bubble(msg):
-        return f"""
-        <div style="
-            background-color:#DCF8C6; 
-            padding:10px 15px; 
-            border-radius:15px; 
-            margin:8px 0; 
-            max-width:70%; 
-            font-family:sans-serif;
-            box-shadow: 1px 1px 3px #ccc;
-            ">
-            <b>User:</b> {msg}
-        </div>
-        """
+    st.subheader("📊 Repository Content Overview")
+    
+    # Show counts as metrics in columns without any selection
+    cols = st.columns(len(categories_to_check))
+    for i, cat in enumerate(categories_to_check):
+        cols[i].metric(label=cat, value=counts.get(cat, 0))
 
-    # Display all chat messages
-    for message in st.session_state.chat_messages:
-        st.markdown(message_bubble(message), unsafe_allow_html=True)
+    st.markdown("---")
+    st.markdown("""
+    <p style='text-align:center; font-size:12px; color:gray;'>
+    Developed by Shubh | 
+    <a href='https://www.linkedin.com/in/shubh-dhadiwal/' target='_blank'>LinkedIn</a>
+    </p>
+    """, unsafe_allow_html=True)
+    st.stop()
 
-    # Append message on Enter press
-    def add_message():
-        msg = st.session_state.chat_input.strip()
-        if msg:
-            st.session_state.chat_messages.append(msg)
-        st.session_state.chat_input = ""
-
-    st.text_input("Type your message here...", key="chat_input", on_change=add_message)
-
-# ===== Other tabs simplified example ===== #
-else:
-    sheet_name = sheet_options.get(selected_tab)
-    if sheet_name:
-        df = load_data(sheet_name)
-        if not df.empty:
-            st.title(f"📂 {selected_tab}")
-            st.dataframe(df)
-        else:
-            st.info("No data available to display.")
+# ===== SUBMIT NEW RESOURCE ===== #
+if selected_tab == "Submit New Resource":
+    st.title("📤 Submit a New Resource")
+    st.markdown("Help us grow this repository by contributing useful links and resources.")
+    google_form_url = "https://forms.gle/FZZpvr4xQyon5nDs6"
+    if st.button("Open Google Submission Form"):
+        st.markdown(f"[Click here to submit your resource]({google_form_url})", unsafe_allow_html=True)
     else:
-        st.info("Select a valid section from the sidebar.")
+        st.markdown(f"Or you can submit your resource using [this Google Form]({google_form_url})")
+    st.stop()
+
+# ===== LOAD DATA FOR OTHER TABS ===== #
+df = load_data(sheet_options[selected_tab])
+
+# ===== INTERACTIVE SEARCH & FILTER ===== #
+search_term = st.sidebar.text_input("🔍 Search")
+if search_term:
+    df = df[df.apply(lambda row: row.astype(str).str.contains(search_term, case=False, na=False).any(), axis=1)]
+
+if selected_tab == "Data Sources" and "Type" in df.columns:
+    type_filter = st.sidebar.multiselect("📂 Filter by Type", sorted(df["Type"].dropna().unique()))
+    if type_filter:
+        df = df[df["Type"].isin(type_filter)]
+
+# ===== TITLE MAPPING ===== #
+title_map = {
+    "Data Sources": "Data Source",
+    "Tools": "Tools",
+    "Courses": "Tutorials",
+    "Python Codes (GEE)": "Title",
+    "Free Tutorials": "Tutorials"
+}
+title_col = title_map.get(selected_tab, df.columns[0])
+
+# ===== MAIN TITLE ===== #
+st.title(f"🌍 GeoAI Repository – {selected_tab}")
+
+# ===== SHOW CARD VIEW ONLY ===== #
+exclude_cols = [title_col, "Description", "Purpose", "S.No"]  # Add more if needed
+
+link_columns_map = {
+    "Data Sources": ["Links", "Link"],
+    "Tools": ["Tool Link", "Link", "Links"],
+    "Courses": ["Course Link", "Link", "Links"],
+    "Free Tutorials": ["Link", "Links", "Tutorial Link"],
+    "Python Codes (GEE)": ["Link", "Links", "Link to the codes"]
+}
+
+possible_links = link_columns_map.get(selected_tab, ["Links", "Link", "Link to the codes"])
+link_col = next((c for c in possible_links if c in df.columns), None)
+
+for idx, row in df.iterrows():
+    resource_title = row.get(title_col)
+    if not resource_title or str(resource_title).strip() == "":
+        resource_title = f"Resource-{idx+1}"
+
+    with st.expander(f"🔹 {resource_title}"):
+        if "Description" in df.columns and pd.notna(row.get("Description")):
+            st.write(row["Description"])
+
+        if link_col and pd.notna(row.get(link_col)):
+            st.markdown(f"[🔗 Access Resource]({row[link_col]})", unsafe_allow_html=True)
+
+        if "Purpose" in df.columns and pd.notna(row.get("Purpose")):
+            st.markdown(f"**🎯 Purpose:** {row['Purpose']}")
+
+        for col in df.columns:
+            if col not in exclude_cols + ([link_col] if link_col else []) and pd.notna(row.get(col)):
+                st.markdown(f"**{col}:** {row[col]}")
 
 # ===== FOOTER ===== #
 st.markdown("<hr style='border:1px solid #ddd'/>", unsafe_allow_html=True)

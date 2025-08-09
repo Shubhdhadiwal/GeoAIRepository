@@ -36,6 +36,20 @@ st.sidebar.markdown(
     """
 )
 
+# ===== PRELOAD COUNTS FOR ABOUT PAGE ===== #
+def get_counts():
+    counts = {}
+    keys_to_count = ["Data Sources", "Tools", "Courses", "Free Tutorials", "Python Codes (GEE)"]
+    for key in keys_to_count:
+        try:
+            df_tmp = load_data(sheet_options[key])
+            counts[key] = len(df_tmp)
+        except Exception:
+            counts[key] = 0
+    return counts
+
+counts = get_counts()
+
 # ===== ABOUT ===== #
 if selected_tab == "About":
     st.title("📘 About GeoAI Repository")
@@ -49,6 +63,15 @@ if selected_tab == "About":
     - 📘 Free tutorials  
     - 💻 Python codes for Google Earth Engine  
     """)
+    
+    # Display counts in columns
+    col1, col2, col3, col4, col5 = st.columns(5)
+    col1.metric("📊 Data Sources", counts.get("Data Sources", 0))
+    col2.metric("🛠️ Tools", counts.get("Tools", 0))
+    col3.metric("🎓 Courses", counts.get("Courses", 0))
+    col4.metric("📚 Free Tutorials", counts.get("Free Tutorials", 0))
+    col5.metric("💻 Python Codes", counts.get("Python Codes (GEE)", 0))
+
     st.markdown("""
     ---
     <p style='text-align:center; font-size:12px; color:gray;'>
@@ -97,7 +120,6 @@ title_col = title_map.get(selected_tab, df.columns[0])
 # ===== SHOW CARD VIEW ONLY ===== #
 exclude_cols = [title_col, "Description", "Purpose", "S.No"]  # Add more if needed
 
-# Define possible link column names per tab for better detection
 link_columns_map = {
     "Data Sources": ["Links", "Link"],
     "Tools": ["Tool Link", "Link", "Links"],

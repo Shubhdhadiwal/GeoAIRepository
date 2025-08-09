@@ -3,8 +3,6 @@ import pandas as pd
 import altair as alt
 import re
 
-import streamlit as st
-
 USER_CREDENTIALS = {
     "alice": "password123",
     "bob": "mypassword"
@@ -13,33 +11,29 @@ USER_CREDENTIALS = {
 if 'authenticated' not in st.session_state:
     st.session_state['authenticated'] = False
     st.session_state['username'] = None
-    st.session_state['login_button_clicked'] = False
 
 def login():
     st.title("Please log in")
     username = st.text_input("Username", key="username_input")
     password = st.text_input("Password", type="password", key="password_input")
 
-    if st.button("Login"):
+    login_pressed = st.button("Login")
+    if login_pressed:
         if username in USER_CREDENTIALS and USER_CREDENTIALS[username] == password:
             st.session_state['authenticated'] = True
             st.session_state['username'] = username
-            st.experimental_rerun()
         else:
             st.error("Invalid username or password")
 
-# 1. Show login if not authenticated
 if not st.session_state['authenticated']:
     login()
     st.stop()
 
-# 2. If authenticated, show logout button in sidebar
 if st.sidebar.button("Logout"):
     st.session_state['authenticated'] = False
     st.session_state['username'] = None
     st.experimental_rerun()
 
-# 3. Show app content after login
 st.sidebar.title(f"Welcome, {st.session_state['username']}!")
 
 category = st.sidebar.radio("Select a category", ["About", "Data Sources", "Tools", "Tutorials"])
@@ -59,8 +53,6 @@ elif category == "Tools":
 elif category == "Tutorials":
     st.header("Tutorials")
     st.write("Repository content for Tutorials")
-
-
 
 # ===== PAGE CONFIG ===== #
 st.set_page_config(page_title="GeoAI Repository", layout="wide")

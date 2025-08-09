@@ -3,6 +3,41 @@ import pandas as pd
 import altair as alt
 import re
 
+import streamlit as st
+
+# --- Simple user login setup ---
+USER_CREDENTIALS = {
+    "alice": "password123",
+    "bob": "mypassword"
+}
+
+if 'authenticated' not in st.session_state:
+    st.session_state['authenticated'] = False
+    st.session_state['username'] = None
+
+def login():
+    st.title("🔐 Login to GeoAI Repository")
+    username = st.text_input("Username", key="username_input")
+    password = st.text_input("Password", type="password", key="password_input")
+
+    if st.button("Login"):
+        if username in USER_CREDENTIALS and USER_CREDENTIALS[username] == password:
+            st.session_state['authenticated'] = True
+            st.session_state['username'] = username
+            st.experimental_rerun()
+        else:
+            st.error("Invalid username or password")
+
+if not st.session_state['authenticated']:
+    login()
+    st.stop()  # Stop executing the rest until logged in
+
+# Add a logout button in the sidebar
+if st.sidebar.button("Logout"):
+    st.session_state['authenticated'] = False
+    st.session_state['username'] = None
+    st.experimental_rerun()
+
 # ===== PAGE CONFIG ===== #
 st.set_page_config(page_title="GeoAI Repository", layout="wide")
 

@@ -37,34 +37,34 @@ if not st.session_state['authenticated']:
     login()
     st.stop()
 
+# --- Logout button ---
+# Put logout logic here BEFORE other app code
 if st.sidebar.button("Logout"):
     st.session_state['authenticated'] = False
     st.session_state['username'] = None
-    st.experimental_rerun()
+    st.experimental_rerun()  # Immediately restart the app after logout
 
 st.sidebar.title(f"Welcome, {st.session_state['username']}!")
 
 # ===== PAGE CONFIG ===== #
 st.set_page_config(page_title="GeoAI Repository", layout="wide")
 
-# Map sidebar display names to actual Excel sheet names
 sheet_options = {
     "About": "About",
     "Data Sources": "Data Sources",
     "Tools": "Tools",
     "Free Tutorials": "Free Tutorials",
-    "Codes": "Google Earth EnginePython Codes",    # Show as 'Codes', load from exact sheet name
+    "Codes": "Google Earth EnginePython Codes",  # Show as Codes, load this exact sheet
     "Courses": "Courses",
     "Submit New Resource": "Submit New Resource",
     "Favorites": "Favorites",
     "FAQ": "FAQ"
 }
 
-# Load data from Excel on GitHub
 def load_data(sheet_name):
     try:
         df = pd.read_excel(GITHUB_RAW_URL, sheet_name=sheet_name)
-        df.columns = df.iloc[0]  # Use first row as header
+        df.columns = df.iloc[0]  # First row as header
         df = df[1:]
         df = df.dropna(subset=[df.columns[0]])
         df = df.loc[:, ~df.columns.str.contains("^Unnamed")]
@@ -140,7 +140,6 @@ if selected_tab == "FAQ":
             st.write(answer)
     st.stop()
 
-# Map titles per tab
 title_map = {
     "Data Sources": "Data Source",
     "Tools": "Tools",
@@ -174,17 +173,12 @@ if selected_tab == "Favorites":
 else:
     title_col = title_map.get(selected_tab, df.columns[0] if not df.empty else None)
 
-# Search input
 search_term = st.sidebar.text_input("🔍 Search")
-
-# Sort option
 sort_order = st.sidebar.selectbox("Sort by Title", ["Ascending", "Descending"])
 
 if selected_tab not in ["Favorites", "About", "Submit New Resource", "FAQ"]:
-    # Filter by search term
     if search_term:
         df = df[df.apply(lambda row: row.astype(str).str.contains(search_term, case=False, na=False).any(), axis=1)]
-    # Sort by title column
     if title_col in df.columns:
         df = df.sort_values(by=title_col, ascending=(sort_order == "Ascending"))
 
@@ -199,7 +193,6 @@ if df.empty:
     st.info("No resources to display.")
     st.stop()
 
-# View mode toggle
 view_mode = st.sidebar.radio("View Mode", ["Detailed", "Compact"])
 
 exclude_cols = [title_col, "Description", "Purpose", "S.No", "Category"]
@@ -256,7 +249,6 @@ for idx, row in df.iterrows():
                 for col in df.columns:
                     if col not in exclude_cols and col not in possible_links and pd.notna(row.get(col)):
                         st.markdown(f"**{col}:** {highlight_search(row[col], search_term)}")
-            # Update favorites
             if fav_checkbox and idx not in st.session_state.favorites.get(category_key, []):
                 st.session_state.favorites.setdefault(category_key, []).append(idx)
             elif not fav_checkbox and idx in st.session_state.favorites.get(category_key, []):
@@ -283,4 +275,4 @@ st.markdown("""
 Developed by Shubh | 
 <a href='https://www.linkedin.com/in/shubh-dhadiwal/' target='_blank'>LinkedIn</a>
 </p>
-""", unsafe_allow_html=True)
+""", unsafe_allow_html=True

@@ -1,10 +1,9 @@
 import streamlit as st
 import pandas as pd
-import altair as alt
 import re
 import hashlib
 
-# Replace this with your GitHub raw Excel file URL (note /raw/ in URL)
+# GitHub raw Excel file URL
 GITHUB_RAW_URL = "https://github.com/Shubhdhadiwal/GeoAIRepository/raw/main/Geospatial%20Data%20Repository%20(2).xlsx"
 
 # Utility to hash password string
@@ -38,29 +37,30 @@ if not st.session_state['authenticated']:
     login()
     st.stop()
 
-# Logout button - UPDATED to remove st.experimental_rerun()
 if st.sidebar.button("Logout"):
     st.session_state['authenticated'] = False
     st.session_state['username'] = None
-    # Removed st.experimental_rerun() to avoid rerun error
+    st.experimental_rerun()
 
 st.sidebar.title(f"Welcome, {st.session_state['username']}!")
 
 # ===== PAGE CONFIG ===== #
 st.set_page_config(page_title="GeoAI Repository", layout="wide")
 
+# Map sidebar display names to actual Excel sheet names
 sheet_options = {
     "About": "About",
     "Data Sources": "Data Sources",
     "Tools": "Tools",
     "Free Tutorials": "Free Tutorials",
-    "Google Earth Engine/Python Codes": "Codes",
+    "Codes": "Google Earth EnginePython Codes",    # Show as 'Codes', load from exact sheet name
     "Courses": "Courses",
     "Submit New Resource": "Submit New Resource",
     "Favorites": "Favorites",
     "FAQ": "FAQ"
 }
 
+# Load data from Excel on GitHub
 def load_data(sheet_name):
     try:
         df = pd.read_excel(GITHUB_RAW_URL, sheet_name=sheet_name)
@@ -101,7 +101,7 @@ if selected_tab == "About":
     - 📘 Free tutorials  
     - 💻 Python codes for Google Earth Engine  
     """)
-    categories_to_check = ["Data Sources", "Tools", "Courses", "Free Tutorials", "Google Earth Engine/Python Codes"]
+    categories_to_check = ["Data Sources", "Tools", "Courses", "Free Tutorials", "Codes"]
     counts = {}
     for cat in categories_to_check:
         df_cat = load_data(sheet_options[cat])
@@ -140,11 +140,12 @@ if selected_tab == "FAQ":
             st.write(answer)
     st.stop()
 
+# Map titles per tab
 title_map = {
     "Data Sources": "Data Source",
     "Tools": "Tools",
     "Courses": "Tutorials",
-    "Google Earth Engine/Python Codes": "Codes",
+    "Codes": "Title",
     "Free Tutorials": "Tutorials",
     "Favorites": "Title"
 }
@@ -173,22 +174,21 @@ if selected_tab == "Favorites":
 else:
     title_col = title_map.get(selected_tab, df.columns[0] if not df.empty else None)
 
-# Search term input
+# Search input
 search_term = st.sidebar.text_input("🔍 Search")
 
 # Sort option
 sort_order = st.sidebar.selectbox("Sort by Title", ["Ascending", "Descending"])
 
 if selected_tab not in ["Favorites", "About", "Submit New Resource", "FAQ"]:
-    # Apply search filter
+    # Filter by search term
     if search_term:
         df = df[df.apply(lambda row: row.astype(str).str.contains(search_term, case=False, na=False).any(), axis=1)]
-    # Sort dataframe
+    # Sort by title column
     if title_col in df.columns:
         df = df.sort_values(by=title_col, ascending=(sort_order == "Ascending"))
 
 if selected_tab == "Favorites":
-    # Clear all favorites button
     if st.sidebar.button("Clear All Favorites"):
         st.session_state.favorites = {}
         st.experimental_rerun()
@@ -209,7 +209,7 @@ link_columns_map = {
     "Tools": ["Tool Link", "Link", "Links"],
     "Courses": ["Course Link", "Link", "Links"],
     "Free Tutorials": ["Link", "Links", "Tutorial Link"],
-    "Google Earth Engine/Python Codes": ["Link", "Links", "Link to the codes"],
+    "Codes": ["Link", "Links", "Link to the codes"],
     "Favorites": ["Link", "Links", "Link to the codes", "Tool Link", "Course Link", "Tutorial Link"]
 }
 
@@ -226,10 +226,8 @@ for idx, row in df.iterrows():
     if not resource_title or str(resource_title).strip() == "":
         resource_title = f"Resource-{idx+1}"
     
-    # Highlight search term in title
     displayed_title = highlight_search(resource_title, search_term)
 
-    # Collect all valid links
     links = []
     for col in possible_links:
         if col in df.columns and pd.notna(row.get(col)):
@@ -264,7 +262,6 @@ for idx, row in df.iterrows():
             elif not fav_checkbox and idx in st.session_state.favorites.get(category_key, []):
                 st.session_state.favorites[category_key].remove(idx)
     else:
-        # Compact view: single line with title + first link + favorite star
         compact_col1, compact_col2, compact_col3 = st.columns([6, 3, 1])
         with compact_col1:
             st.markdown(f"🔹 {displayed_title}")

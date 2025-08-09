@@ -109,23 +109,20 @@ if selected_tab == "FAQ":
 if selected_tab != "Favorites":
     df = load_data(sheet_options[selected_tab])
 else:
-    # For favorites, we need to gather favorited items from session state
-    # We'll combine favorites from all categories for simplicity
+    # For favorites, combine favorites from all categories
     all_fav_items = []
     for key, items in st.session_state.favorites.items():
-        # items is a list of indices saved for that category
         df_cat = load_data(sheet_options.get(key, key))
         if df_cat.empty:
             continue
-        # Filter dataframe for favorite indices
-        fav_rows = df_cat.loc[df_cat.index.isin(items)]
-        fav_rows["Category"] = key  # Mark category for display
+        fav_rows = df_cat.loc[df_cat.index.isin(items)].copy()
+        fav_rows["Category"] = key
         all_fav_items.append(fav_rows)
     if all_fav_items:
         df = pd.concat(all_fav_items)
     else:
         df = pd.DataFrame()
-        
+
 # ===== INTERACTIVE SEARCH & FILTER ===== #
 search_term = st.sidebar.text_input("🔍 Search")
 if selected_tab not in ["Favorites", "About", "Submit New Resource", "FAQ"] and search_term:
@@ -143,7 +140,7 @@ title_map = {
     "Courses": "Tutorials",
     "Python Codes (GEE)": "Title",
     "Free Tutorials": "Tutorials",
-    "Favorites": "Title"  # Using "Title" as default for favorites (fall back)
+    "Favorites": "Title"
 }
 title_col = title_map.get(selected_tab, df.columns[0] if not df.empty else None)
 
@@ -155,7 +152,7 @@ if df.empty:
     st.stop()
 
 # ===== SHOW CARD VIEW WITH FAVORITE BUTTONS ===== #
-exclude_cols = [title_col, "Description", "Purpose", "S.No", "Category"]  # Add more if needed
+exclude_cols = [title_col, "Description", "Purpose", "S.No", "Category"]
 
 link_columns_map = {
     "Data Sources": ["Links", "Link"],
@@ -163,55 +160,56 @@ link_columns_map = {
     "Courses": ["Course Link", "Link", "Links"],
     "Free Tutorials": ["Link", "Links", "Tutorial Link"],
     "Python Codes (GEE)": ["Link", "Links", "Link to the codes"],
-    "Favorites": ["Link", "Links", "Link to the codes", "Tool Link", "Course Link", "Tutorial Link"]  # More flexible for favorites
+    "Favorites": ["Link", "Links", "Link to the codes", "Tool Link", "Course Link", "Tutorial Link"]
 }
 
-possible_links = link_columns_map.get(selected_tab, ["Links", "Link", "Link to the codes"])
-link_col = next((c for c in possible_links if c in df.columns), None)
+possible_links = link_columns_map.get(selected_tab, ["Links", "Link", "Link to the codes", "Tool Link", "Course Link", "Tutorial Link"])
 
 for idx, row in df.iterrows():
-    # Determine resource title, fallback if missing
-    resource_title = row.get(title_col, f"Resource-{idx+1}")
+    resource_title = row.get(title_col)
     if not resource_title or str(resource_title).strip() == "":
         resource_title = f"Resource-{idx+1}"
 
-    # Unique key for favorites storage: combine category + index (index unique per sheet)
-    # For Favorites tab, the 'Category' column indicates original category
+    # Find first valid link column for this row
+    link_val = None
+    for col in possible_links:
+        if col in df.columns and pd.notna(row.get(col)):
+            val = str(row[col]).strip()
+            if val.lower().startswith(("http://", "https://", "www.")):
+                link_val = val
+                break
+
+    # Determine category key for favorites
     category_key = selected_tab
     if selected_tab == "Favorites" and "Category" in row:
         category_key = row["Category"]
-        
     unique_key = f"{category_key}_{idx}"
-
-    # Favorite checkbox state
     is_fav = st.session_state.favorites.get(category_key, [])
     checked = idx in is_fav
 
     with st.expander(f"🔹 {resource_title}"):
         col1, col2 = st.columns([0.9, 0.1])
         with col2:
-            # Favorite toggle button (checkbox)
             fav_checkbox = st.checkbox("⭐", value=checked, key=unique_key)
         with col1:
             if "Description" in df.columns and pd.notna(row.get("Description")):
                 st.write(row["Description"])
 
-            if link_col and pd.notna(row.get(link_col)):
-                st.markdown(f"[🔗 Access Resource]({row[link_col]})", unsafe_allow_html=True)
+            if link_val:
+                st.markdown(f"[🔗 Access Resource]({link_val})", unsafe_allow_html=True)
 
             if "Purpose" in df.columns and pd.notna(row.get("Purpose")):
                 st.markdown(f"**🎯 Purpose:** {row['Purpose']}")
 
             for col in df.columns:
-                if col not in exclude_cols + ([link_col] if link_col else []) and pd.notna(row.get(col)):
-                    st.markdown(f"**{col}:** {row[col]}")
+                if col not in exclude_cols + ([link_val] if link_val else []) and pd.notna(row.get(col)):
+                    if col not in possible_links:
+                        st.markdown(f"**{col}:** {row[col]}")
 
         # Update favorites based on checkbox toggle
         if fav_checkbox and idx not in st.session_state.favorites.get(category_key, []):
-            # Add to favorites
             st.session_state.favorites.setdefault(category_key, []).append(idx)
         elif not fav_checkbox and idx in st.session_state.favorites.get(category_key, []):
-            # Remove from favorites
             st.session_state.favorites[category_key].remove(idx)
 
 # ===== FOOTER ===== #

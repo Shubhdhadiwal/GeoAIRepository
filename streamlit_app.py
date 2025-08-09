@@ -1,3 +1,14 @@
+import os
+import sys
+import subprocess
+
+# ===== Install packages from requirement_1.txt if needed ===== #
+try:
+    import streamlit_authenticator
+except ImportError:
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "-r", "requirement_1.txt"])
+
+# ===== Now safe to import ===== #
 import streamlit as st
 import pandas as pd
 import altair as alt
@@ -5,6 +16,10 @@ import re
 import yaml
 from yaml.loader import SafeLoader
 import streamlit_authenticator as stauth
+import pkg_resources
+
+# Show version in sidebar (optional debug)
+st.sidebar.write("Authenticator version:", pkg_resources.get_distribution("streamlit-authenticator").version)
 
 # ===== PAGE CONFIG ===== #
 st.set_page_config(page_title="GeoAI Repository", layout="wide")
@@ -21,7 +36,7 @@ authenticator = stauth.Authenticate(
     config['cookie']['expiry_days']
 )
 
-# Login form (in sidebar) — v0.4.2 uses only positional args
+# ===== LOGIN (positional args for v0.4.2) ===== #
 name, authentication_status, username = authenticator.login('Login', 'sidebar')
 
 if authentication_status:

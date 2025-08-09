@@ -1,8 +1,6 @@
-# :earth_americas: GeoAI Repository
+# GeoAI Repository
 
 A simple dashboard showing the GeoAI data sources, tools and manymore.
-
-[![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://gdp-dashboard-template.streamlit.app/)
 
 ### How to run it on your own machine
 

@@ -21,8 +21,8 @@ authenticator = stauth.Authenticate(
     config['cookie']['expiry_days']
 )
 
-# Login form (in sidebar)
-name, authentication_status, username = authenticator.login('Login', location='sidebar')
+# Login form (in sidebar) — v0.4.2 uses only positional args
+name, authentication_status, username = authenticator.login('Login', 'sidebar')
 
 if authentication_status:
     st.sidebar.success(f"Welcome {name} 👋")

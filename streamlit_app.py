@@ -1,10 +1,10 @@
 import streamlit as st
 import pandas as pd
+import altair as alt
 
 # ===== PAGE CONFIG ===== #
 st.set_page_config(page_title="GeoAI Repository", layout="wide")
 
-# ===== SIDEBAR OPTIONS ===== #
 sheet_options = {
     "About": "About",
     "Data Sources": "Data Sources",
@@ -12,20 +12,8 @@ sheet_options = {
     "Free Tutorials": "Free Tutorials",
     "Python Codes (GEE)": "Google Earth EnginePython Codes",
     "Courses": "Courses",
-    "Submit New Resource": "Submit New Resource",
-    "Favorites": None,
-    "FAQ & Help": None
+    "Submit New Resource": "Submit New Resource"
 }
-
-# ===== INIT SESSION STATE ===== #
-if "favorites" not in st.session_state:
-    st.session_state.favorites = {}
-if "faq_questions" not in st.session_state:
-    st.session_state.faq_questions = [
-        {"q": "What is GeoAI Repository?", "a": "It is a free resource hub for geospatial analytics, machine learning, and urban/climate planning."},
-        {"q": "How to submit a new resource?", "a": "Use the Submit New Resource tab or the Google Form linked there."},
-        {"q": "Can I favorite resources?", "a": "Yes! Use the star buttons to favorite/unfavorite and view them in the Favorites tab."}
-    ]
 
 # ===== LOAD DATA ===== #
 def load_data(sheet_name):
@@ -43,6 +31,8 @@ def load_data(sheet_name):
 # ===== SIDEBAR NAV ===== #
 st.sidebar.header("🧭 GeoAI Repository")
 selected_tab = st.sidebar.radio("Select Section", list(sheet_options.keys()))
+
+# Sidebar footer
 st.sidebar.markdown("---")
 st.sidebar.markdown("© 2025 GeoAI Repository")
 
@@ -67,6 +57,8 @@ if selected_tab == "About":
         counts[cat] = len(df_cat)
 
     st.subheader("📊 Repository Content Overview")
+    
+    # Show counts as metrics in columns without any selection
     cols = st.columns(len(categories_to_check))
     for i, cat in enumerate(categories_to_check):
         cols[i].metric(label=cat, value=counts.get(cat, 0))
@@ -91,54 +83,12 @@ if selected_tab == "Submit New Resource":
         st.markdown(f"Or you can submit your resource using [this Google Form]({google_form_url})")
     st.stop()
 
-# ===== FAVORITES PAGE ===== #
-if selected_tab == "Favorites":
-    st.title("⭐ Your Favorite Resources")
-    if not st.session_state.favorites:
-        st.info("You have not favorited any resources yet.")
-    else:
-        from collections import defaultdict
-        fav_by_cat = defaultdict(list)
-        for fav in st.session_state.favorites.values():
-            fav_by_cat[fav["category"]].append(fav)
-
-        for cat, items in fav_by_cat.items():
-            st.subheader(cat)
-            for item in items:
-                if item["link"]:
-                    st.markdown(f"- [{item['title']}]({item['link']})")
-                else:
-                    st.markdown(f"- {item['title']}")
-    st.stop()
-
-# ===== FAQ & HELP ===== #
-if selected_tab == "FAQ & Help":
-    st.title("❓ FAQ & Help")
-
-    st.subheader("Frequently Asked Questions")
-    for faq in st.session_state.faq_questions:
-        with st.expander(faq["q"]):
-            st.write(faq["a"])
-
-    st.markdown("---")
-    st.subheader("Submit a Question or Suggestion")
-    new_question = st.text_area("Your Question or Suggestion", key="faq_input")
-    if st.button("Submit Question"):
-        if new_question.strip() != "":
-            st.session_state.faq_questions.append({"q": new_question.strip(), "a": "Awaiting answer..."})
-            st.success("Thanks! Your question has been added.")
-            st.experimental_rerun()
-    st.stop()
-
 # ===== LOAD DATA FOR OTHER TABS ===== #
-if selected_tab in sheet_options and sheet_options[selected_tab]:
-    df = load_data(sheet_options[selected_tab])
-else:
-    df = pd.DataFrame()
+df = load_data(sheet_options[selected_tab])
 
 # ===== INTERACTIVE SEARCH & FILTER ===== #
 search_term = st.sidebar.text_input("🔍 Search")
-if search_term and not df.empty:
+if search_term:
     df = df[df.apply(lambda row: row.astype(str).str.contains(search_term, case=False, na=False).any(), axis=1)]
 
 if selected_tab == "Data Sources" and "Type" in df.columns:
@@ -154,100 +104,43 @@ title_map = {
     "Python Codes (GEE)": "Title",
     "Free Tutorials": "Tutorials"
 }
-title_col = title_map.get(selected_tab, df.columns[0] if not df.empty else None)
+title_col = title_map.get(selected_tab, df.columns[0])
 
-# ===== FUNCTION TO TOGGLE FAVORITE ===== #
-def toggle_favorite(res_id, resource_title, selected_tab, link):
-    if res_id in st.session_state.favorites:
-        st.session_state.favorites.pop(res_id)
-    else:
-        st.session_state.favorites[res_id] = {
-            "title": resource_title,
-            "category": selected_tab,
-            "link": link
-        }
-    st.experimental_rerun()
+# ===== MAIN TITLE ===== #
+st.title(f"🌍 GeoAI Repository – {selected_tab}")
 
-# ===== HELPER FUNCTION TO EMBED URL ===== #
-def embed_resource(url):
-    if not url or not isinstance(url, str):
-        return
-    # Support YouTube embeds
-    if "youtube.com/watch" in url or "youtu.be/" in url:
-        if "youtu.be/" in url:
-            video_id = url.split("youtu.be/")[1].split("?")[0]
-        else:
-            import urllib.parse
-            parsed = urllib.parse.urlparse(url)
-            query = urllib.parse.parse_qs(parsed.query)
-            video_id = query.get("v", [""])[0]
-        embed_url = f"https://www.youtube.com/embed/{video_id}"
-        st.video(embed_url)
-    # Support generic iframe embed for other URLs (if allowed)
-    else:
-        # Basic iframe embed (width and height can be adjusted)
-        iframe_code = f"""
-        <iframe src="{url}" width="700" height="400" frameborder="0" allowfullscreen></iframe>
-        """
-        st.markdown(iframe_code, unsafe_allow_html=True)
+# ===== SHOW CARD VIEW ONLY ===== #
+exclude_cols = [title_col, "Description", "Purpose", "S.No"]  # Add more if needed
 
-# ===== MAIN TITLE & RESOURCE DISPLAY ===== #
-if selected_tab not in ["Favorites", "Submit New Resource", "About", "FAQ & Help"]:
-    st.title(f"🌍 GeoAI Repository – {selected_tab}")
+link_columns_map = {
+    "Data Sources": ["Links", "Link"],
+    "Tools": ["Tool Link", "Link", "Links"],
+    "Courses": ["Course Link", "Link", "Links"],
+    "Free Tutorials": ["Link", "Links", "Tutorial Link"],
+    "Python Codes (GEE)": ["Link", "Links", "Link to the codes"]
+}
 
-    if not df.empty:
-        exclude_cols = [title_col, "Description", "Purpose", "S.No"]
+possible_links = link_columns_map.get(selected_tab, ["Links", "Link", "Link to the codes"])
+link_col = next((c for c in possible_links if c in df.columns), None)
 
-        link_columns_map = {
-            "Data Sources": ["Links", "Link"],
-            "Tools": ["Tool Link", "Link", "Links"],
-            "Courses": ["Course Link", "Link", "Links"],
-            "Free Tutorials": ["Link", "Links", "Tutorial Link"],
-            "Python Codes (GEE)": ["Link", "Links", "Link to the codes"]
-        }
-        possible_links = link_columns_map.get(selected_tab, ["Links", "Link", "Link to the codes"])
-        link_col = next((c for c in possible_links if c in df.columns), None)
+for idx, row in df.iterrows():
+    resource_title = row.get(title_col)
+    if not resource_title or str(resource_title).strip() == "":
+        resource_title = f"Resource-{idx+1}"
 
-        for idx, row in df.iterrows():
-            resource_title = row.get(title_col)
-            if not resource_title or str(resource_title).strip() == "":
-                resource_title = f"Resource-{idx+1}"
+    with st.expander(f"🔹 {resource_title}"):
+        if "Description" in df.columns and pd.notna(row.get("Description")):
+            st.write(row["Description"])
 
-            with st.expander(f"🔹 {resource_title}"):
-                if "Description" in df.columns and pd.notna(row.get("Description")):
-                    st.write(row["Description"])
+        if link_col and pd.notna(row.get(link_col)):
+            st.markdown(f"[🔗 Access Resource]({row[link_col]})", unsafe_allow_html=True)
 
-                if link_col and pd.notna(row.get(link_col)):
-                    st.markdown(f"[🔗 Access Resource]({row[link_col]})", unsafe_allow_html=True)
+        if "Purpose" in df.columns and pd.notna(row.get("Purpose")):
+            st.markdown(f"**🎯 Purpose:** {row['Purpose']}")
 
-                if "Purpose" in df.columns and pd.notna(row.get("Purpose")):
-                    st.markdown(f"**🎯 Purpose:** {row['Purpose']}")
-
-                for col in df.columns:
-                    if col not in exclude_cols + ([link_col] if link_col else []) and pd.notna(row.get(col)):
-                        st.markdown(f"**{col}:** {row[col]}")
-
-                # Embed only for Data Sources and Tools
-                if selected_tab in ["Data Sources", "Tools"]:
-                    if link_col and pd.notna(row.get(link_col)):
-                        embed_resource(row[link_col])
-
-                # Favorite toggle button
-                res_id = f"{selected_tab}_{idx}"
-                is_fav = res_id in st.session_state.favorites
-                col1, col2 = st.columns([1, 5])
-                with col1:
-                    if is_fav:
-                        if st.button("⭐ Unfavorite", key=f"fav_{res_id}"):
-                            toggle_favorite(res_id, resource_title, selected_tab, row[link_col] if link_col and pd.notna(row.get(link_col)) else None)
-                    else:
-                        if st.button("☆ Favorite", key=f"fav_{res_id}"):
-                            toggle_favorite(res_id, resource_title, selected_tab, row[link_col] if link_col and pd.notna(row.get(link_col)) else None)
-                with col2:
-                    st.write("❤️ Favorited" if is_fav else "")
-
-    else:
-        st.info("No data available to display.")
+        for col in df.columns:
+            if col not in exclude_cols + ([link_col] if link_col else []) and pd.notna(row.get(col)):
+                st.markdown(f"**{col}:** {row[col]}")
 
 # ===== FOOTER ===== #
 st.markdown("<hr style='border:1px solid #ddd'/>", unsafe_allow_html=True)

@@ -1,9 +1,51 @@
 import streamlit as st
 import pandas as pd
-import altair as alt
+import streamlit_authenticator as stauth
 
 # ===== PAGE CONFIG ===== #
 st.set_page_config(page_title="GeoAI Repository", layout="wide")
+
+# ===== USER AUTH SETUP ===== #
+users = {
+    "usernames": {
+        "shubh": {
+            "name": "Shubh Dhadiwal",
+            "password": "$2b$12$N0exmplEHashedPasswordHere1234567890abcdEfghIjkl"  # Replace with your hash
+        },
+        "admin": {
+            "name": "Admin User",
+            "password": "$2b$12$An0therExampleHashedPasswordForAdmin1234567890"  # Replace with your hash
+        }
+    }
+}
+
+usernames = list(users["usernames"].keys())
+names = [users["usernames"][u]["name"] for u in usernames]
+passwords = [users["usernames"][u]["password"] for u in usernames]
+
+authenticator = stauth.Authenticate(
+    names,
+    usernames,
+    passwords,
+    "geoai_dashboard_cookie",  # Cookie name
+    "random_signature_key_123",  # Change to a strong random string
+    cookie_expiry_days=1
+)
+
+name, authentication_status, username = authenticator.login("Login", "main")
+
+if not authentication_status:
+    if authentication_status is False:
+        st.error("Username/password is incorrect")
+    elif authentication_status is None:
+        st.warning("Please enter your username and password")
+    st.stop()
+
+# User is authenticated here
+authenticator.logout("Logout", "sidebar")
+st.sidebar.write(f"Welcome *{name}*")
+
+# ===== Your existing app code =====
 
 sheet_options = {
     "About": "About",
@@ -15,7 +57,6 @@ sheet_options = {
     "Submit New Resource": "Submit New Resource"
 }
 
-# ===== LOAD DATA ===== #
 def load_data(sheet_name):
     try:
         df = pd.read_excel("Geospatial Data Repository (2).xlsx", sheet_name=sheet_name)
@@ -26,17 +67,14 @@ def load_data(sheet_name):
         return df
     except Exception as e:
         st.error(f"Error loading sheet '{sheet_name}': {e}")
-        return pd.DataFrame()  # return empty dataframe on error
+        return pd.DataFrame()
 
-# ===== SIDEBAR NAV ===== #
 st.sidebar.header("🧭 GeoAI Repository")
 selected_tab = st.sidebar.radio("Select Section", list(sheet_options.keys()))
 
-# Sidebar footer
 st.sidebar.markdown("---")
 st.sidebar.markdown("© 2025 GeoAI Repository")
 
-# ===== ABOUT PAGE ===== #
 if selected_tab == "About":
     st.title("📘 About GeoAI Repository")
     st.markdown("""
@@ -58,7 +96,6 @@ if selected_tab == "About":
 
     st.subheader("📊 Repository Content Overview")
     
-    # Horizontal radio buttons to select category (just for user to select, no data shown)
     selected_metric = st.radio(
         "Select category:",
         categories_to_check,
@@ -66,10 +103,8 @@ if selected_tab == "About":
         horizontal=True
     )
 
-    # Show counts as metrics in columns
     cols = st.columns(len(categories_to_check))
     for i, cat in enumerate(categories_to_check):
-        # Highlight the selected metric label by adding a small visual clue
         label = f"➡️ {cat}" if cat == selected_metric else cat
         cols[i].metric(label=label, value=counts.get(cat, 0))
 
@@ -82,7 +117,6 @@ if selected_tab == "About":
     """, unsafe_allow_html=True)
     st.stop()
 
-# ===== SUBMIT NEW RESOURCE ===== #
 if selected_tab == "Submit New Resource":
     st.title("📤 Submit a New Resource")
     st.markdown("Help us grow this repository by contributing useful links and resources.")
@@ -93,10 +127,8 @@ if selected_tab == "Submit New Resource":
         st.markdown(f"Or you can submit your resource using [this Google Form]({google_form_url})")
     st.stop()
 
-# ===== LOAD DATA FOR OTHER TABS ===== #
 df = load_data(sheet_options[selected_tab])
 
-# ===== INTERACTIVE SEARCH & FILTER ===== #
 search_term = st.sidebar.text_input("🔍 Search")
 if search_term:
     df = df[df.apply(lambda row: row.astype(str).str.contains(search_term, case=False, na=False).any(), axis=1)]
@@ -106,7 +138,6 @@ if selected_tab == "Data Sources" and "Type" in df.columns:
     if type_filter:
         df = df[df["Type"].isin(type_filter)]
 
-# ===== TITLE MAPPING ===== #
 title_map = {
     "Data Sources": "Data Source",
     "Tools": "Tools",
@@ -116,11 +147,9 @@ title_map = {
 }
 title_col = title_map.get(selected_tab, df.columns[0])
 
-# ===== MAIN TITLE ===== #
 st.title(f"🌍 GeoAI Repository – {selected_tab}")
 
-# ===== SHOW CARD VIEW ONLY ===== #
-exclude_cols = [title_col, "Description", "Purpose", "S.No"]  # Add more if needed
+exclude_cols = [title_col, "Description", "Purpose", "S.No"]
 
 link_columns_map = {
     "Data Sources": ["Links", "Link"],
@@ -152,7 +181,6 @@ for idx, row in df.iterrows():
             if col not in exclude_cols + ([link_col] if link_col else []) and pd.notna(row.get(col)):
                 st.markdown(f"**{col}:** {row[col]}")
 
-# ===== FOOTER ===== #
 st.markdown("<hr style='border:1px solid #ddd'/>", unsafe_allow_html=True)
 st.caption("📘 Powered by Streamlit | © 2025 GeoAI Repository")
 st.markdown("""

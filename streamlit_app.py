@@ -182,7 +182,7 @@ else:
 
 # ===== INTERACTIVE SEARCH & FILTER ===== #
 search_term = st.sidebar.text_input("🔍 Search")
-if selected_tab not in ["Favorites", "About", "Submit New Resource", "FAQ"] and search_term:
+if selected_tab not in ["Favorites", "About", "Submit New Resource", "Dashboards", "FAQ"] and search_term:
     df = df[df.apply(lambda row: row.astype(str).str.contains(search_term, case=False, na=False).any(), axis=1)]
 
 if selected_tab == "Data Sources" and "Type" in df.columns:

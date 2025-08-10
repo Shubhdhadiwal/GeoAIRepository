@@ -2,12 +2,38 @@ import streamlit as st
 import pandas as pd
 import hashlib
 import re
+import os
 
 # ===== PAGE CONFIG =====
 st.set_page_config(page_title="GeoAI Repository", layout="wide")
 
 # GitHub raw Excel file URL
 GITHUB_RAW_URL = "https://github.com/Shubhdhadiwal/GeoAIRepository/raw/main/Geospatial%20Data%20Repository%20(2).xlsx"
+
+# ===== VISITOR COUNTER SETUP =====
+VISITOR_COUNT_FILE = "visitor_count.txt"
+
+def get_visitor_count():
+    if not os.path.exists(VISITOR_COUNT_FILE):
+        with open(VISITOR_COUNT_FILE, "w") as f:
+            f.write("0")
+        return 0
+    with open(VISITOR_COUNT_FILE, "r") as f:
+        count_str = f.read()
+        try:
+            return int(count_str)
+        except ValueError:
+            return 0
+
+def increment_visitor_count():
+    count = get_visitor_count() + 1
+    with open(VISITOR_COUNT_FILE, "w") as f:
+        f.write(str(count))
+    return count
+
+if 'visitor_counted' not in st.session_state:
+    st.session_state.visitor_count = increment_visitor_count()
+    st.session_state.visitor_counted = True
 
 # Utility to hash password string
 def hash_password(password):

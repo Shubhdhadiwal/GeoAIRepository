@@ -201,40 +201,41 @@ if selected_tab == "Dashboards":
     st.title("🌍 Dashboards")
 
     # Google Open Buildings existing section
-    with st.expander("▶️ Google Open Building Dashboard"):
-        st.markdown("""
-        Google Open Buildings is a global dataset developed by Google that provides high-resolution building footprints extracted from satellite imagery using advanced machine learning techniques. It covers millions of buildings across many countries, especially focusing on regions where accurate building data was previously unavailable or incomplete.
+with st.expander("▶️ Google Open Building Dashboard"):
+    st.markdown("""
+    Google Open Buildings is a global dataset developed by Google that provides high-resolution building footprints extracted from satellite imagery using advanced machine learning techniques. It covers millions of buildings across many countries, especially focusing on regions where accurate building data was previously unavailable or incomplete.
 
-        This dataset is an invaluable resource for urban planners, researchers, governments, and humanitarian organizations. It supports applications such as disaster response, infrastructure planning, population estimation, and sustainable development by providing detailed and up-to-date information on building locations and shapes.
+    This dataset is an invaluable resource for urban planners, researchers, governments, and humanitarian organizations. It supports applications such as disaster response, infrastructure planning, population estimation, and sustainable development by providing detailed and up-to-date information on building locations and shapes.
 
-        Google Open Buildings is openly available and continues to grow, helping bridge data gaps and enabling data-driven decision-making at scale.
-        """)
+    Google Open Buildings is openly available and continues to grow, helping bridge data gaps and enabling data-driven decision-making at scale.
+    """)
 
-        st.markdown("🔗 [Official Dataset Documentation](https://developers.google.com/earth-engine/datasets/catalog/GOOGLE_Research_open-buildings_v3_polygons)")
+    st.markdown("🔗 [Official Dataset Documentation](https://developers.google.com/earth-engine/datasets/catalog/GOOGLE_Research_open-buildings_v3_polygons)")
 
-        st.markdown("---")
+    st.markdown("---")
 
-        st.markdown(
-            """
-            <iframe 
-                src="https://ee-shubhdhadiwal.projects.earthengine.app/view/geoai" 
-                width="100%" height="600" frameborder="0" allowfullscreen>
-            </iframe>
-            """,
-            unsafe_allow_html=True
-        )
+    st.markdown(
+        """
+        <iframe 
+            src="https://ee-shubhdhadiwal.projects.earthengine.app/view/geoai" 
+            width="100%" height="600" frameborder="0" allowfullscreen>
+        </iframe>
+        """,
+        unsafe_allow_html=True
+    )
 
-        st.markdown(
-            """
-            Dashboard created by Shubh Dhadiwal using Google Earth Engine.
-            
-            To download the data, click on the Code Editor link below:  
-            [🚀 Open Earth Engine Code Editor here](https://code.earthengine.google.com/272ebbc2fd09e86a3b256c9c2f259b9f?hideCode=true)
-            """,
-            unsafe_allow_html=True,
-        )
+    st.markdown(
+        """
+        Dashboard created by Shubh Dhadiwal using Google Earth Engine.
+        
+        To download the data, click on the Code Editor link below:  
+        [🚀 Open Earth Engine Code Editor here](https://code.earthengine.google.com/272ebbc2fd09e86a3b256c9c2f259b9f?hideCode=true)
+        """,
+        unsafe_allow_html=True,
+    )
 
-   st.stop()
+st.stop()
+
 
    # For other tabs with data
 

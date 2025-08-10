@@ -36,6 +36,79 @@ if 'visitor_counted' not in st.session_state:
     st.session_state.visitor_count = increment_visitor_count()
     st.session_state.visitor_counted = True
 
+import streamlit as st
+
+# Dummy function to simulate sending email (replace with actual email sending logic)
+def send_login_details(email):
+    # In real app, use SMTP or an email API to send login info here
+    print(f"Sending login details to: {email}")
+    # You can add success/failure handling here
+    return True
+
+# Initialize session state flags
+if 'show_pay_page' not in st.session_state:
+    st.session_state.show_pay_page = True  # start at pay page
+if 'email_sent' not in st.session_state:
+    st.session_state.email_sent = False
+
+def pay_page():
+    st.title("Support GeoAI Repository")
+    st.markdown("""
+    <div style="text-align:center;">
+        <!-- Dummy Razorpay Logo -->
+        <img src="https://razorpay.com/assets/razorpay-logo.svg" alt="Razorpay Logo" width="200"/>
+    </div>
+    """ , unsafe_allow_html=True)
+
+    st.markdown("""
+    <p>
+    Your support helps keep the GeoAI Repository free and continuously updated with new data, tools, and tutorials.
+    By contributing, you enable us to maintain server costs, data processing, and improve features.
+    </p>
+    """)
+
+    if not st.session_state.email_sent:
+        email = st.text_input("Enter your email to receive login details:")
+        if st.button("Send Login Details"):
+            if email and "@" in email:
+                success = send_login_details(email)
+                if success:
+                    st.session_state.email_sent = True
+                    st.success(f"Login details sent to {email}! Please check your inbox.")
+                else:
+                    st.error("Failed to send email. Please try again later.")
+            else:
+                st.error("Please enter a valid email address.")
+    else:
+        if st.button("Proceed to Login"):
+            st.session_state.show_pay_page = False
+
+def login_page():
+    st.title("🔐 Login to GeoAI Repository")
+    username = st.text_input("Username", key="username_input")
+    password = st.text_input("Password", type="password", key="password_input")
+    login_pressed = st.button("Login")
+
+    if login_pressed:
+        # Dummy login for demonstration
+        if username == "Shubh4016" and password == "yourpassword":  # replace with your actual password check
+            st.session_state.authenticated = True
+            st.session_state.username = username
+        else:
+            st.error("Invalid username or password")
+
+# Main app logic
+if st.session_state.get('authenticated', False):
+    st.sidebar.title(f"Welcome, {st.session_state['username']}!")
+    st.write("You are logged in. Continue with the rest of your app...")
+    # Your main app code here...
+
+else:
+    if st.session_state.show_pay_page:
+        pay_page()
+    else:
+        login_page()
+
 # Utility to hash password string
 def hash_password(password):
     return hashlib.sha256(password.encode()).hexdigest()

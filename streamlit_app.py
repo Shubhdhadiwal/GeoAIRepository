@@ -6,6 +6,7 @@ import hashlib
 import os
 import json
 from datetime import datetime
+import altair as alt
 
 # ===== PAGE CONFIG ===== #
 st.set_page_config(page_title="GeoAI Repository", layout="wide")

@@ -73,9 +73,6 @@ if st.sidebar.button("Logout"):
 
 st.sidebar.title(f"Welcome, {st.session_state['username']}!")
 
-# Display real-time visitor count
-st.sidebar.markdown(f"👁️ Visitors: **{st.session_state.visitor_count}**")
-
 # Sheet options mapping tab name → Excel sheet name (except Dashboards etc. which don't have sheets)
 sheet_options = {
     "About": "About",
@@ -89,6 +86,9 @@ sheet_options = {
     "Dashboards": "Dashboards",  # note: no sheet actually called "Dashboards"
     "FAQ": "FAQ"
 }
+
+# Display real-time visitor count
+st.sidebar.markdown(f"📅 Total Visitors: **{st.session_state.visitor_count}**")
 
 @st.cache_data(show_spinner=False)
 def load_data(sheet_name):

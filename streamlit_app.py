@@ -239,6 +239,11 @@ import requests
 import pandas as pd
 import altair as alt
 
+import streamlit as st
+import requests
+import pandas as pd
+import altair as alt
+
 if selected_tab == "Dashboards":
     st.title("🌊 Sea Level Global Dashboard")
 
@@ -252,36 +257,32 @@ if selected_tab == "Dashboards":
 
         st.markdown("🔗 [Dataset API Source](https://d3qt3aobtsas2h.cloudfront.net/edge/ws/search/sealevelgovglobal?type=global)")
 
-        # Fetch the data from API
         try:
             response = requests.get("https://d3qt3aobtsas2h.cloudfront.net/edge/ws/search/sealevelgovglobal?type=global")
             response.raise_for_status()
             data_json = response.json()
 
-            # Example: parse the data to a DataFrame depending on actual JSON structure
-            # Assuming data_json['data'] contains a list of records with 'year' and 'sea_level' keys
-            records = data_json.get('data', [])
+            records = data_json.get("data", [])
 
             if records:
                 df = pd.DataFrame(records)
-                # Example columns check
-                if 'year' in df.columns and 'sea_level' in df.columns:
+                # Ensure columns for plotting exist:
+                if "year" in df.columns and "sea_level_mm" in df.columns:
                     chart = alt.Chart(df).mark_line(point=True).encode(
                         x='year:O',
-                        y='sea_level:Q',
-                        tooltip=['year', 'sea_level']
+                        y='sea_level_mm:Q',
+                        tooltip=['year', 'sea_level_mm']
                     ).properties(
                         width=700,
                         height=400,
-                        title="Global Sea Level Rise Over Years"
+                        title="Global Sea Level Rise Over Years (mm)"
                     )
                     st.altair_chart(chart, use_container_width=True)
                 else:
-                    st.write("Dataset format is unexpected. Preview of data:")
-                    st.write(df.head())
+                    st.write("Expected columns 'year' and 'sea_level_mm' not found in the dataset. Here's the raw data:")
+                    st.write(df)
             else:
-                st.write("No data available in the response.")
-
+                st.write("No data found in the API response.")
         except Exception as e:
             st.error(f"Failed to load data: {e}")
 

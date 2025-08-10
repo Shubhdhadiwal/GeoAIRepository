@@ -65,6 +65,7 @@ sheet_options = {
     "Favorites": "Favorites",
     "FAQ": "FAQ",
     "Google Open Building Dashboard": "Dashboard"
+    "Google Open Buildings": "Google Open Buildings",
 }
 
 @st.cache_data(show_spinner=False)
@@ -195,6 +196,28 @@ if selected_tab == "FAQ":
     for question, answer in faqs.items():
         with st.expander(question):
             st.write(answer)
+    st.stop()
+
+if selected_tab == "Google Open Buildings":
+    st.title("🏢 About Google Open Buildings")
+    st.markdown("""
+    Google Open Buildings is a global dataset developed by Google that provides high-resolution building footprints extracted from satellite imagery using advanced machine learning techniques. It covers millions of buildings across many countries, especially focusing on regions where accurate building data was previously unavailable or incomplete.
+
+    This dataset is an invaluable resource for urban planners, researchers, governments, and humanitarian organizations. It supports applications such as disaster response, infrastructure planning, population estimation, and sustainable development by providing detailed and up-to-date information on building locations and shapes.
+
+    Google Open Buildings is openly available and continues to grow, helping bridge data gaps and enabling data-driven decision-making at scale.
+    """)
+
+    st.markdown("🔗 [Official Dataset Documentation](https://developers.google.com/earth-engine/datasets/catalog/GOOGLE_Research_open-buildings_v3_polygons)")
+
+    st.markdown("---")
+
+    st.markdown("""
+    <p style='text-align:center; font-size:12px; color:gray;'>
+    Dashboard developed by Shubh using Google Earth Engine
+    </p>
+    """, unsafe_allow_html=True)
+
     st.stop()
 
 if selected_tab == "Google Open Building Dashboard":

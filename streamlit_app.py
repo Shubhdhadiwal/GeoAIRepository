@@ -184,27 +184,27 @@ if selected_tab == "Dashboards":
             [🚀 Open Earth Engine Code Editor here](https://code.earthengine.google.com/db65e6b4ece8341249a978d4a1509f0e)
             """,
             unsafe_allow_html=True,
-     
-   with st.expander("▶️ NASA Sea Level Evaluation Tool"):
-    st.markdown("""
-    The NASA Sea Level Evaluation Tool provides interactive visualization and analysis of global sea level data, enabling researchers and policymakers to understand rising sea levels and their impacts.
-    """)
-
-    st.markdown("🔗 [NASA Sea Level Evaluation Tool Website](https://sealevel.nasa.gov/sea-level-evaluation-tool)")
-
-    components.iframe(
-        "https://sealevel.nasa.gov/sea-level-evaluation-tool",
-        height=600,
-        width=900,
-    )
-
-    st.markdown("""
-    <p style='font-size:12px; color:gray;'>
-    Source: NASA Sea Level Change Team, <a href="https://sealevel.nasa.gov/" target="_blank">https://sealevel.nasa.gov/</a>
-    </p>
-    """, unsafe_allow_html=True)
-     
         )
+
+    with st.expander("▶️ NASA Sea Level Evaluation Tool"):
+        st.markdown("""
+        The NASA Sea Level Evaluation Tool provides interactive visualization and analysis of global sea level data, enabling researchers and policymakers to understand rising sea levels and their impacts.
+        """)
+
+        st.markdown("🔗 [NASA Sea Level Evaluation Tool Website](https://sealevel.nasa.gov/sea-level-evaluation-tool)")
+
+        components.iframe(
+            "https://sealevel.nasa.gov/sea-level-evaluation-tool",
+            height=600,
+            width=900,
+        )
+
+        st.markdown("""
+        <p style='font-size:12px; color:gray;'>
+        Source: NASA Sea Level Change Team, <a href="https://sealevel.nasa.gov/" target="_blank">https://sealevel.nasa.gov/</a>
+        </p>
+        """, unsafe_allow_html=True)
+
     st.stop()  # Important: stop here so no Excel loading attempted
 
 # ===== NON-SHEET TABS: About, Submit New Resource, FAQ ===== #

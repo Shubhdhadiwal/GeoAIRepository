@@ -188,6 +188,13 @@ if selected_tab == "About":
     for i, cat in enumerate(categories_to_check):
         cols[i].metric(label=cat, value=counts.get(cat, 0))
 
+     st.markdown("---")
+    st.markdown("""
+    <p style='text-align:center; font-size:12px; color:gray;'>
+    Developed by Shubh | 
+    <a href='https://www.linkedin.com/in/shubh-dhadiwal/' target='_blank'>LinkedIn</a>
+    </p>
+    """, unsafe_allow_html=True)
     st.stop()
 
 if selected_tab == "Submit New Resource":

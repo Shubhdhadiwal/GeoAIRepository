@@ -201,7 +201,7 @@ if selected_tab == "Dashboards":
 
         st.markdown("""
         <p style='font-size:12px; color:gray;'>
-        Source: NASA Sea Level Change Team, <a href="https://sealevel.nasa.gov/" target="_blank">https://sealevel.nasa.gov/</a>
+        Source: NASA, <a href="https://sealevel.nasa.gov/sea-level-evaluation-tool" target="_blank">https://sealevel.nasa.gov/sea-level-evaluation-tool</a>
         </p>
         """, unsafe_allow_html=True)
 

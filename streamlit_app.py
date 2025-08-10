@@ -3,6 +3,9 @@ import pandas as pd
 import altair as alt
 import re
 import hashlib
+import os
+import json
+from datetime import datetime
 
 # ===== PAGE CONFIG ===== #
 st.set_page_config(page_title="GeoAI Repository", layout="wide")
@@ -47,13 +50,6 @@ if st.sidebar.button("Logout"):
 
 st.sidebar.title(f"Welcome, {st.session_state['username']}!")
 
-import streamlit as st
-import os
-import json
-from datetime import datetime
-
-# Your other imports...
-
 sheet_options = {
     "About": "About",
     "Data Sources": "Data Sources",
@@ -64,7 +60,7 @@ sheet_options = {
     "Submit New Resource": "Submit New Resource",
     "Favorites": "Favorites",
     "FAQ": "FAQ",
-    "Google Open Building Dashboard": "Dashboard"
+    "Google Open Building Dashboard": "Dashboard",
     "Google Open Buildings": "Google Open Buildings"
 }
 
@@ -127,11 +123,6 @@ def get_visitor_counts():
     today_count = counter["daily"].get(today, 0)
     return total, today_count
 
-# ---- Your login code here ----
-# if not st.session_state['authenticated']:
-#    login()
-#    st.stop()
-
 # ---- After user login ----
 if st.session_state.get('authenticated', False):
     if 'visitor_incremented' not in st.session_state:
@@ -143,9 +134,7 @@ if st.session_state.get('authenticated', False):
     st.sidebar.markdown(f"👥 **Total Visitors:** {total_visitors}")
     st.sidebar.markdown(f"📅 **Today's Visitors:** {today_visitors}")
 
-# ---- Rest of your app code below ----
-
-# Static tabs handling
+# ---- Static tabs handling ----
 
 if selected_tab == "About":
     st.title("📘 About GeoAI Repository")
@@ -246,8 +235,6 @@ if selected_tab == "Google Open Building Dashboard":
     )
 
     st.stop()
-
-
 
 # For other tabs with data
 

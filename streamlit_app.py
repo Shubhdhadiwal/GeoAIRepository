@@ -87,11 +87,6 @@ def load_data(sheet_name):
 st.sidebar.header("🧭 GeoAI Repository")
 selected_tab = st.sidebar.radio("Select Section", list(sheet_options.keys()))
 
-st.markdown("""
-<p style='text-align:center; font-size:12px; color:gray;'>
-© 2025 GeoAI Repository
-""", unsafe_allow_html=True)
-
 # ===== HANDLE SPECIAL TABS WITHOUT EXCEL SHEETS ===== #
 if selected_tab == "Dashboards":
     st.title("🌍 Dashboards")
@@ -205,6 +200,12 @@ if selected_tab == "About":
     <a href='https://www.linkedin.com/in/shubh-dhadiwal/' target='_blank'>LinkedIn</a>
     </p>
     """, unsafe_allow_html=True)
+    
+    st.markdown("""
+<p style='text-align:center; font-size:12px; color:gray;'>
+© 2025 GeoAI Repository
+""", unsafe_allow_html=True)
+
     st.stop()
 
 if selected_tab == "Submit New Resource":

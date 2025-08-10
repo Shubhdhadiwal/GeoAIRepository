@@ -53,7 +53,7 @@ sheet_options = {
     "Data Sources": "Data Sources",
     "Tools": "Tools",
     "Free Tutorials": "Free Tutorials",
-    "Google Earth EnginePythod Codes": "Python Codes (GEE)",
+    "Codes": "Google Earth Engine/Python Codes",
     "Courses": "Courses",
     "Submit New Resource": "Submit New Resource",
     "Favorites": "Favorites",

@@ -176,6 +176,19 @@ if selected_tab == "About":
     """)
     st.stop()
 
+categories_to_check = ["Data Sources", "Tools", "Courses", "Free Tutorials", "Python Codes (GEE)"]
+    counts = {}
+    for cat in categories_to_check:
+        df_cat = load_data(sheet_options[cat])
+        counts[cat] = len(df_cat)
+
+    st.subheader("📊 Repository Content Overview")
+    
+    # Show counts as metrics in columns without any selection
+    cols = st.columns(len(categories_to_check))
+    for i, cat in enumerate(categories_to_check):
+        cols[i].metric(label=cat, value=counts.get(cat, 0))
+
 if selected_tab == "Submit New Resource":
     st.title("📤 Submit a New Resource")
     st.markdown("Help us grow this repository by contributing useful links and resources.")

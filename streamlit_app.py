@@ -47,6 +47,62 @@ if st.sidebar.button("Logout"):
 
 st.sidebar.title(f"Welcome, {st.session_state['username']}!")
 
+import streamlit as st
+import os
+import json
+from datetime import datetime
+
+# Your other imports...
+
+# ---- Visitor counter functions ----
+COUNTER_FILE = "visitor_count.json"
+
+def load_counter():
+    if not os.path.exists(COUNTER_FILE):
+        return {"total": 0, "daily": {}}
+    with open(COUNTER_FILE, "r") as f:
+        return json.load(f)
+
+def save_counter(counter_data):
+    with open(COUNTER_FILE, "w") as f:
+        json.dump(counter_data, f)
+
+def increment_visitor_count():
+    today = datetime.now().strftime("%Y-%m-%d")
+    counter = load_counter()
+
+    counter["total"] = counter.get("total", 0) + 1
+    counter["daily"][today] = counter["daily"].get(today, 0) + 1
+
+    save_counter(counter)
+    return counter["total"], counter["daily"][today]
+
+def get_visitor_counts():
+    today = datetime.now().strftime("%Y-%m-%d")
+    counter = load_counter()
+    total = counter.get("total", 0)
+    today_count = counter["daily"].get(today, 0)
+    return total, today_count
+
+# ---- Your login code here ----
+# if not st.session_state['authenticated']:
+#    login()
+#    st.stop()
+
+# ---- After user login ----
+if st.session_state.get('authenticated', False):
+    if 'visitor_incremented' not in st.session_state:
+        total_visitors, today_visitors = increment_visitor_count()
+        st.session_state.visitor_incremented = True
+    else:
+        total_visitors, today_visitors = get_visitor_counts()
+
+    st.sidebar.title(f"Welcome, {st.session_state['username']}!")
+    st.sidebar.markdown(f"👥 **Total Visitors:** {total_visitors}")
+    st.sidebar.markdown(f"📅 **Today's Visitors:** {today_visitors}")
+
+# ---- Rest of your app code below ----
+
 sheet_options = {
     "About": "About",
     "Data Sources": "Data Sources",

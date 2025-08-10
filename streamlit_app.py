@@ -87,8 +87,12 @@ def load_data(sheet_name):
 st.sidebar.header("🧭 GeoAI Repository")
 selected_tab = st.sidebar.radio("Select Section", list(sheet_options.keys()))
 
-st.sidebar.markdown("---")
-st.sidebar.markdown("© 2025 GeoAI Repository")
+st.markdown("""
+<p style='text-align:center; font-size:12px; color:gray;'>
+© 2025 GeoAI Repository | Licensed under the 
+<a href='https://creativecommons.org/licenses/by-nc/4.0/' target='_blank'>CC BY-NC 4.0</a>
+</p>
+""", unsafe_allow_html=True)
 
 # ===== HANDLE SPECIAL TABS WITHOUT EXCEL SHEETS ===== #
 if selected_tab == "Dashboards":

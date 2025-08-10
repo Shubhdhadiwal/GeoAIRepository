@@ -217,37 +217,38 @@ if selected_tab == "Dashboards":
         Source: NASA, <a href="https://sealevel.nasa.gov/sea-level-evaluation-tool" target="_blank">https://sealevel.nasa.gov/sea-level-evaluation-tool</a>
         </p>
         """, unsafe_allow_html=True)
+        
         with st.expander("▶️ Global Surface Water Explorer"):
-        st.markdown("""
-        The **Global Surface Water Explorer** (GSWE), developed by the European Commission's Joint Research Centre, provides high-resolution mapping of global surface water distribution and long-term changes from 1984 to 2021. 
+    st.markdown("""
+    The **Global Surface Water Explorer** (GSWE), developed by the European Commission's Joint Research Centre, provides high-resolution mapping of global surface water distribution and long-term changes from 1984 to 2021. 
 
-        It utilizes Landsat satellite imagery to analyze water occurrence, seasonality, recurrence, transitions, and maximum extent worldwide. This dataset supports water resource management, climate change studies, biodiversity conservation, and food security.
+    It utilizes Landsat satellite imagery to analyze water occurrence, seasonality, recurrence, transitions, and maximum extent worldwide. This dataset supports water resource management, climate change studies, biodiversity conservation, and food security.
 
-        **Citation:**  
-        Pekel, J.-F., Cottam, A., Gorelick, N., & Belward, A. S. (2016). High-resolution mapping of global surface water and its long-term changes. *Nature*, 540(7633), 418–422. [https://doi.org/10.1038/nature20584](https://doi.org/10.1038/nature20584)
+    **Citation:**  
+    Pekel, J.-F., Cottam, A., Gorelick, N., & Belward, A. S. (2016). High-resolution mapping of global surface water and its long-term changes. *Nature*, 540(7633), 418–422. [https://doi.org/10.1038/nature20584](https://doi.org/10.1038/nature20584)
 
-        **Data Access:**  
-        Download the data at the [Global Surface Water Explorer Download Page](https://global-surface-water.appspot.com/download)
-        """)
+    **Data Access:**  
+    Download the data at the [Global Surface Water Explorer Download Page](https://global-surface-water.appspot.com/download)
+    """)
 
-        # Leaflet JS embed example with tiles URL from GSWE
-        leaflet_html = """
-        <div id="map" style="width: 100%; height: 500px;"></div>
-        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
-        <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-        <script>
-        var map = L.map('map').setView([20, 0], 2);
+    leaflet_html = """
+    <div id="map" style="width: 100%; height: 500px;"></div>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script>
+    var map = L.map('map').setView([20, 0], 2);
 
-        var transitions = L.tileLayer('https://storage.googleapis.com/global-surface-water/tiles2021/transitions/{z}/{x}/{y}.png', {
-            format: 'image/png',
-            maxZoom: 13,
-            errorTileUrl: 'https://storage.googleapis.com/global-surface-water/downloads_ancillary/blank.png',
-            attribution: '© 2016 EC JRC/Google'
-        }).addTo(map);
-        </script>
-        """
+    var transitions = L.tileLayer('https://storage.googleapis.com/global-surface-water/tiles2021/transitions/{z}/{x}/{y}.png', {
+        format: 'image/png',
+        maxZoom: 13,
+        errorTileUrl: 'https://storage.googleapis.com/global-surface-water/downloads_ancillary/blank.png',
+        attribution: '© 2016 EC JRC/Google'
+    }).addTo(map);
+    </script>
+    """
 
-        st.components.v1.html(leaflet_html, height=550)
+    st.components.v1.html(leaflet_html, height=550)
+
 
     st.stop()  # Important: stop here so no Excel loading attempted
 

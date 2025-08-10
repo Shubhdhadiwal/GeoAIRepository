@@ -89,8 +89,18 @@ if "favorites" not in st.session_state:
 st.sidebar.header("🧭 GeoAI Repository")
 selected_tab = st.sidebar.radio("Select Section", list(sheet_options.keys()))
 
-st.sidebar.markdown("---")
-st.sidebar.markdown("© 2025 GeoAI Repository")
+st.markdown(
+    f"""
+    <p style='text-align:center; font-size:12px; color:gray;'>
+        © 2025 GeoAI Repository &nbsp;&nbsp;
+        <a href='https://creativecommons.org/licenses/by-nc/4.0/' target='_blank'>
+            <img src='data:image/png;base64,{cc_logo_base64}' alt='Creative Commons License' style='vertical-align:middle; height:20px;'/>
+        </a>
+    </p>
+    """,
+    unsafe_allow_html=True
+)
+
 
 # ---- Visitor counter functions ----
 COUNTER_FILE = "visitor_count.json"

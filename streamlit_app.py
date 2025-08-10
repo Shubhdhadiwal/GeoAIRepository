@@ -123,8 +123,7 @@ else:
 
 # Show visitor count after successful login
 if st.session_state.get('authenticated', False):
-    st.sidebar.title(f"Welcome, {st.session_state['username']}!")
-    st.sidebar.markdown(f"👥 **Total Visitors:** {visitor_count}")
+   st.sidebar.markdown(f"👥 **Total Visitors:** {visitor_count}")
 
 if selected_tab == "About":
     st.title("📘 About GeoAI Repository")

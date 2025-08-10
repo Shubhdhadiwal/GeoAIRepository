@@ -91,16 +91,12 @@ selected_tab = st.sidebar.radio("Select Section", list(sheet_options.keys()))
 
 st.sidebar.markdown("---")
 st.sidebar.markdown("© 2025 GeoAI Repository")
-import streamlit as st
-
-st.sidebar.markdown("---")
-st.sidebar.markdown("© 2025 GeoAI Repository")
 
 # Simple CC license text with link
 st.sidebar.markdown(
     """
     Created under the  
-    [Creative Commons Attribution-NonCommercial 4.0 International License (CC BY-NC 4.0)](https://creativecommons.org/licenses/by-nc/4.0/)
+    [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/)
     """,
     unsafe_allow_html=True
 )

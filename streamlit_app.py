@@ -54,6 +54,48 @@ from datetime import datetime
 
 # Your other imports...
 
+sheet_options = {
+    "About": "About",
+    "Data Sources": "Data Sources",
+    "Tools": "Tools",
+    "Free Tutorials": "Free Tutorials",
+    "Python Codes (GEE)": "Google Earth EnginePython Codes",  # fixed spacing here
+    "Courses": "Courses",
+    "Submit New Resource": "Submit New Resource",
+    "Favorites": "Favorites",
+    "FAQ": "FAQ",
+    "Google Open Building Dashboard": "Dashboard"
+}
+
+@st.cache_data(show_spinner=False)
+def load_data(sheet_name):
+    try:
+        df = pd.read_excel(GITHUB_RAW_URL, sheet_name=sheet_name)
+        df.columns = df.iloc[0]  # Use first row as header
+        df = df[1:]
+        df = df.dropna(subset=[df.columns[0]])
+        df = df.loc[:, ~df.columns.str.contains("^Unnamed")]
+        if sheet_name == "Tools":
+            new_columns = {}
+            for col in df.columns:
+                if isinstance(col, str) and col.startswith("Column"):
+                    new_columns[col] = "Link"
+            if new_columns:
+                df = df.rename(columns=new_columns)
+        return df
+    except Exception as e:
+        st.error(f"Error loading sheet '{sheet_name}': {e}")
+        return pd.DataFrame()
+
+if "favorites" not in st.session_state:
+    st.session_state.favorites = {}
+
+st.sidebar.header("🧭 GeoAI Repository")
+selected_tab = st.sidebar.radio("Select Section", list(sheet_options.keys()))
+
+st.sidebar.markdown("---")
+st.sidebar.markdown("© 2025 GeoAI Repository")
+
 # ---- Visitor counter functions ----
 COUNTER_FILE = "visitor_count.json"
 
@@ -97,53 +139,10 @@ if st.session_state.get('authenticated', False):
     else:
         total_visitors, today_visitors = get_visitor_counts()
 
-    st.sidebar.title(f"Welcome, {st.session_state['username']}!")
     st.sidebar.markdown(f"👥 **Total Visitors:** {total_visitors}")
     st.sidebar.markdown(f"📅 **Today's Visitors:** {today_visitors}")
 
 # ---- Rest of your app code below ----
-
-sheet_options = {
-    "About": "About",
-    "Data Sources": "Data Sources",
-    "Tools": "Tools",
-    "Free Tutorials": "Free Tutorials",
-    "Python Codes (GEE)": "Google Earth EnginePython Codes",  # fixed spacing here
-    "Courses": "Courses",
-    "Submit New Resource": "Submit New Resource",
-    "Favorites": "Favorites",
-    "FAQ": "FAQ",
-    "Google Open Building Dashboard": "Dashboard"
-}
-
-@st.cache_data(show_spinner=False)
-def load_data(sheet_name):
-    try:
-        df = pd.read_excel(GITHUB_RAW_URL, sheet_name=sheet_name)
-        df.columns = df.iloc[0]  # Use first row as header
-        df = df[1:]
-        df = df.dropna(subset=[df.columns[0]])
-        df = df.loc[:, ~df.columns.str.contains("^Unnamed")]
-        if sheet_name == "Tools":
-            new_columns = {}
-            for col in df.columns:
-                if isinstance(col, str) and col.startswith("Column"):
-                    new_columns[col] = "Link"
-            if new_columns:
-                df = df.rename(columns=new_columns)
-        return df
-    except Exception as e:
-        st.error(f"Error loading sheet '{sheet_name}': {e}")
-        return pd.DataFrame()
-
-if "favorites" not in st.session_state:
-    st.session_state.favorites = {}
-
-st.sidebar.header("🧭 GeoAI Repository")
-selected_tab = st.sidebar.radio("Select Section", list(sheet_options.keys()))
-
-st.sidebar.markdown("---")
-st.sidebar.markdown("© 2025 GeoAI Repository")
 
 # Static tabs handling
 

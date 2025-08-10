@@ -5,3 +5,4 @@ altair
 pyyaml
 openpyxl
 setuptools
+openai

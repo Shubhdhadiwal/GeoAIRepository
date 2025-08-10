@@ -261,7 +261,7 @@ with st.expander("▶️ Local Climate Zones (LCZ) Dashboard"):
         """
         Dashboard created by Shubh Dhadiwal using Google Earth Engine.
         
-        To download or modify the code, open the Earth Engine Code Editor link below:  
+        To download the LCZ data, open the Earth Engine Code Editor link below:  
         [🚀 Open Earth Engine Code Editor here](https://code.earthengine.google.com/db65e6b4ece8341249a978d4a1509f0e)
         """,
         unsafe_allow_html=True,

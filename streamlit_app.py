@@ -52,16 +52,17 @@ if 'authenticated' not in st.session_state:
 def login():
     st.title("🔐 Login to GeoAI Repository")
 
-      # Support/contact info on login page
+ # Support/contact info on login page with smaller font
     st.markdown("""
-    ---
-    🛠️ **Need login access or help?**  
-    Please contact the developer for login credentials:
-    
-    👉 [Shubh Dhadiwal on LinkedIn](https://www.linkedin.com/in/shubh-dhadiwal/)  
+    <hr>
+    <p style="font-size:12px; color:gray;">
+    🛠️ <b>Need login access or help?</b><br>
+    Please contact the developer for login credentials:<br><br>
+    👉 <a href="https://www.linkedin.com/in/shubh-dhadiwal/" target="_blank">Shubh Dhadiwal on LinkedIn</a><br>
     Send a message mentioning your request for login details.
-    ---
-    """)
+    </p>
+    <hr>
+    """, unsafe_allow_html=True)
     
     username = st.text_input("Username", key="username_input")
     password = st.text_input("Password", type="password", key="password_input")

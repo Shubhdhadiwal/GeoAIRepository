@@ -234,6 +234,68 @@ if selected_tab == "Dashboards":
 )
     st.stop()
 
+import streamlit as st
+import requests
+import pandas as pd
+import altair as alt
+
+if selected_tab == "Dashboards":
+    st.title("🌊 Sea Level Global Dashboard")
+
+    with st.expander("▶️ Sea Level Global Dataset Overview"):
+        st.markdown("""
+        The Sea Level Global dataset provides global-scale sea level rise projections and observations, crucial for understanding climate change impacts on coastal regions. 
+        This dataset supports research, policymaking, and urban planning to build resilient coastal infrastructure and adapt to rising seas.
+
+        The dataset is accessible via an API and can be visualized through interactive dashboards.
+        """)
+
+        st.markdown("🔗 [Dataset API Source](https://d3qt3aobtsas2h.cloudfront.net/edge/ws/search/sealevelgovglobal?type=global)")
+
+        # Fetch the data from API
+        try:
+            response = requests.get("https://d3qt3aobtsas2h.cloudfront.net/edge/ws/search/sealevelgovglobal?type=global")
+            response.raise_for_status()
+            data_json = response.json()
+
+            # Example: parse the data to a DataFrame depending on actual JSON structure
+            # Assuming data_json['data'] contains a list of records with 'year' and 'sea_level' keys
+            records = data_json.get('data', [])
+
+            if records:
+                df = pd.DataFrame(records)
+                # Example columns check
+                if 'year' in df.columns and 'sea_level' in df.columns:
+                    chart = alt.Chart(df).mark_line(point=True).encode(
+                        x='year:O',
+                        y='sea_level:Q',
+                        tooltip=['year', 'sea_level']
+                    ).properties(
+                        width=700,
+                        height=400,
+                        title="Global Sea Level Rise Over Years"
+                    )
+                    st.altair_chart(chart, use_container_width=True)
+                else:
+                    st.write("Dataset format is unexpected. Preview of data:")
+                    st.write(df.head())
+            else:
+                st.write("No data available in the response.")
+
+        except Exception as e:
+            st.error(f"Failed to load data: {e}")
+
+        st.markdown("---")
+
+        st.markdown(
+            """
+            Dashboard created by Shubh Dhadiwal using the Sea Level Global API data.
+
+            To explore or download raw data, visit the API link above.
+            """
+        )
+    st.stop()
+
    # For other tabs with data
 
 title_map = {

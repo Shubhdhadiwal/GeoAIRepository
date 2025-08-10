@@ -233,7 +233,7 @@ if selected_tab == "Dashboards":
         """)
 
         leaflet_html = """
-        <div id="map" style="width: 100%; height: 700px;"></div>
+        <div id="map" style="width: 1400px; height: 700px;"></div>
         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
         <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
         <script>

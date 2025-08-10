@@ -8,6 +8,12 @@ import pandas as pd
 import re
 import hashlib
 
+import ee
+import geemap.foliumap as geemap
+from streamlit_folium import st_folium
+from geopy.geocoders import Nominatim
+from geopy.exc import GeocoderTimedOut
+
 # GitHub raw Excel file URL
 GITHUB_RAW_URL = "https://github.com/Shubhdhadiwal/GeoAIRepository/raw/main/Geospatial%20Data%20Repository%20(2).xlsx"
 
@@ -124,6 +130,108 @@ else:
 # Show visitor count after successful login
 if st.session_state.get('authenticated', False):
    st.sidebar.markdown(f"👥 **Total Visitors:** {visitor_count}")
+
+# --- LOAD DATA FUNCTION ---
+
+@st.cache_data(show_spinner=False)
+def load_data(sheet_name):
+    GITHUB_RAW_URL = "https://github.com/Shubhdhadiwal/GeoAIRepository/raw/main/Geospatial%20Data%20Repository%20(2).xlsx"
+    try:
+        df = pd.read_excel(GITHUB_RAW_URL, sheet_name=sheet_name)
+        df.columns = df.iloc[0]
+        df = df[1:]
+        df = df.dropna(subset=[df.columns[0]])
+        df = df.loc[:, ~df.columns.str.contains("^Unnamed")]
+        if sheet_name == "Tools":
+            new_columns = {}
+            for col in df.columns:
+                if isinstance(col, str) and col.startswith("Column"):
+                    new_columns[col] = "Link"
+            if new_columns:
+                df = df.rename(columns=new_columns)
+        return df
+    except Exception as e:
+        st.error(f"Error loading sheet '{sheet_name}': {e}")
+        return pd.DataFrame()
+
+# --- Open Buildings Tab ---
+
+def geocode_city(city):
+    geolocator = Nominatim(user_agent="geoai_app")
+    try:
+        location = geolocator.geocode(city, exactly_one=True, timeout=10)
+        if location and location.raw.get('boundingbox'):
+            bbox = location.raw['boundingbox']  # [south, north, west, east]
+            # Nominatim returns bbox as [south, north, west, east], we want lat_min, lat_max, lon_min, lon_max
+            return (float(bbox[0]), float(bbox[1]), float(bbox[2]), float(bbox[3]))
+        else:
+            return None
+    except GeocoderTimedOut:
+        return None
+
+if selected_tab == "Open Buildings":
+    st.title("🏢 Open Buildings Data Explorer")
+
+    # Initialize EE once
+    try:
+        ee.Initialize()
+    except Exception:
+        ee.Authenticate()
+        ee.Initialize()
+
+    st.sidebar.header("Define Area of Interest")
+
+    city_name = st.sidebar.text_input("Enter City Name (e.g., Mumbai)", value="Mumbai")
+
+    bbox = geocode_city(city_name)
+
+    if bbox:
+        lat_min_default, lat_max_default, lon_min_default, lon_max_default = bbox
+    else:
+        st.sidebar.error("City not found. Please enter coordinates manually.")
+        lat_min_default, lat_max_default, lon_min_default, lon_max_default = 19.05, 19.3, 72.775, 72.99
+
+    lat_min = st.sidebar.number_input("Min Latitude", value=lat_min_default, format="%.6f")
+    lat_max = st.sidebar.number_input("Max Latitude", value=lat_max_default, format="%.6f")
+    lon_min = st.sidebar.number_input("Min Longitude", value=lon_min_default, format="%.6f")
+    lon_max = st.sidebar.number_input("Max Longitude", value=lon_max_default, format="%.6f")
+
+    if st.sidebar.button("Load Buildings Data"):
+
+        roi = ee.Geometry.Polygon([[
+            [lon_min, lat_min],
+            [lon_min, lat_max],
+            [lon_max, lat_max],
+            [lon_max, lat_min],
+            [lon_min, lat_min]
+        ]])
+
+        t = ee.FeatureCollection('GOOGLE/Research/open-buildings/v3/polygons')
+
+        t_065_070 = t.filter('confidence >= 0.65 && confidence < 0.7')
+        t_070_075 = t.filter('confidence >= 0.7 && confidence < 0.75')
+        t_gte_075 = t.filter('confidence >= 0.75')
+
+        center_lat = (lat_min + lat_max) / 2
+        center_lon = (lon_min + lon_max) / 2
+        m = geemap.Map(center=[center_lat, center_lon], zoom=13)
+        m.addLayer(roi, {}, f'{city_name} ROI')
+        m.addLayer(t_065_070.filterBounds(roi), {'color': 'FF0000'}, 'Confidence [0.65, 0.7)')
+        m.addLayer(t_070_075.filterBounds(roi), {'color': 'FFFF00'}, 'Confidence [0.7, 0.75)')
+        m.addLayer(t_gte_075.filterBounds(roi), {'color': '00FF00'}, 'Confidence >= 0.75')
+        m.centerObject(roi, 13)
+
+        st_folium(m, width=800, height=600)
+
+        geojson = geemap.ee_to_geojson(t_gte_075.filterBounds(roi))
+        st.download_button(
+            "Download High Confidence Buildings (>=0.75) as GeoJSON",
+            data=str(geojson),
+            file_name=f"{city_name}_buildings.geojson",
+            mime="application/json"
+        )
+    else:
+        st.info("Enter a city name and click 'Load Buildings Data'")
 
 if selected_tab == "About":
     st.title("📘 About GeoAI Repository")

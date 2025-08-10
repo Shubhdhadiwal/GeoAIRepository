@@ -52,7 +52,7 @@ sheet_options = {
     "Data Sources": "Data Sources",
     "Tools": "Tools",
     "Free Tutorials": "Free Tutorials",
-    "Python Codes (GEE)": "Google Earth Engine Python Codes",  # fixed spacing here
+    "Python Codes (GEE)": "Google Earth EnginePython Codes",  # fixed spacing here
     "Courses": "Courses",
     "Submit New Resource": "Submit New Resource",
     "Favorites": "Favorites",

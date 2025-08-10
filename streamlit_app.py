@@ -65,7 +65,7 @@ sheet_options = {
     "Favorites": "Favorites",
     "FAQ": "FAQ",
     "Google Open Building Dashboard": "Dashboard"
-    "Google Open Buildings": "Google Open Buildings",
+    "Google Open Buildings": "Google Open Buildings"
 }
 
 @st.cache_data(show_spinner=False)

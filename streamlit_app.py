@@ -188,7 +188,7 @@ if selected_tab == "About":
     for i, cat in enumerate(categories_to_check):
         cols[i].metric(label=cat, value=counts.get(cat, 0))
 
-     st.markdown("---")
+    st.markdown("---")
     st.markdown("""
     <p style='text-align:center; font-size:12px; color:gray;'>
     Developed by Shubh | 

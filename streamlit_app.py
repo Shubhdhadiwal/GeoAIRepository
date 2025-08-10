@@ -174,9 +174,7 @@ if selected_tab == "About":
     - 📘 Free tutorials  
     - 💻 Python codes for Google Earth Engine  
     """)
-    st.stop()
-
-categories_to_check = ["Data Sources", "Tools", "Courses", "Free Tutorials", "Python Codes (GEE)"]
+    categories_to_check = ["Data Sources", "Tools", "Courses", "Free Tutorials", "Python Codes (GEE)"]
 counts = {}
 for cat in categories_to_check:
     df_cat = load_data(sheet_options[cat])

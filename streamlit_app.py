@@ -216,7 +216,8 @@ if selected_tab == "Dashboards":
 
         st.markdown(
     """
-    Dashboard created by Shubh using Google Earth Engine.  
+    Dashboard created by Shubh Dhadiwal using Google Earth Engine.
+    
     To download the data, click on the Code Editor link below:  
     [🚀 Open Earth Engine Code Editor here](https://code.earthengine.google.com/272ebbc2fd09e86a3b256c9c2f259b9f?hideCode=true)
     """,

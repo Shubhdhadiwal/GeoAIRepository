@@ -96,6 +96,36 @@ selected_tab = st.sidebar.radio("Select Section", list(sheet_options.keys()))
 st.sidebar.markdown("---")
 st.sidebar.markdown("© 2025 GeoAI Repository")
 
+import os
+
+# ===== Visitor Counter =====
+COUNTER_FILE = "visitor_count.txt"
+
+def get_visitor_count():
+    if not os.path.exists(COUNTER_FILE):
+        with open(COUNTER_FILE, "w") as f:
+            f.write("0")
+    with open(COUNTER_FILE, "r") as f:
+        return int(f.read().strip())
+
+def increment_visitor_count():
+    count = get_visitor_count() + 1
+    with open(COUNTER_FILE, "w") as f:
+        f.write(str(count))
+    return count
+
+# Increment counter only once per session
+if 'visitor_incremented' not in st.session_state:
+    visitor_count = increment_visitor_count()
+    st.session_state.visitor_incremented = True
+else:
+    visitor_count = get_visitor_count()
+
+# Show visitor count after successful login
+if st.session_state.get('authenticated', False):
+    st.sidebar.title(f"Welcome, {st.session_state['username']}!")
+    st.sidebar.markdown(f"👥 **Total Visitors:** {visitor_count}")
+
 if selected_tab == "About":
     st.title("📘 About GeoAI Repository")
     st.markdown("""

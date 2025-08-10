@@ -95,7 +95,7 @@ st.sidebar.markdown("© 2025 GeoAI Repository")
 # Simple CC license text with link
 st.sidebar.markdown(
     """
-    Created under the  
+    Licensed under the  
     [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/)
     """,
     unsafe_allow_html=True

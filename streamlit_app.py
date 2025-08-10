@@ -66,7 +66,7 @@ sheet_options = {
     "Submit New Resource": "Submit New Resource",
     "Favorites": "Favorites",
     "FAQ": "FAQ"
-    "Google Open Building Dashboard": "Dashboard",
+    "Google Open Building Dashboard": "Dashboard"
 }
 
 def load_data(sheet_name):

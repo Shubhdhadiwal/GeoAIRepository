@@ -150,20 +150,15 @@ if selected_tab == "Google Open Building Dashboard":
         "Click the image or link below to open the code in a new tab."
     )
 
-    # URL of the code editor link
     code_editor_url = "https://code.earthengine.google.com/272ebbc2fd09e86a3b256c9c2f259b9f?hideCode=true"
+    image_url = "https://raw.githubusercontent.com/google/earthengine-community/master/datasets/logo_earthengine.png"
 
-    # Image URL (you can replace this with any relevant image URL or upload your own)
-    image_url = "https://earthengine.google.com/static/images/google-earth-engine-icon.png"
-
-    # Display image as a clickable link
     st.markdown(
         f'<a href="{code_editor_url}" target="_blank">'
         f'<img src="{image_url}" width="300" alt="Google Earth Engine Code Editor"></a>',
         unsafe_allow_html=True,
     )
 
-    # Also show a text link below the image
     st.markdown(f"[Open Google Earth Engine Script (Code Editor)]({code_editor_url})")
 
     st.stop()

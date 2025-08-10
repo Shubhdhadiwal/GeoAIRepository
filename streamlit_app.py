@@ -66,6 +66,7 @@ sheet_options = {
     "Submit New Resource": "Submit New Resource",
     "Favorites": "Favorites",
     "FAQ": "FAQ"
+    "Open Buildings Viewer": "Open Buildings Viewer"
 }
 
 def load_data(sheet_name):
@@ -145,6 +146,64 @@ if selected_tab == "FAQ":
     for question, answer in faqs.items():
         with st.expander(question):
             st.write(answer)
+    st.stop()
+
+if selected_tab == "Open Buildings Viewer":
+    import ee
+    import geemap.foliumap as geemap
+
+    # Initialize Earth Engine if not already done
+    try:
+        ee.Initialize()
+    except Exception as e:
+        ee.Authenticate()
+        ee.Initialize()
+
+    st.title("🏢 Google Open Buildings Viewer")
+
+    st.markdown("Enter bounding box coordinates (latitude and longitude):")
+
+    # Sidebar inputs for bounding box
+    min_lat = st.sidebar.number_input("Min Latitude", value=19.0, format="%.6f")
+    max_lat = st.sidebar.number_input("Max Latitude", value=19.5, format="%.6f")
+    min_lon = st.sidebar.number_input("Min Longitude", value=72.7, format="%.6f")
+    max_lon = st.sidebar.number_input("Max Longitude", value=73.2, format="%.6f")
+
+    # Validate bbox inputs
+    if min_lat >= max_lat or min_lon >= max_lon:
+        st.error("Min values must be less than max values for lat and lon.")
+        st.stop()
+
+    # Define bounding box geometry
+    bbox = ee.Geometry.Rectangle([min_lon, min_lat, max_lon, max_lat])
+
+    # Load Open Buildings dataset
+    buildings = ee.FeatureCollection('GOOGLE/Research/open-buildings/v3/polygons')
+
+    # Filter buildings in bbox
+    filtered_buildings = buildings.filterBounds(bbox)
+
+    # Center the map on the bbox center
+    center = [(min_lat + max_lat) / 2, (min_lon + max_lon) / 2]
+
+    # Create map
+    m = geemap.Map(center=center, zoom=12)
+
+    # Style and add filtered buildings layer
+    building_style = {
+        'color': 'red',
+        'fillColor': '00000000',
+        'width': 1,
+    }
+    m.addLayer(filtered_buildings.style(**building_style), {}, "Buildings")
+
+    # Add bbox layer outline
+    m.addLayer(bbox, {"color": "blue"}, "Bounding Box")
+
+    # Render map in Streamlit
+    m.to_streamlit(height=600)
+
+    st.markdown("Buildings filtered within your bounding box are shown on the map.")
     st.stop()
 
 title_map = {

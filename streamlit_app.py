@@ -3,6 +3,7 @@ import pandas as pd
 import hashlib
 import re
 import os
+import streamlit.components.v1 as components
 
 # ===== PAGE CONFIG =====
 st.set_page_config(page_title="GeoAI Repository", layout="wide")
@@ -184,19 +185,19 @@ if selected_tab == "Dashboards":
             """,
             unsafe_allow_html=True,
      
-    with st.expander("▶️ NASA Sea Level Evaluation Tool"):
+   with st.expander("▶️ NASA Sea Level Evaluation Tool"):
     st.markdown("""
     The NASA Sea Level Evaluation Tool provides interactive visualization and analysis of global sea level data, enabling researchers and policymakers to understand rising sea levels and their impacts.
     """)
-    
+
     st.markdown("🔗 [NASA Sea Level Evaluation Tool Website](https://sealevel.nasa.gov/sea-level-evaluation-tool)")
-    
+
     components.iframe(
         "https://sealevel.nasa.gov/sea-level-evaluation-tool",
         height=600,
         width=900,
     )
-    
+
     st.markdown("""
     <p style='font-size:12px; color:gray;'>
     Source: NASA Sea Level Change Team, <a href="https://sealevel.nasa.gov/" target="_blank">https://sealevel.nasa.gov/</a>

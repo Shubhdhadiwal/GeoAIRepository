@@ -147,7 +147,7 @@ if selected_tab == "Google Open Building Dashboard":
     st.markdown(
         """
         <iframe 
-            src="https://ee-shubhdhadiwal.projects.earthengine.app/view/geoai" 
+            src="https://code.earthengine.google.com/272ebbc2fd09e86a3b256c9c2f259b9f?hideCode=true" 
             width="100%" height="800" frameborder="0" 
             allowfullscreen>
         </iframe>

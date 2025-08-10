@@ -60,8 +60,7 @@ sheet_options = {
     "Submit New Resource": "Submit New Resource",
     "Favorites": "Favorites",
     "FAQ": "FAQ",
-    "Google Open Building Dashboard": "Dashboard",
-    "Google Open Buildings": "Google Open Buildings"
+    "Dashboards": "Dashboards"
 }
 
 @st.cache_data(show_spinner=False)
@@ -187,7 +186,7 @@ if selected_tab == "FAQ":
             st.write(answer)
     st.stop()
 
-if selected_tab == "Google Open Buildings":
+if selected_tab == "Dashboards":
     st.title("🏢 Google Open Buildings")
 
     # Clickable expander for the dashboard info and links

@@ -64,16 +64,19 @@ sheet_options = {
     "Dashboards": "Dashboards"
 }
 
+# ===== LOAD DATA ===== #
 @st.cache_data(show_spinner=False)
 def load_data(sheet_name):
     try:
-        # Load Excel directly from GitHub raw URL
-        df = pd.read_excel(GITHUB_RAW_URL, sheet_name=sheet_name, header=0)  # first row as header
-        df = df.dropna(subset=[df.columns[0]])  # drop rows where first col is empty
-        df = df.loc[:, ~df.columns.str.contains("^Unnamed")]  # drop unnamed columns
+        df = pd.read_excel("Geospatial Data Repository (2).xlsx", sheet_name=sheet_name)
+        df.columns = df.iloc[0]  # Use first row as header
+        df = df[1:]  # Skip header row from data
+        df = df.dropna(subset=[df.columns[0]])  # Ensure first column is not empty
+        df = df.loc[:, ~df.columns.str.contains("^Unnamed")]  # Drop unnamed columns
 
-        # Optional renaming for 'Tools' sheet if needed
+        # Fix: Rename any "Column X" column to "Link" if sheet is Tools
         if sheet_name == "Tools":
+            # Find columns named like "Column 10", "Column 9", etc. and rename to "Link"
             new_columns = {}
             for col in df.columns:
                 if isinstance(col, str) and col.startswith("Column"):
@@ -84,8 +87,7 @@ def load_data(sheet_name):
         return df
     except Exception as e:
         st.error(f"Error loading sheet '{sheet_name}': {e}")
-        return pd.DataFrame()
-
+        return pd.DataFrame()  # return empty dataframe on error
 if "favorites" not in st.session_state:
     st.session_state.favorites = {}
 

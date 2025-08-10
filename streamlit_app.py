@@ -80,9 +80,9 @@ sheet_options = {
     "Free Tutorials": "Free Tutorials",
     "Python Codes (GEE)": "Google Earth EnginePython Codes",
     "Courses": "Courses",
+    "Dashboards": "Dashboards",  # note: no sheet actually called "Dashboards"
     "Submit New Resource": "Submit New Resource",
     "Favorites": "Favorites",
-    "Dashboards": "Dashboards",  # note: no sheet actually called "Dashboards"
     "FAQ": "FAQ"
 }
 

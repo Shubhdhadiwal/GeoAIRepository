@@ -7,9 +7,8 @@ import hashlib
 import os
 import json
 from datetime import datetime
-import altair as alt
 
-# ===== PAGE CONFIG ===== #
+# ===== PAGE CONFIG =====
 st.set_page_config(page_title="GeoAI Repository", layout="wide")
 
 # GitHub raw Excel file URL
@@ -52,37 +51,12 @@ if st.sidebar.button("Logout"):
 
 st.sidebar.title(f"Welcome, {st.session_state['username']}!")
 
-GITHUB_RAW_URL = "https://github.com/Shubhdhadiwal/GeoAIRepository/raw/main/Geospatial%20Data%20Repository%20(2).xlsx"
-
-@st.cache_data(show_spinner=False)
-def load_data(sheet_name):
-    try:
-        # Load Excel directly from GitHub raw URL
-        df = pd.read_excel(GITHUB_RAW_URL, sheet_name=sheet_name)
-        
-        # Use first row as header
-        df.columns = df.iloc[0]  
-        
-        # Remove the header row from data
-        df = df[1:]  
-        
-        # Drop rows where first column is empty
-        df = df.dropna(subset=[df.columns[0]])  
-        
-        # Remove any unnamed columns
-        df = df.loc[:, ~df.columns.str.contains("^Unnamed")]  
-        
-        return df
-    except Exception as e:
-        st.error(f"Error loading sheet '{sheet_name}': {e}")
-        return pd.DataFrame()  # return empty DataFrame on error
-
 sheet_options = {
     "About": "About",
     "Data Sources": "Data Sources",
     "Tools": "Tools",
     "Free Tutorials": "Free Tutorials",
-    "Python Codes (GEE)": "Google Earth EnginePython Codes",  # fixed spacing here
+    "Python Codes (GEE)": "Python Codes (GEE)",
     "Courses": "Courses",
     "Submit New Resource": "Submit New Resource",
     "Favorites": "Favorites",
@@ -93,11 +67,12 @@ sheet_options = {
 @st.cache_data(show_spinner=False)
 def load_data(sheet_name):
     try:
-        df = pd.read_excel(GITHUB_RAW_URL, sheet_name=sheet_name)
-        df.columns = df.iloc[0]  # Use first row as header
-        df = df[1:]
-        df = df.dropna(subset=[df.columns[0]])
-        df = df.loc[:, ~df.columns.str.contains("^Unnamed")]
+        # Load Excel directly from GitHub raw URL
+        df = pd.read_excel(GITHUB_RAW_URL, sheet_name=sheet_name, header=0)  # first row as header
+        df = df.dropna(subset=[df.columns[0]])  # drop rows where first col is empty
+        df = df.loc[:, ~df.columns.str.contains("^Unnamed")]  # drop unnamed columns
+
+        # Optional renaming for 'Tools' sheet if needed
         if sheet_name == "Tools":
             new_columns = {}
             for col in df.columns:
@@ -105,6 +80,7 @@ def load_data(sheet_name):
                     new_columns[col] = "Link"
             if new_columns:
                 df = df.rename(columns=new_columns)
+
         return df
     except Exception as e:
         st.error(f"Error loading sheet '{sheet_name}': {e}")
@@ -122,7 +98,7 @@ st.sidebar.markdown("© 2025 GeoAI Repository")
 # Simple CC license text with link
 st.sidebar.markdown(
     """
-    Licensed under the  
+    Licensed under the
     [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/)
     """,
     unsafe_allow_html=True
@@ -144,10 +120,8 @@ def save_counter(counter_data):
 def increment_visitor_count():
     today = datetime.now().strftime("%Y-%m-%d")
     counter = load_counter()
-
     counter["total"] = counter.get("total", 0) + 1
     counter["daily"][today] = counter["daily"].get(today, 0) + 1
-
     save_counter(counter)
     return counter["total"], counter["daily"][today]
 
@@ -169,20 +143,23 @@ if st.session_state.get('authenticated', False):
     st.sidebar.markdown(f"👥 **Total Visitors:** {total_visitors}")
     st.sidebar.markdown(f"📅 **Today's Visitors:** {today_visitors}")
 
-# ---- Static tabs handling ----
-
+# Handle static tabs
 if selected_tab == "About":
     st.title("📘 About GeoAI Repository")
-    st.markdown("""
-    The **GeoAI Repository** is a free and open resource hub for students, researchers, and professionals 
-    working in geospatial analytics, machine learning, and urban/climate planning.
-    """)
-    st.info("""
-    - 🌐 Public geospatial datasets  
-    - 🛠️ Open-source tools  
-    - 📘 Free tutorials  
-    - 💻 Python codes for Google Earth Engine  
-    """)
+    st.markdown(
+        """
+        The **GeoAI Repository** is a free and open resource hub for students, researchers, and professionals 
+        working in geospatial analytics, machine learning, and urban/climate planning.
+        """
+    )
+    st.info(
+        """
+        - 🌐 Public geospatial datasets  
+        - 🛠️ Open-source tools  
+        - 📘 Free tutorials  
+        - 💻 Python codes for Google Earth Engine  
+        """
+    )
     categories_to_check = ["Data Sources", "Tools", "Courses", "Free Tutorials", "Python Codes (GEE)"]
     counts = {}
     for cat in categories_to_check:
@@ -193,13 +170,18 @@ if selected_tab == "About":
     for i, cat in enumerate(categories_to_check):
         cols[i].metric(label=cat, value=counts.get(cat, 0))
     st.markdown("---")
-    st.markdown("""
-    <p style='text-align:center; font-size:12px; color:gray;'>
-    Developed by Shubh | 
-    <a href='https://www.linkedin.com/in/shubh-dhadiwal/' target='_blank'>LinkedIn</a>
-    </p>
-    """, unsafe_allow_html=True)
+    st.markdown(
+        """
+        <p style='text-align:center; font-size:12px; color:gray;'>
+        Developed by Shubh |  
+        <a href='https://www.linkedin.com/in/shubh-dhadiwal/' target='_blank'>LinkedIn</a>
+        </p>
+        """,
+        unsafe_allow_html=True,
+    )
     st.stop()
+
+# You can keep the rest of your tab handling code below as it was, unchanged...
 
 if selected_tab == "Submit New Resource":
     st.title("📤 Submit a New Resource")

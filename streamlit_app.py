@@ -49,6 +49,20 @@ if 'authenticated' not in st.session_state:
     st.session_state['authenticated'] = False
     st.session_state['username'] = None
 
+# ==== SUPPORT PAGE (no login required) ====
+if selected_tab == "Support":
+    st.title("🛠️ Support & Login Help")
+    st.markdown("""
+    If you need access to the GeoAI Repository or have any questions about the login process,  
+    please contact the developer for login credentials and assistance.
+
+    **Contact Developer:**  
+    [Shubh Dhadiwal on LinkedIn](https://www.linkedin.com/in/shubh-dhadiwal/)  
+
+    Feel free to send a message mentioning your request for login details.
+    """)
+    st.stop()
+
 def login():
     st.title("🔐 Login to GeoAI Repository")
     username = st.text_input("Username", key="username_input")

@@ -357,11 +357,14 @@ for idx, row in df.iterrows():
             elif not fav_checkbox and idx in st.session_state.favorites.get(category_key, []):
                 st.session_state.favorites[category_key].remove(idx)
 
-st.markdown("<hr style='border:1px solid #ddd'/>", unsafe_allow_html=True)
-st.caption("📘 Powered by Streamlit | © 2025 GeoAI Repository")
 st.markdown("""
 <p style='text-align:center; font-size:12px; color:gray;'>
 Developed by Shubh | 
-<a href='https://www.linkedin.com/in/shubh-dhadiwal/' target='_blank'>LinkedIn</a>
+<a href='https://www.linkedin.com/in/shubh-dhadiwal/' target='_blank'>LinkedIn</a> | 
+<a href='https://creativecommons.org/licenses/by-nc/4.0/' target='_blank'>
+  <img src='https://mirrors.creativecommons.org/presskit/icons/by-nc/88x31.png' alt='Creative Commons License' style='vertical-align:middle;'/>
+  Creative Commons BY-NC 4.0 License
+</a>
 </p>
 """, unsafe_allow_html=True)
+

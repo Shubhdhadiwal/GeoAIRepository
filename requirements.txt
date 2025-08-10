@@ -10,3 +10,4 @@ earthengine-api
 geemap
 streamlit-folium
 geopy
+geemap[folium]

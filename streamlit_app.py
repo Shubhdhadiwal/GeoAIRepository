@@ -144,17 +144,30 @@ if selected_tab == "FAQ":
 
 if selected_tab == "Google Open Building Dashboard":
     st.title("🏙️ Google Open Building Dashboard")
-    st.markdown(
-        """
-        <iframe 
-            src="https://code.earthengine.google.com/272ebbc2fd09e86a3b256c9c2f259b9f?hideCode=true" 
-            width="100%" height="800" frameborder="0" 
-            allowfullscreen>
-        </iframe>
-        """,
-        unsafe_allow_html=True
+
+    st.info(
+        "⚠️ Embedding the Google Earth Engine Code Editor is not supported due to browser security restrictions. "
+        "Click the image or link below to open the code in a new tab."
     )
+
+    # URL of the code editor link
+    code_editor_url = "https://code.earthengine.google.com/272ebbc2fd09e86a3b256c9c2f259b9f?hideCode=true"
+
+    # Image URL (you can replace this with any relevant image URL or upload your own)
+    image_url = "https://earthengine.google.com/static/images/google-earth-engine-icon.png"
+
+    # Display image as a clickable link
+    st.markdown(
+        f'<a href="{code_editor_url}" target="_blank">'
+        f'<img src="{image_url}" width="300" alt="Google Earth Engine Code Editor"></a>',
+        unsafe_allow_html=True,
+    )
+
+    # Also show a text link below the image
+    st.markdown(f"[Open Google Earth Engine Script (Code Editor)]({code_editor_url})")
+
     st.stop()
+
 
 # For other tabs with data
 

@@ -268,6 +268,9 @@ for idx, row in df.iterrows():
         elif not fav_checkbox and idx in st.session_state.favorites.get(category_key, []):
             st.session_state.favorites[category_key].remove(idx)
 
+# After sidebar selection:
+selected_tab = st.sidebar.radio("Select Section", list(sheet_options.keys()))
+
 if selected_tab == "Dashboards":
     st.title("🌍 Dashboards")
 

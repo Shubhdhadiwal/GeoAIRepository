@@ -193,6 +193,14 @@ if selected_tab == "About":
         cols[i].metric(label=cat, value=counts.get(cat, 0))
 
     st.markdown("---")
+
+    # ADD CREATIVE COMMONS LICENSE INFO HERE
+    st.markdown("""
+    <p style='text-align:center; font-size:12px; color:gray;'>
+    Licensed under the <a href='https://creativecommons.org/licenses/by-nc/4.0/' target='_blank'>Creative Commons BY-NC 4.0 License</a>.
+    </p>
+    """, unsafe_allow_html=True)
+
     st.markdown("""
     <p style='text-align:center; font-size:12px; color:gray;'>
     Developed by Shubh | 

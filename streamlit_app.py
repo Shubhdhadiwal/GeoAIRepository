@@ -52,6 +52,31 @@ if st.sidebar.button("Logout"):
 
 st.sidebar.title(f"Welcome, {st.session_state['username']}!")
 
+GITHUB_RAW_URL = "https://github.com/Shubhdhadiwal/GeoAIRepository/raw/main/Geospatial%20Data%20Repository%20(2).xlsx"
+
+@st.cache_data(show_spinner=False)
+def load_data(sheet_name):
+    try:
+        # Load Excel directly from GitHub raw URL
+        df = pd.read_excel(GITHUB_RAW_URL, sheet_name=sheet_name)
+        
+        # Use first row as header
+        df.columns = df.iloc[0]  
+        
+        # Remove the header row from data
+        df = df[1:]  
+        
+        # Drop rows where first column is empty
+        df = df.dropna(subset=[df.columns[0]])  
+        
+        # Remove any unnamed columns
+        df = df.loc[:, ~df.columns.str.contains("^Unnamed")]  
+        
+        return df
+    except Exception as e:
+        st.error(f"Error loading sheet '{sheet_name}': {e}")
+        return pd.DataFrame()  # return empty DataFrame on error
+
 sheet_options = {
     "About": "About",
     "Data Sources": "Data Sources",

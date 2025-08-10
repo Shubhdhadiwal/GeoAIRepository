@@ -1,29 +1,33 @@
 import streamlit as st
 import pandas as pd
+import altair as alt
 import re
 import hashlib
 import openai
 
-# ====== CONFIGURE PAGE ====== #
+# ========== CONFIG ==========
 st.set_page_config(page_title="GeoAI Repository", layout="wide")
 
-# ====== GITHUB RAW EXCEL URL ====== #
+# Secure API key
+openai.api_key = st.secrets["OPENAI_API_KEY"]
+
+# GitHub raw Excel file URL
 GITHUB_RAW_URL = "https://github.com/Shubhdhadiwal/GeoAIRepository/raw/main/Geospatial%20Data%20Repository%20(2).xlsx"
 
-# ====== PASSWORD HASHING ====== #
+# Utility to hash password string
 def hash_password(password):
     return hashlib.sha256(password.encode()).hexdigest()
 
+# Store username and hashed password
 USER_CREDENTIALS = {
     "Shubh4016": hash_password("Shubh9834421314")
 }
 
-# ====== AUTH STATE ====== #
 if 'authenticated' not in st.session_state:
     st.session_state['authenticated'] = False
     st.session_state['username'] = None
 
-# ====== LOGIN ====== #
+# Login function
 def login():
     st.title("🔐 Login to GeoAI Repository")
     username = st.text_input("Username", key="username_input")
@@ -38,17 +42,19 @@ def login():
         else:
             st.error("Invalid username or password")
 
+# Show login if not authenticated
 if not st.session_state['authenticated']:
     login()
     st.stop()
 
+# Logout button
 if st.sidebar.button("Logout"):
     st.session_state['authenticated'] = False
     st.session_state['username'] = None
 
 st.sidebar.title(f"Welcome, {st.session_state['username']}!")
 
-# ====== SIDEBAR OPTIONS ====== #
+# ====== Sidebar Navigation ======
 sheet_options = {
     "About": "About",
     "Data Sources": "Data Sources",
@@ -58,15 +64,14 @@ sheet_options = {
     "Courses": "Courses",
     "Submit New Resource": "Submit New Resource",
     "Favorites": "Favorites",
-    "FAQ": "FAQ",
-    "GeoAI Chat": "GeoAI Chat"
+    "FAQ": "FAQ"
 }
 
-# ====== LOAD DATA ====== #
+@st.cache_data(show_spinner=False)
 def load_data(sheet_name):
     try:
         df = pd.read_excel(GITHUB_RAW_URL, sheet_name=sheet_name)
-        df.columns = df.iloc[0]
+        df.columns = df.iloc[0]  # Use first row as header
         df = df[1:]
         df = df.dropna(subset=[df.columns[0]])
         df = df.loc[:, ~df.columns.str.contains("^Unnamed")]
@@ -82,19 +87,38 @@ def load_data(sheet_name):
         st.error(f"Error loading sheet '{sheet_name}': {e}")
         return pd.DataFrame()
 
-# ====== FAVORITES ====== #
 if "favorites" not in st.session_state:
     st.session_state.favorites = {}
 
+st.sidebar.header("🧭 GeoAI Repository")
 selected_tab = st.sidebar.radio("Select Section", list(sheet_options.keys()))
+
+# ========== AI Generator in Sidebar ==========
+st.sidebar.markdown("---")
+st.sidebar.subheader("🤖 AI Generator")
+ai_prompt = st.sidebar.text_area("Enter your prompt:", "write a haiku about AI")
+if st.sidebar.button("Generate with AI"):
+    with st.spinner("Generating AI response..."):
+        try:
+            response = openai.responses.create(
+                model="gpt-4o-mini",
+                input=ai_prompt,
+                store=True
+            )
+            st.sidebar.success("AI Response:")
+            st.sidebar.write(response.output_text)
+        except Exception as e:
+            st.sidebar.error(f"Error: {e}")
+
 st.sidebar.markdown("---")
 st.sidebar.markdown("© 2025 GeoAI Repository")
 
-# ====== ABOUT ====== #
+# ======== About Page ========
 if selected_tab == "About":
     st.title("📘 About GeoAI Repository")
     st.markdown("""
-    The **GeoAI Repository** is a free and open resource hub for students, researchers, and professionals.
+    The **GeoAI Repository** is a free and open resource hub for students, researchers, and professionals 
+    working in geospatial analytics, machine learning, and urban/climate planning.
     """)
     st.info("""
     - 🌐 Public geospatial datasets  
@@ -111,16 +135,24 @@ if selected_tab == "About":
     cols = st.columns(len(categories_to_check))
     for i, cat in enumerate(categories_to_check):
         cols[i].metric(label=cat, value=counts.get(cat, 0))
+    st.markdown("---")
+    st.markdown("""
+    <p style='text-align:center; font-size:12px; color:gray;'>
+    Developed by Shubh | 
+    <a href='https://www.linkedin.com/in/shubh-dhadiwal/' target='_blank'>LinkedIn</a>
+    </p>
+    """, unsafe_allow_html=True)
     st.stop()
 
-# ====== SUBMIT NEW ====== #
+# ======== Submit Page ========
 if selected_tab == "Submit New Resource":
     st.title("📤 Submit a New Resource")
+    st.markdown("Help us grow this repository by contributing useful links and resources.")
     google_form_url = "https://forms.gle/FZZpvr4xQyon5nDs6"
     st.markdown(f"You can submit your resource using [this Google Form]({google_form_url}).")
     st.stop()
 
-# ====== FAQ ====== #
+# ======== FAQ Page ========
 if selected_tab == "FAQ":
     st.title("❓ Frequently Asked Questions")
     faqs = {
@@ -135,39 +167,7 @@ if selected_tab == "FAQ":
             st.write(answer)
     st.stop()
 
-# ====== GEOAI CHAT (OPENAI INTEGRATION) ====== #
-if selected_tab == "GeoAI Chat":
-    st.title("🤖 GeoAI Chat Assistant")
-    st.markdown("Ask any geospatial or AI-related question.")
-
-    openai_api_key = st.text_input("Enter your OpenAI API key", type="password")
-
-    if "chat_history" not in st.session_state:
-        st.session_state.chat_history = []
-
-    user_input = st.text_area("Your question:")
-    if st.button("Send") and user_input and openai_api_key:
-        openai.api_key = openai_api_key
-        try:
-            response = openai.ChatCompletion.create(
-                model="gpt-4o-mini",
-                messages=[
-                    {"role": "system", "content": "You are a helpful assistant for geospatial and AI questions."},
-                    {"role": "user", "content": user_input}
-                ]
-            )
-            answer = response.choices[0].message["content"]
-            st.session_state.chat_history.append(("You", user_input))
-            st.session_state.chat_history.append(("GeoAI", answer))
-        except Exception as e:
-            st.error(f"Error: {e}")
-
-    for role, msg in st.session_state.chat_history:
-        st.markdown(f"**{role}:** {msg}")
-
-    st.stop()
-
-# ====== TITLE MAP ====== #
+# ====== Title Mapping ======
 title_map = {
     "Data Sources": "Data Source",
     "Tools": "Tools",
@@ -177,7 +177,7 @@ title_map = {
     "Favorites": "Title"
 }
 
-# ====== DATA LOADING FOR TABS ====== #
+# ====== Load Data ======
 if selected_tab != "Favorites":
     with st.spinner(f"Loading {selected_tab} data..."):
         df = load_data(sheet_options[selected_tab])
@@ -189,20 +189,25 @@ else:
             continue
         fav_rows = df_cat.loc[df_cat.index.isin(items)].copy()
         fav_rows["Category"] = key
-        fav_rows["Fav_Title"] = fav_rows[title_map.get(key, df_cat.columns[0])]
+        title_col_fav = title_map.get(key, df_cat.columns[0])
+        fav_rows["Fav_Title"] = fav_rows[title_col_fav]
         all_fav_items.append(fav_rows)
-    df = pd.concat(all_fav_items) if all_fav_items else pd.DataFrame()
+    if all_fav_items:
+        df = pd.concat(all_fav_items)
+    else:
+        df = pd.DataFrame()
 
+# ====== Title Column ======
 if selected_tab == "Favorites":
     title_col = "Fav_Title"
 else:
     title_col = title_map.get(selected_tab, df.columns[0] if not df.empty else None)
 
-# ====== SEARCH & SORT ====== #
+# ====== Search & Sort ======
 search_term = st.sidebar.text_input("🔍 Search")
 sort_order = st.sidebar.selectbox("Sort by Title", ["Ascending", "Descending"])
 
-if selected_tab not in ["Favorites", "About", "Submit New Resource", "FAQ", "GeoAI Chat"]:
+if selected_tab not in ["Favorites", "About", "Submit New Resource", "FAQ"]:
     if search_term:
         df = df[df.apply(lambda row: row.astype(str).str.contains(search_term, case=False, na=False).any(), axis=1)]
     if title_col in df.columns:
@@ -213,6 +218,7 @@ if selected_tab == "Favorites":
         st.session_state.favorites = {}
         st.experimental_rerun()
 
+# ====== Main Content ======
 st.title(f"🌍 GeoAI Repository – {selected_tab}")
 
 if df.empty:
@@ -234,21 +240,29 @@ link_columns_map = {
 
 possible_links = link_columns_map.get(selected_tab, ["Links", "Link", "Link to the codes", "Tool Link", "Course Link", "Tutorial Link"])
 
-# ====== SEARCH HIGHLIGHT ====== #
 def highlight_search(text, term):
     if not term:
         return text
     regex = re.compile(re.escape(term), re.IGNORECASE)
     return regex.sub(lambda match: f"**:yellow[{match.group(0)}]**", str(text))
 
-# ====== DISPLAY RESOURCES ====== #
 for idx, row in df.iterrows():
-    resource_title = row.get(title_col) or f"Resource-{idx+1}"
+    resource_title = row.get(title_col)
+    if not resource_title or str(resource_title).strip() == "":
+        resource_title = f"Resource-{idx+1}"
+    
     displayed_title = highlight_search(resource_title, search_term)
 
-    links = [(col, str(row[col]).strip()) for col in possible_links if col in df.columns and pd.notna(row.get(col))]
-
-    category_key = selected_tab if selected_tab != "Favorites" else row.get("Category")
+    links = []
+    for col in possible_links:
+        if col in df.columns and pd.notna(row.get(col)):
+            val = str(row[col]).strip()
+            if val.lower().startswith(("http://", "https://", "www.")):
+                links.append((col, val))
+    
+    category_key = selected_tab
+    if selected_tab == "Favorites" and "Category" in row:
+        category_key = row["Category"]
     is_fav = st.session_state.favorites.get(category_key, [])
     checked = idx in is_fav
 
@@ -276,8 +290,9 @@ for idx, row in df.iterrows():
         with compact_col1:
             st.markdown(f"🔹 {displayed_title}")
         with compact_col2:
-            for link_name, link_url in links:
-                st.markdown(f"[🔗 {link_name}]({link_url})", unsafe_allow_html=True)
+            if links:
+                for link_name, link_url in links:
+                    st.markdown(f"[🔗 {link_name}]({link_url})", unsafe_allow_html=True)
         with compact_col3:
             fav_checkbox = st.checkbox("⭐", value=checked, key=f"compact_{category_key}_{idx}")
             if fav_checkbox and idx not in st.session_state.favorites.get(category_key, []):
@@ -285,7 +300,6 @@ for idx, row in df.iterrows():
             elif not fav_checkbox and idx in st.session_state.favorites.get(category_key, []):
                 st.session_state.favorites[category_key].remove(idx)
 
-# ====== FOOTER ====== #
 st.markdown("<hr style='border:1px solid #ddd'/>", unsafe_allow_html=True)
 st.caption("📘 Powered by Streamlit | © 2025 GeoAI Repository")
 st.markdown("""

@@ -91,23 +91,16 @@ selected_tab = st.sidebar.radio("Select Section", list(sheet_options.keys()))
 
 st.sidebar.markdown("---")
 st.sidebar.markdown("© 2025 GeoAI Repository")
+import streamlit as st
 
-cc_logo_path = "/mnt/data/0f49f8ac-02f7-4aa1-931b-d2b02ece4c5c.png"
+st.sidebar.markdown("---")
+st.sidebar.markdown("© 2025 GeoAI Repository")
 
-# Read image and encode to base64
-with open(cc_logo_path, "rb") as img_file:
-    cc_logo_base64 = base64.b64encode(img_file.read()).decode()
-
-# Add CC license with logo and link in sidebar below copyright
+# Simple CC license text with link
 st.sidebar.markdown(
-    f"""
-    <p style='font-size:12px; color:gray;'>
-        Licensed under&nbsp;
-        <a href='https://creativecommons.org/licenses/by-nc/4.0/' target='_blank'>
-            Creative Commons BY-NC 4.0
-            <img src='data:image/png;base64,{cc_logo_base64}' alt='Creative Commons License' style='vertical-align:middle; height:20px;'/>
-        </a>
-    </p>
+    """
+    Created under the  
+    [Creative Commons Attribution-NonCommercial 4.0 International License (CC BY-NC 4.0)](https://creativecommons.org/licenses/by-nc/4.0/)
     """,
     unsafe_allow_html=True
 )

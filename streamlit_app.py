@@ -66,6 +66,7 @@ sheet_options = {
     "Submit New Resource": "Submit New Resource",
     "Favorites": "Favorites",
     "FAQ": "FAQ"
+    "Google Open Building Dashboard": "Dashboard",
 }
 
 def load_data(sheet_name):
@@ -193,6 +194,20 @@ if selected_tab == "Favorites":
     if st.sidebar.button("Clear All Favorites"):
         st.session_state.favorites = {}
         st.experimental_rerun()
+
+if selected_tab == "Google Open Building Dashboard":
+    st.title("🏙️ Google Open Building Dashboard")
+    st.markdown(
+        """
+        <iframe 
+            src="https://ee-shubhdhadiwal.projects.earthengine.app/view/geoai" 
+            width="100%" height="800" frameborder="0" 
+            allowfullscreen>
+        </iframe>
+        """,
+        unsafe_allow_html=True
+    )
+    st.stop()
 
 st.title(f"🌍 GeoAI Repository – {selected_tab}")
 

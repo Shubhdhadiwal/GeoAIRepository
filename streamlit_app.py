@@ -234,58 +234,7 @@ if selected_tab == "Dashboards":
             unsafe_allow_html=True,
         )
 
-
-    # New World Bank Climate Anomaly section
-    with st.expander("▶️ World Bank Climate Anomaly - USA Historical Data"):
-        st.markdown("""
-        This dataset shows the historical annual temperature anomaly (1995-2014 median historical ensemble mean) for the USA, sourced from the World Bank Climate Change Knowledge Portal (CCKP). 
-        It provides valuable insights for climate change monitoring and impact assessments.
-
-        The data is fetched dynamically from the World Bank API and visualized here.
-        """)
-
-        st.markdown("🔗 [World Bank CCKP API Documentation](https://climateknowledgeportal.worldbank.org/)")
-
-        url = "https://cckpapi.worldbank.org/cckp/v1/cmip6-x0.25_climatology_tas,tasmin,tasmax_anomaly_annual_1995-2014_median_historical_ensemble_all_mean/USA.2593214?_format=json"
-
-        try:
-            import requests
-            import pandas as pd
-            import altair as alt
-
-            response = requests.get(url)
-            response.raise_for_status()
-            data_json = response.json()
-
-            records = data_json.get("data", data_json.get("values", []))
-
-            if records:
-                df = pd.DataFrame(records)
-
-                # Show raw preview
-                st.write("Data Preview:")
-                st.write(df.head())
-
-                if "year" in df.columns and "value" in df.columns:
-                    chart = alt.Chart(df).mark_line(point=True).encode(
-                        x='year:O',
-                        y='value:Q',
-                        tooltip=['year', 'value']
-                    ).properties(
-                        width=700,
-                        height=400,
-                        title="Annual Temperature Anomaly (°C) for USA (1995-2014 median historical ensemble mean)"
-                    )
-                    st.altair_chart(chart, use_container_width=True)
-                else:
-                    st.warning("Expected columns 'year' and 'value' not found in the dataset.")
-                    st.write(df)
-            else:
-                st.error("No data found in API response.")
-        except Exception as e:
-            st.error(f"Failed to load or process data: {e}")
-
-    st.stop()
+   st.stop()
 
    # For other tabs with data
 

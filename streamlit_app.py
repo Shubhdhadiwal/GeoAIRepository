@@ -57,8 +57,8 @@ sheet_options = {
     "Courses": "Courses",
     "Submit New Resource": "Submit New Resource",
     "Favorites": "Favorites",
-    "FAQ": "FAQ",
-    "Dashboards": "Dashboards"  # note: no sheet actually called "Dashboards"
+    "Dashboards": "Dashboards",  # note: no sheet actually called "Dashboards"
+    "FAQ": "FAQ"
 }
 
 @st.cache_data(show_spinner=False)
@@ -222,6 +222,7 @@ if selected_tab == "FAQ":
         "How can I contribute resources?": "Use the 'Submit New Resource' tab to add new links and resources.",
         "Are the datasets free to use?": "Yes, all datasets listed here are publicly accessible and free.",
         "Can I save favorite resources?": "Yes, use the 'Favorites' tab to view and manage your favorite items.",
+        "What are the Dashboards?": "The Dashboards section provides interactive visualization tools such as the Google Open Building and Local Climate Zones dashboards. Check them out for detailed geospatial insights!",
         "Who developed this repository?": "This repository is developed and maintained by Shubh Dhadiwal."
     }
     for question, answer in faqs.items():

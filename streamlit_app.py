@@ -214,17 +214,13 @@ if selected_tab == "Dashboards":
             unsafe_allow_html=True
         )
 
-        st.markdown("---")
-
-        code_editor_url = "https://code.earthengine.google.com/272ebbc2fd09e86a3b256c9c2f259b9f?hideCode=true"
-        st.info(
-            "To view or download the data, open the Earth Engine Code Editor from the link below:"
-        )
         st.markdown(
-            f"[🚀 Open Earth Engine Code Editor here]({code_editor_url})",
-            unsafe_allow_html=True,
-        )
-
+    """
+    Dashboard created by Shubh using Google Earth Engine  
+    [🚀 Open Earth Engine Code Editor here](https://code.earthengine.google.com/272ebbc2fd09e86a3b256c9c2f259b9f?hideCode=true)
+    """,
+    unsafe_allow_html=True,
+)
     st.stop()
 
    # For other tabs with data

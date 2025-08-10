@@ -1,5 +1,7 @@
 import streamlit as st
+import requests
 import pandas as pd
+import altair as alt
 import re
 import hashlib
 import os
@@ -9,13 +11,14 @@ from datetime import datetime
 # ===== PAGE CONFIG =====
 st.set_page_config(page_title="GeoAI Repository", layout="wide")
 
-# Use GitHub raw Excel URL (not local file)
+# GitHub raw Excel file URL
 GITHUB_RAW_URL = "https://github.com/Shubhdhadiwal/GeoAIRepository/raw/main/Geospatial%20Data%20Repository%20(2).xlsx"
 
 # Utility to hash password string
 def hash_password(password):
     return hashlib.sha256(password.encode()).hexdigest()
 
+# Store username and hashed password
 USER_CREDENTIALS = {
     "Shubh4016": hash_password("Shubh9834421314")
 }
@@ -45,7 +48,6 @@ if not st.session_state['authenticated']:
 if st.sidebar.button("Logout"):
     st.session_state['authenticated'] = False
     st.session_state['username'] = None
-    st.experimental_rerun()
 
 st.sidebar.title(f"Welcome, {st.session_state['username']}!")
 
@@ -54,7 +56,7 @@ sheet_options = {
     "Data Sources": "Data Sources",
     "Tools": "Tools",
     "Free Tutorials": "Free Tutorials",
-    "Python Codes (GEE)": "Python Codes (GEE)",  # FIXED key name here
+    "Google Earth EnginePython Codes": "Python Codes (GEE)",
     "Courses": "Courses",
     "Submit New Resource": "Submit New Resource",
     "Favorites": "Favorites",
@@ -66,64 +68,28 @@ sheet_options = {
 @st.cache_data(show_spinner=False)
 def load_data(sheet_name):
     try:
-        # Load Excel from GitHub raw URL, header=0 means first row is header automatically
-        df = pd.read_excel(GITHUB_RAW_URL, sheet_name=sheet_name, header=0)
-        # Drop empty rows where first column is NaN
-        df = df.dropna(subset=[df.columns[0]])
-        # Drop unnamed columns automatically added by pandas for empty cols
-        df = df.loc[:, ~df.columns.str.contains("^Unnamed")]
+        df = pd.read_excel("Geospatial Data Repository (2).xlsx", sheet_name=sheet_name)
+        df.columns = df.iloc[0]  # Use first row as header
+        df = df[1:]  # Skip header row from data
+        df = df.dropna(subset=[df.columns[0]])  # Ensure first column is not empty
+        df = df.loc[:, ~df.columns.str.contains("^Unnamed")]  # Drop unnamed columns
 
         # Fix: Rename any "Column X" column to "Link" if sheet is Tools
         if sheet_name == "Tools":
-            new_columns = {col: "Link" for col in df.columns if isinstance(col, str) and col.startswith("Column")}
+            # Find columns named like "Column 10", "Column 9", etc. and rename to "Link"
+            new_columns = {}
+            for col in df.columns:
+                if isinstance(col, str) and col.startswith("Column"):
+                    new_columns[col] = "Link"
             if new_columns:
                 df = df.rename(columns=new_columns)
 
         return df
     except Exception as e:
         st.error(f"Error loading sheet '{sheet_name}': {e}")
-        return pd.DataFrame()
-
+        return pd.DataFrame()  # return empty dataframe on error
 if "favorites" not in st.session_state:
     st.session_state.favorites = {}
-
-# Visitor counter functions (same as your code)
-COUNTER_FILE = "visitor_count.json"
-
-def load_counter():
-    if not os.path.exists(COUNTER_FILE):
-        return {"total": 0, "daily": {}}
-    with open(COUNTER_FILE, "r") as f:
-        return json.load(f)
-
-def save_counter(counter_data):
-    with open(COUNTER_FILE, "w") as f:
-        json.dump(counter_data, f)
-
-def increment_visitor_count():
-    today = datetime.now().strftime("%Y-%m-%d")
-    counter = load_counter()
-    counter["total"] = counter.get("total", 0) + 1
-    counter["daily"][today] = counter["daily"].get(today, 0) + 1
-    save_counter(counter)
-    return counter["total"], counter["daily"][today]
-
-def get_visitor_counts():
-    today = datetime.now().strftime("%Y-%m-%d")
-    counter = load_counter()
-    total = counter.get("total", 0)
-    today_count = counter["daily"].get(today, 0)
-    return total, today_count
-
-if st.session_state.get('authenticated', False):
-    if 'visitor_incremented' not in st.session_state:
-        total_visitors, today_visitors = increment_visitor_count()
-        st.session_state.visitor_incremented = True
-    else:
-        total_visitors, today_visitors = get_visitor_counts()
-
-    st.sidebar.markdown(f"👥 **Total Visitors:** {total_visitors}")
-    st.sidebar.markdown(f"📅 **Today's Visitors:** {today_visitors}")
 
 st.sidebar.header("🧭 GeoAI Repository")
 selected_tab = st.sidebar.radio("Select Section", list(sheet_options.keys()))
@@ -139,169 +105,6 @@ st.sidebar.markdown(
     """,
     unsafe_allow_html=True
 )
-
-# Static tabs handling (About, FAQ, Submit New Resource, Dashboards) 
-# ... (Use your existing code unchanged here)
-
-if selected_tab == "About":
-    # Your About tab code here...
-    st.title("📘 About GeoAI Repository")
-    st.markdown(
-        """
-        The **GeoAI Repository** is a free and open resource hub for students, researchers, and professionals 
-        working in geospatial analytics, machine learning, and urban/climate planning.
-        """
-    )
-    # (rest unchanged)
-    st.stop()
-
-# Other static tabs like Submit New Resource, FAQ, Dashboards - keep your existing code.
-
-# For data tabs, load data:
-title_map = {
-    "Data Sources": "Data Source",
-    "Tools": "Tools",
-    "Courses": "Tutorials",
-    "Python Codes (GEE)": "Title",
-    "Free Tutorials": "Tutorials",
-    "Favorites": "Title"
-}
-
-if selected_tab != "Favorites" and selected_tab not in ["About", "Submit New Resource", "FAQ", "Dashboards"]:
-    with st.spinner(f"Loading {selected_tab} data..."):
-        df = load_data(sheet_options[selected_tab])
-else:
-    df = pd.DataFrame()  # default empty if special tabs
-
-# Favorites loading
-if selected_tab == "Favorites":
-    all_fav_items = []
-    for key, items in st.session_state.favorites.items():
-        df_cat = load_data(sheet_options.get(key, key))
-        if df_cat.empty:
-            continue
-        fav_rows = df_cat.loc[df_cat.index.isin(items)].copy()
-        fav_rows["Category"] = key
-        title_col_fav = title_map.get(key, df_cat.columns[0])
-        fav_rows["Fav_Title"] = fav_rows[title_col_fav]
-        all_fav_items.append(fav_rows)
-    if all_fav_items:
-        df = pd.concat(all_fav_items)
-    else:
-        df = pd.DataFrame()
-
-# Determine title column
-if selected_tab == "Favorites":
-    title_col = "Fav_Title"
-else:
-    title_col = title_map.get(selected_tab, df.columns[0] if not df.empty else None)
-
-# Search and sorting
-search_term = st.sidebar.text_input("🔍 Search")
-sort_order = st.sidebar.selectbox("Sort by Title", ["Ascending", "Descending"])
-
-if selected_tab not in ["Favorites", "About", "Submit New Resource", "FAQ", "Dashboards"] and not df.empty:
-    if search_term:
-        df = df[df.apply(lambda row: row.astype(str).str.contains(search_term, case=False, na=False).any(), axis=1)]
-    if title_col in df.columns:
-        df = df.sort_values(by=title_col, ascending=(sort_order == "Ascending"))
-
-if selected_tab == "Favorites":
-    if st.sidebar.button("Clear All Favorites"):
-        st.session_state.favorites = {}
-        st.experimental_rerun()
-
-st.title(f"🌍 GeoAI Repository – {selected_tab}")
-
-if df.empty and selected_tab not in ["About", "Submit New Resource", "FAQ", "Dashboards"]:
-    st.info("No resources to display.")
-    st.stop()
-
-# View mode selection
-view_mode = st.sidebar.radio("View Mode", ["Detailed", "Compact"])
-
-exclude_cols = [title_col, "Description", "Purpose", "S.No", "Category"]
-
-link_columns_map = {
-    "Data Sources": ["Links", "Link"],
-    "Tools": ["Tool Link", "Link", "Links"],
-    "Courses": ["Course Link", "Link", "Links"],
-    "Free Tutorials": ["Link", "Links", "Tutorial Link"],
-    "Python Codes (GEE)": ["Link", "Links", "Link to the codes"],
-    "Favorites": ["Link", "Links", "Link to the codes", "Tool Link", "Course Link", "Tutorial Link"]
-}
-
-possible_links = link_columns_map.get(selected_tab, ["Links", "Link", "Link to the codes", "Tool Link", "Course Link", "Tutorial Link"])
-
-def highlight_search(text, term):
-    if not term:
-        return text
-    regex = re.compile(re.escape(term), re.IGNORECASE)
-    return regex.sub(lambda match: f"**:yellow[{match.group(0)}]**", str(text))
-
-for idx, row in df.iterrows():
-    resource_title = row.get(title_col)
-    if not resource_title or str(resource_title).strip() == "":
-        resource_title = f"Resource-{idx+1}"
-    displayed_title = highlight_search(resource_title, search_term)
-
-    links = []
-    for col in possible_links:
-        if col in df.columns and pd.notna(row.get(col)):
-            val = str(row[col]).strip()
-            if val.lower().startswith(("http://", "https://", "www.")):
-                links.append((col, val))
-
-    category_key = selected_tab
-    if selected_tab == "Favorites" and "Category" in row:
-        category_key = row["Category"]
-    is_fav = st.session_state.favorites.get(category_key, [])
-    checked = idx in is_fav
-
-    if view_mode == "Detailed":
-        with st.expander(f"🔹 {displayed_title}", expanded=False):
-            col1, col2 = st.columns([0.9, 0.1])
-            with col2:
-                fav_checkbox = st.checkbox("⭐", value=checked, key=f"{category_key}_{idx}")
-            with col1:
-                if "Description" in df.columns and pd.notna(row.get("Description")):
-                    st.write(highlight_search(row["Description"], search_term))
-                for link_name, link_url in links:
-                    st.markdown(f"[🔗 {link_name}]({link_url})", unsafe_allow_html=True)
-                if "Purpose" in df.columns and pd.notna(row.get("Purpose")):
-                    st.markdown(f"**🎯 Purpose:** {highlight_search(row['Purpose'], search_term)}")
-                for col in df.columns:
-                    if col not in exclude_cols and col not in possible_links and pd.notna(row.get(col)):
-                        st.markdown(f"**{col}:** {highlight_search(row[col], search_term)}")
-            if fav_checkbox and idx not in st.session_state.favorites.get(category_key, []):
-                st.session_state.favorites.setdefault(category_key, []).append(idx)
-            elif not fav_checkbox and idx in st.session_state.favorites.get(category_key, []):
-                st.session_state.favorites[category_key].remove(idx)
-    else:
-        compact_col1, compact_col2, compact_col3 = st.columns([6, 3, 1])
-        with compact_col1:
-            st.markdown(f"🔹 {displayed_title}")
-        with compact_col2:
-            if links:
-                for link_name, link_url in links:
-                    st.markdown(f"[🔗 {link_name}]({link_url})", unsafe_allow_html=True)
-        with compact_col3:
-            fav_checkbox = st.checkbox("⭐", value=checked, key=f"compact_{category_key}_{idx}")
-            if fav_checkbox and idx not in st.session_state.favorites.get(category_key, []):
-                st.session_state.favorites.setdefault(category_key, []).append(idx)
-            elif not fav_checkbox and idx in st.session_state.favorites.get(category_key, []):
-                st.session_state.favorites[category_key].remove(idx)
-
-st.markdown("""
-<p style='text-align:center; font-size:12px; color:gray;'>
-Developed by Shubh | 
-<a href='https://www.linkedin.com/in/shubh-dhadiwal/' target='_blank'>LinkedIn</a> | 
-<a href='https://creativecommons.org/licenses/by-nc/4.0/' target='_blank'>
-  <img src='https://mirrors.creativecommons.org/presskit/icons/by-nc/88x31.png' alt='Creative Commons License' style='vertical-align:middle;'/>
-  Creative Commons BY-NC 4.0 License
-</a>
-</p>
-""", unsafe_allow_html=True)
 
 # ---- Visitor counter functions ----
 COUNTER_FILE = "visitor_count.json"
@@ -444,7 +247,7 @@ with st.expander("▶️ Local Climate Zones (LCZ) Dashboard"):
     st.markdown("""
     Local Climate Zones (LCZs), introduced in 2012, provide a standardized classification for urban and rural landscapes at a micro-scale. This classification captures detailed land-cover and physical properties critical for understanding urban climate phenomena such as urban heat islands.
 
-    The global LCZ map shown here has a spatial resolution of 100 meters, representing the nominal year 2018. It is derived from multiple Earth observation datasets combined with expert LCZ class labels. The recommended band for most users is **`LCZ_Filter`**, which provides the primary classification. Another band, **`LCZ`**, is available but mainly used internally for calculating the probability layer.
+    The global LCZ map shown here has a spatial resolution of 100 meters, representing the nominal year 2018. It is derived from multiple Earth observation datasets combined with expert LCZ class labels. The recommended band for most users is **LCZ_Filter**, which provides the primary classification. Another band, **LCZ**, is available but mainly used internally for calculating the probability layer.
 
     The LCZ scheme classifies landscapes into 17 classes: 10 representing built environments (urban forms) and 7 representing natural land-cover types. Each LCZ type includes generic numerical descriptions of urban canopy parameters, making this dataset valuable for urban climate modeling and impact assessment.
     """)
@@ -617,4 +420,3 @@ Developed by Shubh |
 </a>
 </p>
 """, unsafe_allow_html=True)
-

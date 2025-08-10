@@ -62,11 +62,10 @@ sheet_options = {
     "Python Codes (GEE)": "Google Earth EnginePython Codes",
     "Courses": "Courses",
     "Submit New Resource": "Submit New Resource",
-    "Favorites": "Favorites",  # Added Favorites tab
-    "FAQ": "FAQ"               # Added FAQ tab
-    "Dashboards: "Dashboards"
+    "Favorites": "Favorites",
+    "FAQ": "FAQ",
+    "Dashboards": "Dashboards"
 }
-
 # ===== LOAD DATA ===== #
 @st.cache_data(show_spinner=False)
 def load_data(sheet_name):

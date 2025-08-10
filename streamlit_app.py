@@ -433,6 +433,65 @@ if selected_tab == "Favorites":
         st.session_state.favorites = {}
         st.experimental_rerun()
 
+if selected_tab == "Open Buildings Viewer":
+    import ee
+    import geemap.foliumap as geemap
+
+    # Initialize Earth Engine
+    try:
+        ee.Initialize()
+    except Exception:
+        ee.Authenticate()
+        ee.Initialize()
+
+    st.title("🏢 Google Open Buildings Viewer")
+
+    st.markdown("Enter bounding box coordinates (latitude and longitude):")
+
+    # Sidebar inputs for bounding box
+    min_lat = st.sidebar.number_input("Min Latitude", value=19.0, format="%.6f")
+    max_lat = st.sidebar.number_input("Max Latitude", value=19.5, format="%.6f")
+    min_lon = st.sidebar.number_input("Min Longitude", value=72.7, format="%.6f")
+    max_lon = st.sidebar.number_input("Max Longitude", value=73.2, format="%.6f")
+
+    # Validate bbox inputs
+    if min_lat >= max_lat or min_lon >= max_lon:
+        st.error("Min latitude and longitude must be less than max values.")
+        st.stop()
+
+    bbox = ee.Geometry.Rectangle([min_lon, min_lat, max_lon, max_lat])
+
+    # Load Open Buildings dataset
+    buildings = ee.FeatureCollection('GOOGLE/Research/open-buildings/v3/polygons')
+
+    # Filter buildings in bbox
+    filtered_buildings = buildings.filterBounds(bbox)
+
+    # Center map at bbox center
+    center_lat = (min_lat + max_lat) / 2
+    center_lon = (min_lon + max_lon) / 2
+
+    # Create map
+    m = geemap.Map(center=[center_lat, center_lon], zoom=13)
+
+    # Style buildings layer
+    style_params = {
+        "color": "red",
+        "fillColor": "00000000",
+        "width": 1,
+    }
+
+    # Add buildings and bbox layers
+    m.addLayer(filtered_buildings.style(**style_params), {}, "Buildings")
+    m.addLayer(bbox, {"color": "blue"}, "Bounding Box")
+
+    # Render map in Streamlit
+    m.to_streamlit(height=600)
+
+    st.markdown("Buildings within your bounding box are shown on the map.")
+    st.stop()
+
+
 st.title(f"🌍 GeoAI Repository – {selected_tab}")
 
 if df.empty:

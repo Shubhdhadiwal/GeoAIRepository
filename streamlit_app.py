@@ -69,7 +69,6 @@ if not st.session_state['authenticated']:
 if st.sidebar.button("Logout"):
     st.session_state['authenticated'] = False
     st.session_state['username'] = None
-    st.experimental_rerun()
 
 st.sidebar.title(f"Welcome, {st.session_state['username']}!")
 

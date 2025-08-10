@@ -174,18 +174,21 @@ if selected_tab == "About":
     - 📘 Free tutorials  
     - 💻 Python codes for Google Earth Engine  
     """)
+
     categories_to_check = ["Data Sources", "Tools", "Courses", "Free Tutorials", "Python Codes (GEE)"]
-counts = {}
-for cat in categories_to_check:
-    df_cat = load_data(sheet_options[cat])
-    counts[cat] = len(df_cat)
+    counts = {}
+    for cat in categories_to_check:
+        df_cat = load_data(sheet_options[cat])
+        counts[cat] = len(df_cat)
 
-st.subheader("📊 Repository Content Overview")
+    st.subheader("📊 Repository Content Overview")
 
-# Show counts as metrics in columns without any selection
-cols = st.columns(len(categories_to_check))
-for i, cat in enumerate(categories_to_check):
-    cols[i].metric(label=cat, value=counts.get(cat, 0))
+    # Show counts as metrics in columns without any selection
+    cols = st.columns(len(categories_to_check))
+    for i, cat in enumerate(categories_to_check):
+        cols[i].metric(label=cat, value=counts.get(cat, 0))
+
+    st.stop()
 
 if selected_tab == "Submit New Resource":
     st.title("📤 Submit a New Resource")

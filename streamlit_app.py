@@ -236,24 +236,6 @@ if selected_tab == "Dashboards":
 )
     st.stop()
 
-if selected_tab == "Dashboards":
-    import requests
-    st.title("Sea Level Global Raw API Response")
-
-    url = "https://d3qt3aobtsas2h.cloudfront.net/edge/ws/search/sealevelgovglobal?type=global"
-
-    try:
-        response = requests.get(url)
-        st.write(f"HTTP Status Code: {response.status_code}")
-
-        text = response.text
-        st.text_area("Raw API Response (first 1000 chars)", text[:1000])
-
-    except Exception as e:
-        st.error(f"Error fetching data: {e}")
-    
-    st.stop()
-
    # For other tabs with data
 
 title_map = {

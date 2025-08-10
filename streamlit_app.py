@@ -64,6 +64,7 @@ sheet_options = {
     "Submit New Resource": "Submit New Resource",
     "Favorites": "Favorites",  # Added Favorites tab
     "FAQ": "FAQ"               # Added FAQ tab
+    "Dashboards: "Dashboards"
 }
 
 # ===== LOAD DATA ===== #

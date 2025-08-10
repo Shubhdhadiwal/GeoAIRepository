@@ -236,67 +236,22 @@ if selected_tab == "Dashboards":
 )
     st.stop()
 
-import streamlit as st
-import requests
-import pandas as pd
-import altair as alt
-
-import streamlit as st
-import requests
-import pandas as pd
-import altair as alt
-
 if selected_tab == "Dashboards":
-    st.title("🌊 Sea Level Global Dashboard")
+    import requests
+    st.title("Sea Level Global Raw API Response")
 
-    with st.expander("▶️ Sea Level Global Dataset Overview"):
-        st.markdown("""
-        The Sea Level Global dataset provides global-scale sea level rise projections and observations, crucial for understanding climate change impacts on coastal regions. 
-        This dataset supports research, policymaking, and urban planning to build resilient coastal infrastructure and adapt to rising seas.
+    url = "https://d3qt3aobtsas2h.cloudfront.net/edge/ws/search/sealevelgovglobal?type=global"
 
-        The dataset is accessible via an API and can be visualized through interactive dashboards.
-        """)
+    try:
+        response = requests.get(url)
+        st.write(f"HTTP Status Code: {response.status_code}")
 
-        st.markdown("🔗 [Dataset API Source](https://d3qt3aobtsas2h.cloudfront.net/edge/ws/search/sealevelgovglobal?type=global)")
+        text = response.text
+        st.text_area("Raw API Response (first 1000 chars)", text[:1000])
 
-        try:
-            response = requests.get("https://d3qt3aobtsas2h.cloudfront.net/edge/ws/search/sealevelgovglobal?type=global")
-            response.raise_for_status()
-            data_json = response.json()
-
-            records = data_json.get("data", [])
-
-            if records:
-                df = pd.DataFrame(records)
-                # Ensure columns for plotting exist:
-                if "year" in df.columns and "sea_level_mm" in df.columns:
-                    chart = alt.Chart(df).mark_line(point=True).encode(
-                        x='year:O',
-                        y='sea_level_mm:Q',
-                        tooltip=['year', 'sea_level_mm']
-                    ).properties(
-                        width=700,
-                        height=400,
-                        title="Global Sea Level Rise Over Years (mm)"
-                    )
-                    st.altair_chart(chart, use_container_width=True)
-                else:
-                    st.write("Expected columns 'year' and 'sea_level_mm' not found in the dataset. Here's the raw data:")
-                    st.write(df)
-            else:
-                st.write("No data found in the API response.")
-        except Exception as e:
-            st.error(f"Failed to load data: {e}")
-
-        st.markdown("---")
-
-        st.markdown(
-            """
-            Dashboard created by Shubh Dhadiwal using the Sea Level Global API data.
-
-            To explore or download raw data, visit the API link above.
-            """
-        )
+    except Exception as e:
+        st.error(f"Error fetching data: {e}")
+    
     st.stop()
 
    # For other tabs with data

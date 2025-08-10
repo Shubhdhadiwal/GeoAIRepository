@@ -187,7 +187,7 @@ if selected_tab == "FAQ":
     st.stop()
 
 if selected_tab == "Dashboards":
-    st.title("🏢 Google Open Buildings")
+    st.title("🏙️Dashboards")
 
     # Clickable expander for the dashboard info and links
     with st.expander("▶️ Google Open Building Dashboard"):

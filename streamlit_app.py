@@ -479,29 +479,33 @@ for idx, row in df.iterrows():
             if val.lower().startswith(("http://", "https://", "www.")):
                 links.append((col, val))
 
-    if view_mode == "Detailed":
-    pass  # TODO: add detailed view code here
-else:
-    # your else code here
+ if view_mode == "Detailed":
+    # Your existing detailed view code here
+    pass  # Replace with your detailed view code
 
-else:  # Compact view
-    compact_col1, compact_col2, compact_col3 = st.columns([6, 3, 1])
-    with compact_col1:
-        st.markdown(f"🔹 {displayed_title}")
-    with compact_col2:
-        if links:
-            for link_name, link_url in links:
-                st.markdown(f"[🔗 {link_name}]({link_url})", unsafe_allow_html=True)
-    with compact_col3:
-        fav_checkbox = st.checkbox(
-            "⭐", 
-            value=idx in st.session_state.favorites.get(category_key, []), 
-            key=f"compact_{category_key}_{idx}"
-        )
-        if fav_checkbox and idx not in st.session_state.favorites.get(category_key, []):
-            st.session_state.favorites.setdefault(category_key, []).append(idx)
-        elif not fav_checkbox and idx in st.session_state.favorites.get(category_key, []):
-            st.session_state.favorites[category_key].remove(idx)
+else:
+    # Only show compact view if NOT Favorites tab
+    if selected_tab != "Favorites":
+        compact_col1, compact_col2, compact_col3 = st.columns([6, 3, 1])
+        with compact_col1:
+            st.markdown(f"🔹 {displayed_title}")
+        with compact_col2:
+            if links:
+                for link_name, link_url in links:
+                    st.markdown(f"[🔗 {link_name}]({link_url})", unsafe_allow_html=True)
+        with compact_col3:
+            fav_checkbox = st.checkbox(
+                "⭐", 
+                value=idx in st.session_state.favorites.get(category_key, []), 
+                key=f"compact_{category_key}_{idx}"
+            )
+            if fav_checkbox and idx not in st.session_state.favorites.get(category_key, []):
+                st.session_state.favorites.setdefault(category_key, []).append(idx)
+            elif not fav_checkbox and idx in st.session_state.favorites.get(category_key, []):
+                st.session_state.favorites[category_key].remove(idx)
+    else:
+        # For Favorites tab, force detailed view or just display nothing in compact mode
+        pass  # Or you can display a message or fallback UI here if you want
 
 st.markdown("""
 <p style='text-align:center; font-size:12px; color:gray;'>

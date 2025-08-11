@@ -250,12 +250,7 @@ if selected_tab == "Dashboards":
             height=900,
             width=1400,
             scrolling=True
-        )
-    
-if selected_tab == "Dashboards":
-    st.title("🌍 Dashboards")
-
-    # Existing expanders...
+        )  
 
     with st.expander("▶️ ArcGIS Living Atlas Land Cover"):
         st.markdown("""

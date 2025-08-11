@@ -362,26 +362,48 @@ if selected_tab == "About":
 
     st.markdown("---")
 
-    # ADD CREATIVE COMMONS LICENSE INFO HERE
-    st.markdown("""
-    <p style='text-align:center; font-size:12px; color:gray;'>
-    Licensed under the <a href='https://creativecommons.org/licenses/by-nc/4.0/' target='_blank'>Creative Commons BY-NC 4.0 License</a>.
-    </p>
-    """, unsafe_allow_html=True)
+   import os
+from datetime import datetime
 
-    st.markdown("""
-    <p style='text-align:center; font-size:12px; color:gray;'>
-    Developed by Shubh | 
-    <a href='https://www.linkedin.com/in/shubh-dhadiwal/' target='_blank'>LinkedIn</a>
-    </p>
-    """, unsafe_allow_html=True)
-    
-    st.markdown("""
+# Set the file path to check last update — update this to your actual data file
+DATA_FILE_PATH = "path_to_your_main_data_file_or_repo_file"  # e.g. "data/mydata.csv"
+
+def get_last_updated_str(file_path):
+    if os.path.exists(file_path):
+        timestamp = os.path.getmtime(file_path)
+        last_updated = datetime.fromtimestamp(timestamp).strftime("%Y-%m-%d %H:%M:%S")
+        return f"GeoAI Repository updated last data: {last_updated}"
+    else:
+        return "GeoAI Repository updated last data: Unknown"
+
+# Footer content
+st.markdown("""
 <p style='text-align:center; font-size:12px; color:gray;'>
-© 2025 GeoAI Repository
+Licensed under the <a href='https://creativecommons.org/licenses/by-nc/4.0/' target='_blank'>Creative Commons BY-NC 4.0 License</a>.
+</p>
 """, unsafe_allow_html=True)
 
-    st.stop()
+st.markdown("""
+<p style='text-align:center; font-size:12px; color:gray;'>
+Developed by Shubh | 
+<a href='https://www.linkedin.com/in/shubh-dhadiwal/' target='_blank'>LinkedIn</a>
+</p>
+""", unsafe_allow_html=True)
+
+st.markdown("""
+<p style='text-align:center; font-size:12px; color:gray; margin-top: 0;'>
+© 2025 GeoAI Repository
+</p>
+""", unsafe_allow_html=True)
+
+last_updated_text = get_last_updated_str(DATA_FILE_PATH)
+st.markdown(f"""
+<p style='text-align:center; font-size:12px; color:gray; margin-top: 0;'>
+{last_updated_text}
+</p>
+""", unsafe_allow_html=True)
+
+st.stop()
 
 if selected_tab == "Submit New Resource":
     st.title("📤 Submit a New Resource")

@@ -352,23 +352,34 @@ if selected_tab == "About":
 
     st.markdown("---")
 
-    # ADD CREATIVE COMMONS LICENSE INFO HERE
-    st.markdown("""
-    <p style='text-align:center; font-size:12px; color:gray;'>
-    Licensed under the <a href='https://creativecommons.org/licenses/by-nc/4.0/' target='_blank'>Creative Commons BY-NC 4.0 License</a>.
-    </p>
-    """, unsafe_allow_html=True)
+    # Manually set last updated date here (YYYY-MM-DD or full datetime string)
+LAST_UPDATED_DATE = "2025-08-11 11:45:00"
 
-    st.markdown("""
-    <p style='text-align:center; font-size:12px; color:gray;'>
-    Developed by Shubh | 
-    <a href='https://www.linkedin.com/in/shubh-dhadiwal/' target='_blank'>LinkedIn</a>
-    </p>
-    """, unsafe_allow_html=True)
-    
-    st.markdown("""
+# Footer content
+st.markdown("""
 <p style='text-align:center; font-size:12px; color:gray;'>
+Licensed under the <a href='https://creativecommons.org/licenses/by-nc/4.0/' target='_blank'>Creative Commons BY-NC 4.0 License</a>.
+</p>
+""", unsafe_allow_html=True)
+
+st.markdown("""
+<p style='text-align:center; font-size:12px; color:gray;'>
+Developed by Shubh | 
+<a href='https://www.linkedin.com/in/shubh-dhadiwal/' target='_blank'>LinkedIn</a>
+</p>
+""", unsafe_allow_html=True)
+
+st.markdown("""
+<p style='text-align:center; font-size:12px; color:gray; margin-top: 0;'>
 © 2025 GeoAI Repository
+</p>
+""", unsafe_allow_html=True)
+
+# Display the manually set last updated date
+st.markdown(f"""
+<p style='text-align:center; font-size:12px; color:gray; margin-top: 0;'>
+Last Updated: {LAST_UPDATED_DATE}
+</p>
 """, unsafe_allow_html=True)
 
     st.stop()

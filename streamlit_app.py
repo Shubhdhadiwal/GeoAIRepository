@@ -352,29 +352,26 @@ if selected_tab == "About":
 
     st.markdown("---")
 
-# ADD CREATIVE COMMONS LICENSE INFO HERE
-st.markdown("""
-<p style='text-align:center; font-size:12px; color:gray;'>
-Licensed under the <a href='https://creativecommons.org/licenses/by-nc/4.0/' target='_blank'>Creative Commons BY-NC 4.0 License</a>.
-</p>
-""", unsafe_allow_html=True)
+    # ADD CREATIVE COMMONS LICENSE INFO HERE
+    st.markdown("""
+    <p style='text-align:center; font-size:12px; color:gray;'>
+    Licensed under the <a href='https://creativecommons.org/licenses/by-nc/4.0/' target='_blank'>Creative Commons BY-NC 4.0 License</a>.
+    </p>
+    """, unsafe_allow_html=True)
 
-st.markdown("""
-<p style='text-align:center; font-size:12px; color:gray;'>
-Developed by Shubh | 
-<a href='https://www.linkedin.com/in/shubh-dhadiwal/' target='_blank'>LinkedIn</a>
-</p>
-""", unsafe_allow_html=True)
-
-LAST_UPDATED_DATE = "2025-08-11 11:45:00"
-
-st.markdown("""
+    st.markdown("""
+    <p style='text-align:center; font-size:12px; color:gray;'>
+    Developed by Shubh | 
+    <a href='https://www.linkedin.com/in/shubh-dhadiwal/' target='_blank'>LinkedIn</a>
+    </p>
+    """, unsafe_allow_html=True)
+    
+    st.markdown("""
 <p style='text-align:center; font-size:12px; color:gray;'>
 © 2025 GeoAI Repository
 """, unsafe_allow_html=True)
 
-st.stop()
-
+    st.stop()
 
 if selected_tab == "Submit New Resource":
     st.title("📤 Submit a New Resource")

@@ -445,15 +445,6 @@ link_columns_map = {
     "Favorites": ["Link", "Links", "Link to the codes", "Tool Link", "Course Link", "Tutorial Link"]
 }
 
-# Example variables - replace with your actual data/values
-df = ...  # your dataframe here
-selected_tab = st.sidebar.selectbox("Select Tab", options=[...])  # your tabs here
-title_col = "Title"  # or your actual title column
-title_map = {...}  # your mapping for favorites titles if any
-search_term = st.sidebar.text_input("Search")  # or wherever you get the search term
-link_columns_map = {
-    # your mapping of tab to possible link columns
-}
 possible_links = link_columns_map.get(selected_tab, ["Links", "Link", "Link to the codes", "Tool Link", "Course Link", "Tutorial Link"])
 
 # Initialize favorites in session_state if not present

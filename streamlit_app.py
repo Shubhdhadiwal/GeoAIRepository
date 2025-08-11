@@ -469,7 +469,7 @@ for idx, row in df.iterrows():
 
     displayed_title = highlight_search(resource_title, search_term)
 
-  links = []
+    links = []
     for col in possible_links:
         if col in df.columns and pd.notna(row.get(col)):
             val = str(row[col]).strip()

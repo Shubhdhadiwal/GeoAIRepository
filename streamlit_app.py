@@ -20,47 +20,61 @@ import json
 from datetime import date
 import streamlit as st
 
+import streamlit as st
+import os
+import json
+from datetime import date
+
 # ===== VISITOR COUNTER SETUP =====
 VISITOR_COUNT_FILE = "visitor_count_by_date.json"
 
-def get_visitor_counts():
+def get_visitor_count_today():
+    today_str = str(date.today())
     if not os.path.exists(VISITOR_COUNT_FILE):
         with open(VISITOR_COUNT_FILE, "w") as f:
             json.dump({}, f)
-        return {}
+        return 0
     with open(VISITOR_COUNT_FILE, "r") as f:
         try:
             counts = json.load(f)
         except json.JSONDecodeError:
             counts = {}
-    return counts
+    return counts.get(today_str, 0)
 
-def save_visitor_counts(counts):
-    with open(VISITOR_COUNT_FILE, "w") as f:
-        json.dump(counts, f)
+def get_total_visitor_count():
+    if not os.path.exists(VISITOR_COUNT_FILE):
+        return 0
+    with open(VISITOR_COUNT_FILE, "r") as f:
+        try:
+            counts = json.load(f)
+        except json.JSONDecodeError:
+            counts = {}
+    return sum(counts.values())
 
 def increment_visitor_count_today():
     today_str = str(date.today())
-    counts = get_visitor_counts()
+    if not os.path.exists(VISITOR_COUNT_FILE):
+        counts = {}
+    else:
+        with open(VISITOR_COUNT_FILE, "r") as f:
+            try:
+                counts = json.load(f)
+            except json.JSONDecodeError:
+                counts = {}
     counts[today_str] = counts.get(today_str, 0) + 1
-    save_visitor_counts(counts)
-    return counts[today_str], sum(counts.values())
+    with open(VISITOR_COUNT_FILE, "w") as f:
+        json.dump(counts, f)
+    return counts[today_str]
 
-# Increment visitor count only once per browser session per day
-if 'visitor_counted_date' not in st.session_state or st.session_state.visitor_counted_date != str(date.today()):
-    today_count, total_count = increment_visitor_count_today()
-    st.session_state.visitor_counted_date = str(date.today())
-    st.session_state.today_visitor_count = today_count
-    st.session_state.total_visitor_count = total_count
-else:
-    counts = get_visitor_counts()
-    st.session_state.today_visitor_count = counts.get(str(date.today()), 0)
-    st.session_state.total_visitor_count = sum(counts.values())
+# Only increment once per session
+if 'visitor_counted' not in st.session_state:
+    st.session_state.today_visitor_count = increment_visitor_count_today()
+    st.session_state.total_visitor_count = get_total_visitor_count()
+    st.session_state.visitor_counted = True
 
-# Display below welcome text (replace st.write below with your welcome text)
+# Now show welcome and visitor counts nicely formatted
 st.write("### Welcome to GeoAI Repository!")
 
-# Display visitor counts below welcome
 st.markdown(f"""
 <p style='font-size:14px; color:gray; margin-top: 0;'>
 📅 Today's Visitors: <b>{st.session_state.today_visitor_count}</b> &nbsp;&nbsp;|&nbsp;&nbsp; 

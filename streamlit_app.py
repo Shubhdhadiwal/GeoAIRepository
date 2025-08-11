@@ -379,28 +379,33 @@ if selected_tab == "FAQ":
             st.write(answer)
     st.stop()
 
-# ===== FAVORITES STORAGE ===== #
-if "favorites" not in st.session_state:
-    st.session_state.favorites = {}  # dict: {category_key: set of titles}
-
 # ===== LOAD DATA FOR OTHER TABS INCLUDING FAVORITES ===== #
 if selected_tab != "Favorites":
     df = load_data(sheet_options[selected_tab])
 else:
-    # For favorites, combine favorites from all categories by title (not index)
+    # For favorites, combine favorites from all categories
     all_fav_items = []
-    for key, titles in st.session_state.favorites.items():
+    for key, items in st.session_state.favorites.items():
         df_cat = load_data(sheet_options.get(key, key))
-        if df_cat.empty or not titles:
+        if df_cat.empty:
             continue
-        title_col_for_cat = title_map.get(key, df_cat.columns[0])
-        fav_rows = df_cat[df_cat[title_col_for_cat].isin(titles)].copy()
+        fav_rows = df_cat.loc[df_cat.index.isin(items)].copy()
         fav_rows["Category"] = key
         all_fav_items.append(fav_rows)
     if all_fav_items:
         df = pd.concat(all_fav_items)
     else:
         df = pd.DataFrame()
+
+# ===== SEARCH & FILTER ===== #
+search_term = st.sidebar.text_input("🔍 Search")
+if selected_tab not in ["Favorites", "About", "Submit New Resource", "Dashboards", "FAQ"] and search_term:
+    df = df[df.apply(lambda row: row.astype(str).str.contains(search_term, case=False, na=False).any(), axis=1)]
+
+if selected_tab == "Data Sources" and "Type" in df.columns:
+    type_filter = st.sidebar.multiselect("📂 Filter by Type", sorted(df["Type"].dropna().unique()))
+    if type_filter:
+        df = df[df["Type"].isin(type_filter)]
 
 # ===== TITLE MAP ===== #
 title_map = {
@@ -413,6 +418,7 @@ title_map = {
 }
 
 title_col = title_map.get(selected_tab, df.columns[0] if not df.empty else None)
+
 if selected_tab == "Favorites":
     title_col = "Title" if "Title" in df.columns else (df.columns[0] if not df.empty else None)
 
@@ -422,6 +428,10 @@ st.title(f"🌍 GeoAI Repository – {selected_tab}")
 if df.empty:
     st.info("No resources to display.")
     st.stop()
+
+# ===== FAVORITES STORAGE ===== #
+if "favorites" not in st.session_state:
+    st.session_state.favorites = {}
 
 # ===== DISPLAY DATA ===== #
 exclude_cols = [title_col, "Description", "Purpose", "S.No", "Category"]
@@ -445,14 +455,6 @@ def highlight_search(text, term):
 
 view_mode = st.sidebar.radio("View Mode", ["Detailed", "Compact"])
 
-def toggle_favorite(category_key, title, checked):
-    if category_key not in st.session_state.favorites:
-        st.session_state.favorites[category_key] = set()
-    if checked:
-        st.session_state.favorites[category_key].add(title)
-    else:
-        st.session_state.favorites[category_key].discard(title)
-
 for idx, row in df.iterrows():
     resource_title = row.get(title_col)
     if not resource_title or str(resource_title).strip() == "":
@@ -469,15 +471,14 @@ for idx, row in df.iterrows():
     category_key = selected_tab
     if selected_tab == "Favorites" and "Category" in row:
         category_key = row["Category"]
-
-    fav_set = st.session_state.favorites.get(category_key, set())
-    checked = resource_title in fav_set
+    is_fav = st.session_state.favorites.get(category_key, [])
+    checked = idx in is_fav
 
     if view_mode == "Detailed":
         with st.expander(f"🔹 {displayed_title}", expanded=False):
             col1, col2 = st.columns([0.9, 0.1])
             with col2:
-                fav_checkbox = st.checkbox("⭐", value=checked, key=f"{category_key}_{resource_title}")
+                fav_checkbox = st.checkbox("⭐", value=checked, key=f"{category_key}_{idx}")
             with col1:
                 if "Description" in df.columns and pd.notna(row.get("Description")):
                     st.write(highlight_search(row["Description"], search_term))
@@ -488,10 +489,10 @@ for idx, row in df.iterrows():
                 for col in df.columns:
                     if col not in exclude_cols and col not in possible_links and pd.notna(row.get(col)):
                         st.markdown(f"**{col}:** {highlight_search(row[col], search_term)}")
-            if fav_checkbox and not checked:
-                toggle_favorite(category_key, resource_title, True)
-            elif not fav_checkbox and checked:
-                toggle_favorite(category_key, resource_title, False)
+            if fav_checkbox and idx not in st.session_state.favorites.get(category_key, []):
+                st.session_state.favorites.setdefault(category_key, []).append(idx)
+            elif not fav_checkbox and idx in st.session_state.favorites.get(category_key, []):
+                st.session_state.favorites[category_key].remove(idx)
     else:
         compact_col1, compact_col2, compact_col3 = st.columns([6, 3, 1])
         with compact_col1:
@@ -501,11 +502,11 @@ for idx, row in df.iterrows():
                 for link_name, link_url in links:
                     st.markdown(f"[🔗 {link_name}]({link_url})", unsafe_allow_html=True)
         with compact_col3:
-            fav_checkbox = st.checkbox("⭐", value=checked, key=f"compact_{category_key}_{resource_title}")
-            if fav_checkbox and not checked:
-                toggle_favorite(category_key, resource_title, True)
-            elif not fav_checkbox and checked:
-                toggle_favorite(category_key, resource_title, False)
+            fav_checkbox = st.checkbox("⭐", value=checked, key=f"compact_{category_key}_{idx}")
+            if fav_checkbox and idx not in st.session_state.favorites.get(category_key, []):
+                st.session_state.favorites.setdefault(category_key, []).append(idx)
+            elif not fav_checkbox and idx in st.session_state.favorites.get(category_key, []):
+                st.session_state.favorites[category_key].remove(idx)
 
 if selected_tab == "Favorites":
     if st.sidebar.button("Clear All Favorites"):

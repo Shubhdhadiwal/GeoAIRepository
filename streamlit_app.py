@@ -168,17 +168,10 @@ if selected_tab == "Dashboards":
 
     with st.expander("▶️ Google Open Building Dashboard"):
         st.markdown("""
-        Google Open Buildings is a global dataset developed by Google that provides high-resolution building footprints extracted from satellite imagery using advanced machine learning techniques. It covers millions of buildings across many countries, especially focusing on regions where accurate building data was previously unavailable or incomplete.
-    
-        This dataset is an invaluable resource for urban planners, researchers, governments, and humanitarian organizations. It supports applications such as disaster response, infrastructure planning, population estimation, and sustainable development by providing detailed and up-to-date information on building locations and shapes.
-    
-        Google Open Buildings is openly available and continues to grow, helping bridge data gaps and enabling data-driven decision-making at scale.
+        Google Open Buildings is a global dataset developed by Google that provides high-resolution building footprints extracted from satellite imagery using advanced machine learning techniques...
         """)
-    
         st.markdown("🔗 [Official Dataset Documentation](https://developers.google.com/earth-engine/datasets/catalog/GOOGLE_Research_open-buildings_v3_polygons)")
-    
         st.markdown("---")
-    
         st.markdown(
             """
             <iframe 
@@ -188,30 +181,17 @@ if selected_tab == "Dashboards":
             """,
             unsafe_allow_html=True
         )
-    
-        st.markdown(
-            """
-            Dashboard created by Shubh Dhadiwal using Google Earth Engine.
-            
-            To download the data, click on the Code Editor link below:  
-            [🚀 Open Earth Engine Code Editor here](https://code.earthengine.google.com/272ebbc2fd09e86a3b256c9c2f259b9f?hideCode=true)
-            """,
-            unsafe_allow_html=True,
-        )
-    
+        st.markdown("""
+        Dashboard created by Shubh Dhadiwal using Google Earth Engine.  
+        [🚀 Open Earth Engine Code Editor here](https://code.earthengine.google.com/272ebbc2fd09e86a3b256c9c2f259b9f?hideCode=true)
+        """, unsafe_allow_html=True)
+
     with st.expander("▶️ Local Climate Zones (LCZ) Dashboard"):
         st.markdown("""
-        Local Climate Zones (LCZs), introduced in 2012, provide a standardized classification for urban and rural landscapes at a micro-scale. This classification captures detailed land-cover and physical properties critical for understanding urban climate phenomena such as urban heat islands.
-
-        The global LCZ map shown here has a spatial resolution of 100 meters, representing the nominal year 2018. It is derived from multiple Earth observation datasets combined with expert LCZ class labels. The recommended band for most users is **LCZ_Filter**, which provides the primary classification. Another band, **LCZ**, is available but mainly used internally for calculating the probability layer.
-
-        The LCZ scheme classifies landscapes into 17 classes: 10 representing built environments (urban forms) and 7 representing natural land-cover types. Each LCZ type includes generic numerical descriptions of urban canopy parameters, making this dataset valuable for urban climate modeling and impact assessment.
+        Local Climate Zones (LCZs), introduced in 2012, provide a standardized classification for urban and rural landscapes...
         """)
-
         st.markdown("🔗 [Official Dataset Documentation](https://developers.google.com/earth-engine/datasets/catalog/RUB_RUBCLIM_LCZ_global_lcz_map_latest#description)")
-
         st.markdown("---")
-
         st.markdown(
             """
             <iframe 
@@ -221,30 +201,21 @@ if selected_tab == "Dashboards":
             """,
             unsafe_allow_html=True
         )
-
-        st.markdown(
-            """
-            Dashboard created by Shubh Dhadiwal using Google Earth Engine.
-            
-            To download the LCZ data, open the Earth Engine Code Editor link below:  
-            [🚀 Open Earth Engine Code Editor here](https://code.earthengine.google.com/db65e6b4ece8341249a978d4a1509f0e)
-            """,
-            unsafe_allow_html=True,
-        )
+        st.markdown("""
+        Dashboard created by Shubh Dhadiwal using Google Earth Engine.  
+        [🚀 Open Earth Engine Code Editor here](https://code.earthengine.google.com/db65e6b4ece8341249a978d4a1509f0e)
+        """, unsafe_allow_html=True)
 
     with st.expander("▶️ NASA Sea Level Evaluation Tool"):
         st.markdown("""
-        The NASA Sea Level Evaluation Tool provides interactive visualization and analysis of global sea level data, enabling researchers and policymakers to understand rising sea levels and their impacts.
+        The NASA Sea Level Evaluation Tool provides interactive visualization and analysis of global sea level data...
         """)
-
         st.markdown("🔗 [NASA Sea Level Evaluation Tool Website](https://sealevel.nasa.gov/sea-level-evaluation-tool)")
-
         components.iframe(
             "https://sealevel.nasa.gov/sea-level-evaluation-tool",
             height=1200,
             width=1400,
         )
-
         st.markdown("""
         <p style='font-size:15px; color:gray;'>
         Source: NASA, <a href="https://sealevel.nasa.gov/sea-level-evaluation-tool" target="_blank">https://sealevel.nasa.gov/sea-level-evaluation-tool</a>
@@ -253,24 +224,14 @@ if selected_tab == "Dashboards":
 
     with st.expander("▶️ Global Surface Water Explorer"):
         st.markdown("""
-        The **Global Surface Water Explorer** (GSWE), developed by the European Commission's Joint Research Centre, provides high-resolution mapping of global surface water distribution and long-term changes from 1984 to 2021. 
-
-        It utilizes Landsat satellite imagery to analyze water occurrence, seasonality, recurrence, transitions, and maximum extent worldwide. This dataset supports water resource management, climate change studies, biodiversity conservation, and food security.
-
-        **Citation:**  
-        Pekel, J.-F., Cottam, A., Gorelick, N., & Belward, A. S. (2016). High-resolution mapping of global surface water and its long-term changes. *Nature*, 540(7633), 418–422. [https://doi.org/10.1038/nature20584](https://doi.org/10.1038/nature20584)
-
-        **Data Access:**  
-        Download the data at the [Global Surface Water Explorer Download Page](https://global-surface-water.appspot.com/download)
+        The **Global Surface Water Explorer** (GSWE), developed by the European Commission's Joint Research Centre...
         """)
-
         leaflet_html = """
         <div id="map" style="width: 1400px; height: 700px;"></div>
         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
         <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
         <script>
         var map = L.map('map').setView([20, 0], 2);
-
         var transitions = L.tileLayer('https://storage.googleapis.com/global-surface-water/tiles2021/transitions/{z}/{x}/{y}.png', {
             format: 'image/png',
             maxZoom: 13,
@@ -279,14 +240,12 @@ if selected_tab == "Dashboards":
         }).addTo(map);
         </script>
         """
-
         st.components.v1.html(leaflet_html, height=550)
 
     with st.expander("▶️ BBBike Extract Service"):
         st.markdown("""
-        BBBike Extract is a service to extract OpenStreetMap data for custom-defined areas worldwide. It allows users to select any region and download geospatial data extracts.
+        BBBike Extract is a service to extract OpenStreetMap data for custom-defined areas worldwide...
         """)
-
         components.iframe(
             "https://extract.bbbike.org/",
             height=700,
@@ -294,27 +253,27 @@ if selected_tab == "Dashboards":
             scrolling=True
         )
 
-   with st.expander("▶️ DIVA-GIS Global Data Access"):
-    st.markdown("""
-    **DIVA-GIS** provides free spatial data for any country in the world, including:
-    - Administrative boundaries
-    - Roads, railways, and population density
-    - Elevation and climate data
-    - Land cover maps
+    with st.expander("▶️ DIVA-GIS Global Data Access"):
+        st.markdown("""
+        **DIVA-GIS** provides free spatial data for any country in the world, including:
+        - Administrative boundaries
+        - Roads, railways, and population density
+        - Elevation and climate data
+        - Land cover maps
 
-    This is especially useful for GIS analysis, ecological studies, and spatial planning.
+        This is especially useful for GIS analysis, ecological studies, and spatial planning.
 
-    🔗 [Official DIVA-GIS Website](https://diva-gis.org/data.html)
-    """)
+        🔗 [Official DIVA-GIS Website](https://diva-gis.org/data.html)
+        """)
+        st.components.v1.iframe(
+            "https://diva-gis.org/data.html",
+            height=900,
+            width=1400,
+            scrolling=True
+        )
 
-    st.components.v1.iframe(
-        "https://diva-gis.org/data.html",
-        height=900,
-        width=1400,
-        scrolling=True
-    )
+    st.stop()
 
-    st.stop()  # Stop execution here for dashboards so no other code runs below
 
 # ===== NON-SHEET TABS: About, Submit New Resource, FAQ ===== #
 if selected_tab == "About":

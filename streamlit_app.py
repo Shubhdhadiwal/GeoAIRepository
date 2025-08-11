@@ -363,7 +363,7 @@ if selected_tab == "About":
     st.markdown("---")
 
 # Manually set last updated date here (YYYY-MM-DD or full datetime string)
-LAST_UPDATED_DATE = "2025-08-10 14:30:00"
+LAST_UPDATED_DATE = "2025-08-11 11:45:00"
 
 # Footer content
 st.markdown("""
@@ -388,7 +388,7 @@ st.markdown("""
 # Display the manually set last updated date
 st.markdown(f"""
 <p style='text-align:center; font-size:12px; color:gray; margin-top: 0;'>
-GeoAI Repository updated last data: {LAST_UPDATED_DATE}
+Last Updated: {LAST_UPDATED_DATE}
 </p>
 """, unsafe_allow_html=True)
 

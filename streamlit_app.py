@@ -57,6 +57,9 @@ else:
     st.session_state.today_visitor_count = counts.get(str(date.today()), 0)
     st.session_state.total_visitor_count = sum(counts.values())
 
+# Display below welcome text (replace st.write below with your welcome text)
+st.write("### Welcome to GeoAI Repository!")
+
 # Display visitor counts below welcome
 st.markdown(f"""
 <p style='font-size:14px; color:gray; margin-top: 0;'>

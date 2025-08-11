@@ -218,7 +218,6 @@ if selected_tab == "Dashboards":
         </p>
         """, unsafe_allow_html=True)
 
-    # <-- Here is the properly indented Global Surface Water Explorer expander -->
     with st.expander("▶️ Global Surface Water Explorer"):
         st.markdown("""
         The **Global Surface Water Explorer** (GSWE), developed by the European Commission's Joint Research Centre, provides high-resolution mapping of global surface water distribution and long-term changes from 1984 to 2021. 
@@ -250,14 +249,38 @@ if selected_tab == "Dashboards":
 
         st.components.v1.html(leaflet_html, height=550)
 
-    # New expander for BBBike Extract
     with st.expander("▶️ BBBike Extract Service"):
         st.markdown("""
         BBBike Extract is a service to extract OpenStreetMap data for custom-defined areas worldwide. It allows users to select any region and download geospatial data extracts.
+
+        ---
+
+        **Welcome to the BBBike Extract Service!**
+
+        BBBike extracts allows you to extract areas from Planet.osm in OSM, PBF, o5m, Garmin, Organic Maps, Osmand, mapsforge CSV, SVG, libosmium OPL, GeoJSON, SQLite, text, or Esri shapefile format. The maximum area size is 24,000,000 square km, or up to 512MB file size. It takes between 2-7 minutes to extract an area. The email field is required, you will be notified by email if your extract is ready for download. Please use a meaningful name for the extract. For more information, please read the extract help page.
+
+        **How to use the BBBike extract service (YouTube tutorials):**
+
+        1. Now move the map to your desired location.  
+        2. Then click the **here** button to create the bounding box.  
+        3. Move or resize the bounding box, or add new points to the polygon.  
+        4. Select a Format, enter Your email address and Name of area to extract.  
+        5. Click the extract button. Wait for email notification and download the map. Done!
+
+        Supported formats include:  
+        - Shapefile (Esri)  
+        - Garmin OSM  
+        - Garmin Leisure  
+        - Organic Maps  
+        - mapsforge  
+        - OsmAnd  
+        - SVG
+
+        For a full guide, visit [BBBike Extract Website](https://extract.bbbike.org/).
+
+        ---
         """)
-        st.markdown("🔗 [Visit BBBike Extract Website](https://extract.bbbike.org/)")
-        
-        # Embed BBBike website in an iframe
+
         components.iframe(
             "https://extract.bbbike.org/",
             height=700,
@@ -265,8 +288,7 @@ if selected_tab == "Dashboards":
             scrolling=True
         )
 
-   st.stop()  # Stop execution here for dashboards so no other code runs below
-
+    st.stop()  # Stop execution here for dashboards so no other code runs below
 
 # ===== NON-SHEET TABS: About, Submit New Resource, FAQ ===== #
 if selected_tab == "About":

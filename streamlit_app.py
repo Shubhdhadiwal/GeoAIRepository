@@ -209,7 +209,7 @@ if selected_tab == "Dashboards":
         components.iframe(
             "https://sealevel.nasa.gov/sea-level-evaluation-tool",
             height=600,
-            width=900,
+            width=1200,
         )
 
         st.markdown("""

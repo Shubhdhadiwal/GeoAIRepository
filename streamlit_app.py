@@ -295,24 +295,24 @@ if selected_tab == "Dashboards":
         )
 
    with st.expander("▶️ DIVA-GIS Global Data Access"):
-        st.markdown("""
-        **DIVA-GIS** provides free spatial data for any country in the world, including:
-        - Administrative boundaries
-        - Roads, railways, and population density
-        - Elevation and climate data
-        - Land cover maps
+    st.markdown("""
+    **DIVA-GIS** provides free spatial data for any country in the world, including:
+    - Administrative boundaries
+    - Roads, railways, and population density
+    - Elevation and climate data
+    - Land cover maps
 
-        This is especially useful for GIS analysis, ecological studies, and spatial planning.
+    This is especially useful for GIS analysis, ecological studies, and spatial planning.
 
-        🔗 [Official DIVA-GIS Website](https://diva-gis.org/data.html)
-        """)
-        
-        components.iframe(
-            "https://diva-gis.org/data.html",
-            height=900,
-            width=1400,
-            scrolling=True
-        )
+    🔗 [Official DIVA-GIS Website](https://diva-gis.org/data.html)
+    """)
+
+    st.components.v1.iframe(
+        "https://diva-gis.org/data.html",
+        height=900,
+        width=1400,
+        scrolling=True
+    )
 
     st.stop()  # Stop execution here for dashboards so no other code runs below
 

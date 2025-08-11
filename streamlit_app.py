@@ -5,9 +5,8 @@ import re
 import os
 import streamlit.components.v1 as components
 import json
-from datetime import date
 import os
-
+from datetime import date
 
 # ===== PAGE CONFIG =====
 st.set_page_config(page_title="GeoAI Repository", layout="wide")
@@ -15,22 +14,13 @@ st.set_page_config(page_title="GeoAI Repository", layout="wide")
 # GitHub raw Excel file URL
 GITHUB_RAW_URL = "https://github.com/Shubhdhadiwal/GeoAIRepository/raw/main/Geospatial%20Data%20Repository%20(2).xlsx"
 
-import os
-import json
-from datetime import date
-import streamlit as st
-
-import streamlit as st
-import os
-import json
-from datetime import date
-
 # ===== VISITOR COUNTER SETUP =====
 VISITOR_COUNT_FILE = "visitor_count_by_date.json"
 
 def get_visitor_count_today():
     today_str = str(date.today())
     if not os.path.exists(VISITOR_COUNT_FILE):
+        # Create empty JSON if file doesn't exist
         with open(VISITOR_COUNT_FILE, "w") as f:
             json.dump({}, f)
         return 0
@@ -40,16 +30,6 @@ def get_visitor_count_today():
         except json.JSONDecodeError:
             counts = {}
     return counts.get(today_str, 0)
-
-def get_total_visitor_count():
-    if not os.path.exists(VISITOR_COUNT_FILE):
-        return 0
-    with open(VISITOR_COUNT_FILE, "r") as f:
-        try:
-            counts = json.load(f)
-        except json.JSONDecodeError:
-            counts = {}
-    return sum(counts.values())
 
 def increment_visitor_count_today():
     today_str = str(date.today())
@@ -66,21 +46,12 @@ def increment_visitor_count_today():
         json.dump(counts, f)
     return counts[today_str]
 
-# Only increment once per session
 if 'visitor_counted' not in st.session_state:
-    st.session_state.today_visitor_count = increment_visitor_count_today()
-    st.session_state.total_visitor_count = get_total_visitor_count()
+    st.session_state.visitor_count = increment_visitor_count_today()
     st.session_state.visitor_counted = True
 
-# Now show welcome and visitor counts nicely formatted
-st.write("### Welcome to GeoAI Repository!")
-
-st.markdown(f"""
-<p style='font-size:14px; color:gray; margin-top: 0;'>
-📅 Today's Visitors: <b>{st.session_state.today_visitor_count}</b> &nbsp;&nbsp;|&nbsp;&nbsp; 
-📈 Total Visitors: <b>{st.session_state.total_visitor_count}</b>
-</p>
-""", unsafe_allow_html=True)
+# Then to display today's visitors anywhere in your app:
+# st.sidebar.markdown(f"📅 Today's Visitors: **{st.session_state.visitor_count}**")
 
 # Utility to hash password string
 def hash_password(password):
@@ -88,7 +59,7 @@ def hash_password(password):
 
 # Store username and hashed password
 USER_CREDENTIALS = {
-    "Shubh1301": hash_password("Shubh130100")
+    "Shubh4016": hash_password("Shubh9834421314")
 }
 
 if 'authenticated' not in st.session_state:
@@ -145,6 +116,9 @@ sheet_options = {
     "Favorites": "Favorites",
     "FAQ": "FAQ"
 }
+
+# Display real-time visitor count
+st.sidebar.markdown(f"📅 Total Visitors: **{st.session_state.visitor_count}**")
 
 @st.cache_data(show_spinner=False)
 def load_data(sheet_name):
@@ -362,37 +336,26 @@ if selected_tab == "About":
 
     st.markdown("---")
 
-# Manually set last updated date here (YYYY-MM-DD or full datetime string)
-LAST_UPDATED_DATE = "2025-08-11 11:45:00"
+    # ADD CREATIVE COMMONS LICENSE INFO HERE
+    st.markdown("""
+    <p style='text-align:center; font-size:12px; color:gray;'>
+    Licensed under the <a href='https://creativecommons.org/licenses/by-nc/4.0/' target='_blank'>Creative Commons BY-NC 4.0 License</a>.
+    </p>
+    """, unsafe_allow_html=True)
 
-# Footer content
-st.markdown("""
+    st.markdown("""
+    <p style='text-align:center; font-size:12px; color:gray;'>
+    Developed by Shubh | 
+    <a href='https://www.linkedin.com/in/shubh-dhadiwal/' target='_blank'>LinkedIn</a>
+    </p>
+    """, unsafe_allow_html=True)
+    
+    st.markdown("""
 <p style='text-align:center; font-size:12px; color:gray;'>
-Licensed under the <a href='https://creativecommons.org/licenses/by-nc/4.0/' target='_blank'>Creative Commons BY-NC 4.0 License</a>.
-</p>
-""", unsafe_allow_html=True)
-
-st.markdown("""
-<p style='text-align:center; font-size:12px; color:gray;'>
-Developed by Shubh | 
-<a href='https://www.linkedin.com/in/shubh-dhadiwal/' target='_blank'>LinkedIn</a>
-</p>
-""", unsafe_allow_html=True)
-
-st.markdown("""
-<p style='text-align:center; font-size:12px; color:gray; margin-top: 0;'>
 © 2025 GeoAI Repository
-</p>
 """, unsafe_allow_html=True)
 
-# Display the manually set last updated date
-st.markdown(f"""
-<p style='text-align:center; font-size:12px; color:gray; margin-top: 0;'>
-Last Updated: {LAST_UPDATED_DATE}
-</p>
-""", unsafe_allow_html=True)
-
-st.stop()
+    st.stop()
 
 if selected_tab == "Submit New Resource":
     st.title("📤 Submit a New Resource")
@@ -484,10 +447,6 @@ link_columns_map = {
 
 possible_links = link_columns_map.get(selected_tab, ["Links", "Link", "Link to the codes", "Tool Link", "Course Link", "Tutorial Link"])
 
-# Initialize favorites in session_state if not present
-if "favorites" not in st.session_state:
-    st.session_state.favorites = {}
-
 def highlight_search(text, term):
     if not term:
         return text
@@ -496,26 +455,12 @@ def highlight_search(text, term):
 
 view_mode = st.sidebar.radio("View Mode", ["Detailed", "Compact"])
 
-# Debug print to check selected tab value
-st.write(f"Selected tab: '{selected_tab}'")
-
 for idx, row in df.iterrows():
-    # Handle title and category keys
-    if selected_tab.strip().lower() == "favorites":
-        category_key = row.get("Category", None)
-        title_for_fav = title_map.get(category_key, title_col)  # fallback to default title_col
-        resource_title = row.get(title_for_fav)
-        if not resource_title or str(resource_title).strip() == "":
-            resource_title = f"Resource-{idx+1}"
-    else:
-        category_key = selected_tab
-        resource_title = row.get(title_col)
-        if not resource_title or str(resource_title).strip() == "":
-            resource_title = f"Resource-{idx+1}"
-
+    resource_title = row.get(title_col)
+    if not resource_title or str(resource_title).strip() == "":
+        resource_title = f"Resource-{idx+1}"
     displayed_title = highlight_search(resource_title, search_term)
 
-    # Collect links for this row
     links = []
     for col in possible_links:
         if col in df.columns and pd.notna(row.get(col)):
@@ -523,15 +468,17 @@ for idx, row in df.iterrows():
             if val.lower().startswith(("http://", "https://", "www.")):
                 links.append((col, val))
 
+    category_key = selected_tab
+    if selected_tab == "Favorites" and "Category" in row:
+        category_key = row["Category"]
+    is_fav = st.session_state.favorites.get(category_key, [])
+    checked = idx in is_fav
+
     if view_mode == "Detailed":
         with st.expander(f"🔹 {displayed_title}", expanded=False):
             col1, col2 = st.columns([0.9, 0.1])
             with col2:
-                fav_checkbox = st.checkbox(
-                    "⭐",
-                    value=idx in st.session_state.favorites.get(category_key, []),
-                    key=f"{category_key}_{idx}"
-                )
+                fav_checkbox = st.checkbox("⭐", value=checked, key=f"{category_key}_{idx}")
             with col1:
                 if "Description" in df.columns and pd.notna(row.get("Description")):
                     st.write(highlight_search(row["Description"], search_term))
@@ -539,41 +486,33 @@ for idx, row in df.iterrows():
                     st.markdown(f"[🔗 {link_name}]({link_url})", unsafe_allow_html=True)
                 if "Purpose" in df.columns and pd.notna(row.get("Purpose")):
                     st.markdown(f"**🎯 Purpose:** {highlight_search(row['Purpose'], search_term)}")
-                exclude_cols = [title_col, "Description", "Purpose", "S.No", "Category"] + possible_links
                 for col in df.columns:
-                    if col not in exclude_cols and pd.notna(row.get(col)):
+                    if col not in exclude_cols and col not in possible_links and pd.notna(row.get(col)):
                         st.markdown(f"**{col}:** {highlight_search(row[col], search_term)}")
-
-            # Update favorites list
+            if fav_checkbox and idx not in st.session_state.favorites.get(category_key, []):
+                st.session_state.favorites.setdefault(category_key, []).append(idx)
+            elif not fav_checkbox and idx in st.session_state.favorites.get(category_key, []):
+                st.session_state.favorites[category_key].remove(idx)
+    else:
+        compact_col1, compact_col2, compact_col3 = st.columns([6, 3, 1])
+        with compact_col1:
+            st.markdown(f"🔹 {displayed_title}")
+        with compact_col2:
+            if links:
+                for link_name, link_url in links:
+                    st.markdown(f"[🔗 {link_name}]({link_url})", unsafe_allow_html=True)
+        with compact_col3:
+            fav_checkbox = st.checkbox("⭐", value=checked, key=f"compact_{category_key}_{idx}")
             if fav_checkbox and idx not in st.session_state.favorites.get(category_key, []):
                 st.session_state.favorites.setdefault(category_key, []).append(idx)
             elif not fav_checkbox and idx in st.session_state.favorites.get(category_key, []):
                 st.session_state.favorites[category_key].remove(idx)
 
-    else:
-        # Compact mode ONLY if NOT Favorites tab
-        if selected_tab.strip().lower() != "favorites":
-            compact_col1, compact_col2, compact_col3 = st.columns([6, 3, 1])
-            with compact_col1:
-                st.markdown(f"🔹 {displayed_title}")
-            with compact_col2:
-                for link_name, link_url in links:
-                    st.markdown(f"[🔗 {link_name}]({link_url})", unsafe_allow_html=True)
-            with compact_col3:
-                fav_checkbox = st.checkbox(
-                    "⭐",
-                    value=idx in st.session_state.favorites.get(category_key, []),
-                    key=f"compact_{category_key}_{idx}"
-                )
-                if fav_checkbox and idx not in st.session_state.favorites.get(category_key, []):
-                    st.session_state.favorites.setdefault(category_key, []).append(idx)
-                elif not fav_checkbox and idx in st.session_state.favorites.get(category_key, []):
-                    st.session_state.favorites[category_key].remove(idx)
-        else:
-            # Favorites tab: no compact view - do nothing or add message if you want
-            pass
+if selected_tab == "Favorites":
+    if st.sidebar.button("Clear All Favorites"):
+        st.session_state.favorites = {}
+        st.experimental_rerun()
 
-# Footer
 st.markdown("""
 <p style='text-align:center; font-size:12px; color:gray;'>
 Developed by Shubh | 
@@ -581,4 +520,3 @@ Developed by Shubh |
 © Copyright GeoAI Repository
 </p>
 """, unsafe_allow_html=True)
-

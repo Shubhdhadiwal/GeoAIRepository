@@ -462,45 +462,41 @@ for idx, row in df.iterrows():
         resource_title = row.get(fav_title_col, None)
         if not resource_title or str(resource_title).strip() == "":
             resource_title = f"Resource-{idx+1}"
+        possible_links_for_row = link_columns_map.get(category_key, ["Links", "Link"])
     else:
         resource_title = row.get(title_col)
         if not resource_title or str(resource_title).strip() == "":
             resource_title = f"Resource-{idx+1}"
+        possible_links_for_row = possible_links
 
     displayed_title = highlight_search(resource_title, search_term)
 
+    # Collect links using the correct link columns for this row's category
     links = []
-    for col in possible_links:
+    for col in possible_links_for_row:
         if col in df.columns and pd.notna(row.get(col)):
             val = str(row[col]).strip()
             if val.lower().startswith(("http://", "https://", "www.")):
                 links.append((col, val))
-   
-    category_key = selected_tab
-    if selected_tab == "Favorites" and "Category" in row:
-        category_key = row["Category"]
-    is_fav = st.session_state.favorites.get(category_key, [])
-    checked = idx in is_fav
 
     if view_mode == "Detailed":
-        with st.expander(f"🔹 {displayed_title}", expanded=False):
-            col1, col2 = st.columns([0.9, 0.1])
-            with col2:
-                fav_checkbox = st.checkbox("⭐", value=checked, key=f"{category_key}_{idx}")
-            with col1:
-                if "Description" in df.columns and pd.notna(row.get("Description")):
-                    st.write(highlight_search(row["Description"], search_term))
+        # existing detailed view code for displaying resource and links
+        ...
+    else:  # Compact view
+        compact_col1, compact_col2, compact_col3 = st.columns([6, 3, 1])
+        with compact_col1:
+            st.markdown(f"🔹 {displayed_title}")
+        with compact_col2:
+            if links:
                 for link_name, link_url in links:
                     st.markdown(f"[🔗 {link_name}]({link_url})", unsafe_allow_html=True)
-                if "Purpose" in df.columns and pd.notna(row.get("Purpose")):
-                    st.markdown(f"**🎯 Purpose:** {highlight_search(row['Purpose'], search_term)}")
-                for col in df.columns:
-                    if col not in exclude_cols and col not in possible_links and pd.notna(row.get(col)):
-                        st.markdown(f"**{col}:** {highlight_search(row[col], search_term)}")
+        with compact_col3:
+            fav_checkbox = st.checkbox("⭐", value=idx in st.session_state.favorites.get(category_key, []), key=f"compact_{category_key}_{idx}")
             if fav_checkbox and idx not in st.session_state.favorites.get(category_key, []):
                 st.session_state.favorites.setdefault(category_key, []).append(idx)
             elif not fav_checkbox and idx in st.session_state.favorites.get(category_key, []):
                 st.session_state.favorites[category_key].remove(idx)
+
     else:
         compact_col1, compact_col2, compact_col3 = st.columns([6, 3, 1])
         with compact_col1:

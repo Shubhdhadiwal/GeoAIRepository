@@ -272,7 +272,7 @@ if selected_tab == "Dashboards":
             scrolling=True
         )
 
-    with st.expander("▶️ About Google My Maps"):
+    with st.expander("▶️ Google My Maps"):
         st.markdown("""
         **Google My Maps** is a versatile tool that allows you to create and share **custom, interactive maps** with points, lines, shapes, and rich annotations — like text, photos, and videos — on top of Google Maps.
 
@@ -291,8 +291,8 @@ if selected_tab == "Dashboards":
         mymaps_iframe = """
         <iframe 
             src="https://www.google.com/maps/d/embed?mid=1YYXdblP__avwS-m2twXu9k5cYNzbwgI&ehbc=2E312F" 
-            width="640" 
-            height="480" 
+            width="1300" 
+            height="600" 
             style="border:0;" 
             allowfullscreen="" 
             loading="lazy">

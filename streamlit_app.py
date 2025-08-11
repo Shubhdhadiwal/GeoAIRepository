@@ -291,14 +291,14 @@ if selected_tab == "Dashboards":
         mymaps_iframe = """
         <iframe 
             src="https://www.google.com/maps/d/embed?mid=1YYXdblP__avwS-m2twXu9k5cYNzbwgI&ehbc=2E312F" 
-            width="1300" 
+            width="2000" 
             height="600" 
             style="border:0;" 
             allowfullscreen="" 
             loading="lazy">
         </iframe>
         """
-        st.components.v1.html(mymaps_iframe, height=500)
+        st.components.v1.html(mymaps_iframe, height=600)
 
 
     st.stop()

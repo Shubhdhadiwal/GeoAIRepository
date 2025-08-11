@@ -146,9 +146,6 @@ sheet_options = {
     "FAQ": "FAQ"
 }
 
-# Display real-time visitor count
-st.sidebar.markdown(f"📅 Total Visitors: **{st.session_state.visitor_count}**")
-
 @st.cache_data(show_spinner=False)
 def load_data(sheet_name):
     try:

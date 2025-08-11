@@ -222,26 +222,6 @@ if selected_tab == "Dashboards":
         </p>
         """, unsafe_allow_html=True)
 
-    with st.expander("▶️ Global Surface Water Explorer"):
-        st.markdown("""
-        The **Global Surface Water Explorer** (GSWE), developed by the European Commission's Joint Research Centre...
-        """)
-        leaflet_html = """
-        <div id="map" style="width: 1400px; height: 700px;"></div>
-        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
-        <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-        <script>
-        var map = L.map('map').setView([20, 0], 2);
-        var transitions = L.tileLayer('https://storage.googleapis.com/global-surface-water/tiles2021/transitions/{z}/{x}/{y}.png', {
-            format: 'image/png',
-            maxZoom: 13,
-            errorTileUrl: 'https://storage.googleapis.com/global-surface-water/downloads_ancillary/blank.png',
-            attribution: '© 2016 EC JRC/Google'
-        }).addTo(map);
-        </script>
-        """
-        st.components.v1.html(leaflet_html, height=550)
-
     with st.expander("▶️ BBBike Extract Service"):
         st.markdown("""
         BBBike Extract is a service to extract OpenStreetMap data for custom-defined areas worldwide...
@@ -271,35 +251,6 @@ if selected_tab == "Dashboards":
             width=1400,
             scrolling=True
         )
-
-    with st.expander("▶️ Google My Maps"):
-        st.markdown("""
-        **Google My Maps** is a versatile tool that allows you to create and share **custom, interactive maps** with points, lines, shapes, and rich annotations — like text, photos, and videos — on top of Google Maps.
-
-        - **Draw & annotate:** Add placemarks, paths, shapes, and descriptions directly on the map.  
-        - **Import data:** Easily bring in features from spreadsheets (CSV/XLSX), KML/KMZ files, or GPS tracks.  
-        - **Share & embed:** Share via link, invite collaborators, or embed the map in websites — just like Google Docs.  
-        - **Organize in Drive:** Your maps live alongside your documents in Google Drive.  
-        - **Trusted for real use:** Used by governments and nonprofits for crisis mapping and site planning.
-
-        It’s simple, collaborative, and powerful. Create custom maps, share them securely — and embed them anywhere with just a few clicks.
-
-        Learn more: [https://www.google.com/maps/about/mymaps/](https://www.google.com/maps/about/mymaps/)
-        """)
-
-        # Embed the actual Google My Maps iframe here:
-        mymaps_iframe = """
-        <iframe 
-            src="https://www.google.com/maps/d/embed?mid=1YYXdblP__avwS-m2twXu9k5cYNzbwgI&ehbc=2E312F" 
-            width="2000" 
-            height="600" 
-            style="border:0;" 
-            allowfullscreen="" 
-            loading="lazy">
-        </iframe>
-        """
-        st.components.v1.html(mymaps_iframe, height=600)
-
 
     st.stop()
 

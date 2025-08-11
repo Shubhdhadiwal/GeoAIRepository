@@ -294,28 +294,7 @@ if selected_tab == "Dashboards":
             scrolling=True
         )
 
-    with st.expander("▶️ NASA AppEEARS (Area Request Tool)"):
-        st.markdown("""
-        The **Application for Extracting and Exploring Analysis Ready Samples (AppEEARS)** from NASA allows users to subset, extract, and download geospatial datasets 
-        for a specified area or point. It supports a variety of NASA Earth observation datasets, such as MODIS, VIIRS, and SMAP, and provides convenient analysis-ready formats.
-        
-        With the **Area Request Tool**, you can:
-        - Select an area of interest via shapefile upload or by drawing a polygon
-        - Choose specific datasets and variables
-        - Set time ranges and request processing
-        - Download your results in GeoTIFF, NetCDF, CSV, or other formats
-
-        🔗 [Official AppEEARS Website](https://appeears.earthdatacloud.nasa.gov/)
-        """)
-        
-        components.iframe(
-            "https://appeears.earthdatacloud.nasa.gov/task/area",
-            height=900,
-            width=1400,
-            scrolling=True
-        )
-
-    with st.expander("▶️ DIVA-GIS Global Data Access"):
+   with st.expander("▶️ DIVA-GIS Global Data Access"):
         st.markdown("""
         **DIVA-GIS** provides free spatial data for any country in the world, including:
         - Administrative boundaries

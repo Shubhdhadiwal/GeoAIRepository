@@ -368,10 +368,9 @@ Developed by Shubh |
 
 LAST_UPDATED_DATE = "2025-08-11 11:45:00"
 
-st.markdown(f"""
+st.markdown("""
 <p style='text-align:center; font-size:12px; color:gray;'>
-Last Updated: {LAST_UPDATED_DATE} | © 2025 GeoAI Repository
-</p>
+© 2025 GeoAI Repository
 """, unsafe_allow_html=True)
 
 st.stop()

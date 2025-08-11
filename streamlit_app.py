@@ -456,12 +456,20 @@ def highlight_search(text, term):
 view_mode = st.sidebar.radio("View Mode", ["Detailed", "Compact"])
 
 for idx, row in df.iterrows():
-    resource_title = row.get(title_col)
-    if not resource_title or str(resource_title).strip() == "":
-        resource_title = f"Resource-{idx+1}"
+    if selected_tab == "Favorites":
+        category_key = row.get("Category", None)
+        fav_title_col = title_map.get(category_key, df.columns[0] if not df.empty else None)
+        resource_title = row.get(fav_title_col, None)
+        if not resource_title or str(resource_title).strip() == "":
+            resource_title = f"Resource-{idx+1}"
+    else:
+        resource_title = row.get(title_col)
+        if not resource_title or str(resource_title).strip() == "":
+            resource_title = f"Resource-{idx+1}"
+
     displayed_title = highlight_search(resource_title, search_term)
 
-    links = []
+  links = []
     for col in possible_links:
         if col in df.columns and pd.notna(row.get(col)):
             val = str(row[col]).strip()

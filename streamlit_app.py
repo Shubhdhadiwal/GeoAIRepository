@@ -252,36 +252,6 @@ if selected_tab == "Dashboards":
             scrolling=True
         )  
 
-    with st.expander("▶️ ArcGIS Living Atlas Land Cover"):
-        st.markdown("""
-        The data source provides a **9-class map of the surface**, including vegetation types, bare surfaces, water, cropland, and built areas.  
-        These maps are available from the ArcGIS Living Atlas of the World. Using these visualizations, planners worldwide can better understand the geography around them and how it has changed.  
-        With the latest information available, they can make more informed decisions.
-
-        ---
-        ### 🔗 Links
-        - [ArcGIS Living Atlas Land Cover](https://livingatlas.arcgis.com/landcover/)
-
-        ### 🎯 Purpose
-        High-resolution, open, accurate, comparable, and timely land use maps are critical for decision-makers in many industry sectors and developing nations. These maps improve understanding of important topics such as food security, land use planning, surface water, and resource management planning.  
-        In addition, national government resource agencies use land use/land cover as a basis for understanding trends in the country's natural capital, helping define land planning priorities and guiding budget allocations.
-
-        ---
-        **Year/Month of Data Availability:** 2017 to 2024  
-        **Countries Covered:** All Countries  
-        **Type:** Landuse Landcover data  
-        **Spatial Resolution:** 10 meters  
-        **Version:** Free
-        """)
-        st.components.v1.iframe(
-            "https://livingatlas.arcgis.com/landcover/",
-            height=700,
-            width=1300,
-            scrolling=True
-        )
-
-    # Other expanders...
-
     st.stop()
 
 

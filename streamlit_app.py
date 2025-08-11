@@ -252,6 +252,18 @@ if selected_tab == "Dashboards":
             scrolling=True
         )
     
+    with st.expander("▶️ ArcGIS Living Atlas Land Cover"):
+        st.markdown("""
+        Explore global land cover classifications provided by the ArcGIS Living Atlas. This dataset offers detailed land cover maps derived from satellite imagery and serves as a valuable resource for environmental and spatial analysis.
+        """)
+        st.markdown("🔗 [ArcGIS Living Atlas Land Cover](https://livingatlas.arcgis.com/landcover/)")
+        st.components.v1.iframe(
+            "https://livingatlas.arcgis.com/landcover/",
+            height=700,
+            width=1300,
+            scrolling=True
+        )
+    
     st.stop()
 
 

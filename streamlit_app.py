@@ -7,7 +7,6 @@ import streamlit.components.v1 as components
 import json
 import os
 from datetime import date
-import geopandas as gpd
 
 # ===== PAGE CONFIG =====
 st.set_page_config(page_title="GeoAI Repository", layout="wide")

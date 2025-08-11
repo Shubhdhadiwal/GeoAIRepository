@@ -516,11 +516,6 @@ for idx, row in df.iterrows():
             elif not fav_checkbox and idx in st.session_state.favorites.get(category_key, []):
                 st.session_state.favorites[category_key].remove(idx)
 
-if selected_tab == "Favorites":
-    if st.sidebar.button("Clear All Favorites"):
-        st.session_state.favorites = {}
-        st.experimental_rerun()
-
 st.markdown("""
 <p style='text-align:center; font-size:12px; color:gray;'>
 Developed by Shubh | 

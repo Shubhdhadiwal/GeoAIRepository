@@ -480,8 +480,25 @@ for idx, row in df.iterrows():
                 links.append((col, val))
 
  if view_mode == "Detailed":
-    # Your existing detailed view code here
-    pass  # Replace with your detailed view code
+    # Detailed view code
+    with st.expander(f"🔹 {displayed_title}", expanded=False):
+        col1, col2 = st.columns([0.9, 0.1])
+        with col2:
+            fav_checkbox = st.checkbox("⭐", value=idx in st.session_state.favorites.get(category_key, []), key=f"{category_key}_{idx}")
+        with col1:
+            if "Description" in df.columns and pd.notna(row.get("Description")):
+                st.write(highlight_search(row["Description"], search_term))
+            for link_name, link_url in links:
+                st.markdown(f"[🔗 {link_name}]({link_url})", unsafe_allow_html=True)
+            if "Purpose" in df.columns and pd.notna(row.get("Purpose")):
+                st.markdown(f"**🎯 Purpose:** {highlight_search(row['Purpose'], search_term)}")
+            for col in df.columns:
+                if col not in [title_col, "Description", "Purpose", "S.No", "Category"] + possible_links and pd.notna(row.get(col)):
+                    st.markdown(f"**{col}:** {highlight_search(row[col], search_term)}")
+        if fav_checkbox and idx not in st.session_state.favorites.get(category_key, []):
+            st.session_state.favorites.setdefault(category_key, []).append(idx)
+        elif not fav_checkbox and idx in st.session_state.favorites.get(category_key, []):
+            st.session_state.favorites[category_key].remove(idx)
 
 else:
     # Only show compact view if NOT Favorites tab
@@ -504,8 +521,8 @@ else:
             elif not fav_checkbox and idx in st.session_state.favorites.get(category_key, []):
                 st.session_state.favorites[category_key].remove(idx)
     else:
-        # For Favorites tab, force detailed view or just display nothing in compact mode
-        pass  # Or you can display a message or fallback UI here if you want
+        # Favorites tab: no compact view, you can add message or leave empty
+        pass
 
 st.markdown("""
 <p style='text-align:center; font-size:12px; color:gray;'>
@@ -514,3 +531,4 @@ Developed by Shubh |
 © Copyright GeoAI Repository
 </p>
 """, unsafe_allow_html=True)
+

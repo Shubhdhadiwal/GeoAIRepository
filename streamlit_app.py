@@ -15,6 +15,11 @@ st.set_page_config(page_title="GeoAI Repository", layout="wide")
 # GitHub raw Excel file URL
 GITHUB_RAW_URL = "https://github.com/Shubhdhadiwal/GeoAIRepository/raw/main/Geospatial%20Data%20Repository%20(2).xlsx"
 
+import os
+import json
+from datetime import date
+import streamlit as st
+
 # ===== VISITOR COUNTER SETUP =====
 VISITOR_COUNT_FILE = "visitor_count_by_date.json"
 
@@ -39,16 +44,29 @@ def increment_visitor_count_today():
     counts = get_visitor_counts()
     counts[today_str] = counts.get(today_str, 0) + 1
     save_visitor_counts(counts)
-    return counts[today_str]
+    return counts[today_str], sum(counts.values())
 
-# Only increment visitor count once per browser session per day
+# Increment visitor count only once per browser session per day
 if 'visitor_counted_date' not in st.session_state or st.session_state.visitor_counted_date != str(date.today()):
-    st.session_state.visitor_count = increment_visitor_count_today()
+    today_count, total_count = increment_visitor_count_today()
     st.session_state.visitor_counted_date = str(date.today())
+    st.session_state.today_visitor_count = today_count
+    st.session_state.total_visitor_count = total_count
+else:
+    counts = get_visitor_counts()
+    st.session_state.today_visitor_count = counts.get(str(date.today()), 0)
+    st.session_state.total_visitor_count = sum(counts.values())
 
-# To display today's visitor count somewhere in your app, for example sidebar:
-st.sidebar.markdown(f"📅 Today's Visitors: **{st.session_state.visitor_count}**")
+# Display below welcome text (replace st.write below with your welcome text)
+st.write("### Welcome to GeoAI Repository!")
 
+# Display visitor counts below welcome
+st.markdown(f"""
+<p style='font-size:14px; color:gray; margin-top: 0;'>
+📅 Today's Visitors: <b>{st.session_state.today_visitor_count}</b> &nbsp;&nbsp;|&nbsp;&nbsp; 
+📈 Total Visitors: <b>{st.session_state.total_visitor_count}</b>
+</p>
+""", unsafe_allow_html=True)
 
 # Utility to hash password string
 def hash_password(password):

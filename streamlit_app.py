@@ -362,19 +362,8 @@ if selected_tab == "About":
 
     st.markdown("---")
 
-   import os
-from datetime import datetime
-
-# Set the file path to check last update — update this to your actual data file
-DATA_FILE_PATH = "path_to_your_main_data_file_or_repo_file"  # e.g. "data/mydata.csv"
-
-def get_last_updated_str(file_path):
-    if os.path.exists(file_path):
-        timestamp = os.path.getmtime(file_path)
-        last_updated = datetime.fromtimestamp(timestamp).strftime("%Y-%m-%d %H:%M:%S")
-        return f"GeoAI Repository updated last data: {last_updated}"
-    else:
-        return "GeoAI Repository updated last data: Unknown"
+# Manually set last updated date here (YYYY-MM-DD or full datetime string)
+LAST_UPDATED_DATE = "2025-08-10 14:30:00"
 
 # Footer content
 st.markdown("""
@@ -396,10 +385,10 @@ st.markdown("""
 </p>
 """, unsafe_allow_html=True)
 
-last_updated_text = get_last_updated_str(DATA_FILE_PATH)
+# Display the manually set last updated date
 st.markdown(f"""
 <p style='text-align:center; font-size:12px; color:gray; margin-top: 0;'>
-{last_updated_text}
+GeoAI Repository updated last data: {LAST_UPDATED_DATE}
 </p>
 """, unsafe_allow_html=True)
 

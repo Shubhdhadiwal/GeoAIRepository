@@ -366,18 +366,11 @@ Developed by Shubh |
 </p>
 """, unsafe_allow_html=True)
 
-st.markdown("""
-<p style='text-align:center; font-size:12px; color:gray;'>
-© 2025 GeoAI Repository
-</p>
-""", unsafe_allow_html=True)
-
-# Manually set last updated date here (YYYY-MM-DD or full datetime string)
 LAST_UPDATED_DATE = "2025-08-11 11:45:00"
 
 st.markdown(f"""
-<p style='text-align:center; font-size:12px; color:gray; margin-top: 10px;'>
-Last Updated: {LAST_UPDATED_DATE}
+<p style='text-align:center; font-size:12px; color:gray;'>
+Last Updated: {LAST_UPDATED_DATE} | © 2025 GeoAI Repository
 </p>
 """, unsafe_allow_html=True)
 

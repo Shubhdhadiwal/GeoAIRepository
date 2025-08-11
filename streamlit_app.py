@@ -272,6 +272,35 @@ if selected_tab == "Dashboards":
             scrolling=True
         )
 
+    with st.expander("▶️ About Google My Maps"):
+        st.markdown("""
+        **Google My Maps** is a versatile tool that allows you to create and share **custom, interactive maps** with points, lines, shapes, and rich annotations — like text, photos, and videos — on top of Google Maps.
+
+        - **Draw & annotate:** Add placemarks, paths, shapes, and descriptions directly on the map.  
+        - **Import data:** Easily bring in features from spreadsheets (CSV/XLSX), KML/KMZ files, or GPS tracks.  
+        - **Share & embed:** Share via link, invite collaborators, or embed the map in websites — just like Google Docs.  
+        - **Organize in Drive:** Your maps live alongside your documents in Google Drive.  
+        - **Trusted for real use:** Used by governments and nonprofits for crisis mapping and site planning.
+
+        It’s simple, collaborative, and powerful. Create custom maps, share them securely — and embed them anywhere with just a few clicks.
+
+        Learn more: [https://www.google.com/maps/about/mymaps/](https://www.google.com/maps/about/mymaps/)
+        """)
+
+        # Embed the actual Google My Maps iframe here:
+        mymaps_iframe = """
+        <iframe 
+            src="https://www.google.com/maps/d/embed?mid=1YYXdblP__avwS-m2twXu9k5cYNzbwgI&ehbc=2E312F" 
+            width="640" 
+            height="480" 
+            style="border:0;" 
+            allowfullscreen="" 
+            loading="lazy">
+        </iframe>
+        """
+        st.components.v1.html(mymaps_iframe, height=500)
+
+
     st.stop()
 
 

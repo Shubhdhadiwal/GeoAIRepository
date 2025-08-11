@@ -327,11 +327,14 @@ if selected_tab == "FAQ":
             st.write(answer)
     st.stop()
 
+# ===== INITIALIZE FAVORITES ===== #
+if "favorites" not in st.session_state:
+    st.session_state.favorites = {}
+
 # ===== LOAD DATA FOR OTHER TABS INCLUDING FAVORITES ===== #
 if selected_tab != "Favorites":
     df = load_data(sheet_options[selected_tab])
 else:
-    # For favorites, combine favorites from all categories
     all_fav_items = []
     for key, items in st.session_state.favorites.items():
         df_cat = load_data(sheet_options.get(key, key))
@@ -377,10 +380,6 @@ if df.empty:
     st.info("No resources to display.")
     st.stop()
 
-# ===== FAVORITES STORAGE ===== #
-if "favorites" not in st.session_state:
-    st.session_state.favorites = {}
-
 # ===== DISPLAY DATA ===== #
 exclude_cols = [title_col, "Description", "Purpose", "S.No", "Category"]
 
@@ -394,10 +393,6 @@ link_columns_map = {
 }
 
 possible_links = link_columns_map.get(selected_tab, ["Links", "Link", "Link to the codes", "Tool Link", "Course Link", "Tutorial Link"])
-
-# Initialize favorites in session_state if not present
-if "favorites" not in st.session_state:
-    st.session_state.favorites = {}
 
 def highlight_search(text, term):
     if not term:
@@ -484,3 +479,4 @@ Developed by Shubh |
 © Copyright GeoAI Repository
 </p>
 """, unsafe_allow_html=True)
+

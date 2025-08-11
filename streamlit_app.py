@@ -5,8 +5,9 @@ import re
 import os
 import streamlit.components.v1 as components
 import json
-import os
 from datetime import date
+import os
+
 
 # ===== PAGE CONFIG =====
 st.set_page_config(page_title="GeoAI Repository", layout="wide")
@@ -17,41 +18,37 @@ GITHUB_RAW_URL = "https://github.com/Shubhdhadiwal/GeoAIRepository/raw/main/Geos
 # ===== VISITOR COUNTER SETUP =====
 VISITOR_COUNT_FILE = "visitor_count_by_date.json"
 
-def get_visitor_count_today():
-    today_str = str(date.today())
+def get_visitor_counts():
     if not os.path.exists(VISITOR_COUNT_FILE):
-        # Create empty JSON if file doesn't exist
         with open(VISITOR_COUNT_FILE, "w") as f:
             json.dump({}, f)
-        return 0
+        return {}
     with open(VISITOR_COUNT_FILE, "r") as f:
         try:
             counts = json.load(f)
         except json.JSONDecodeError:
             counts = {}
-    return counts.get(today_str, 0)
+    return counts
+
+def save_visitor_counts(counts):
+    with open(VISITOR_COUNT_FILE, "w") as f:
+        json.dump(counts, f)
 
 def increment_visitor_count_today():
     today_str = str(date.today())
-    if not os.path.exists(VISITOR_COUNT_FILE):
-        counts = {}
-    else:
-        with open(VISITOR_COUNT_FILE, "r") as f:
-            try:
-                counts = json.load(f)
-            except json.JSONDecodeError:
-                counts = {}
+    counts = get_visitor_counts()
     counts[today_str] = counts.get(today_str, 0) + 1
-    with open(VISITOR_COUNT_FILE, "w") as f:
-        json.dump(counts, f)
+    save_visitor_counts(counts)
     return counts[today_str]
 
-if 'visitor_counted' not in st.session_state:
+# Only increment visitor count once per browser session per day
+if 'visitor_counted_date' not in st.session_state or st.session_state.visitor_counted_date != str(date.today()):
     st.session_state.visitor_count = increment_visitor_count_today()
-    st.session_state.visitor_counted = True
+    st.session_state.visitor_counted_date = str(date.today())
 
-# Then to display today's visitors anywhere in your app:
-# st.sidebar.markdown(f"📅 Today's Visitors: **{st.session_state.visitor_count}**")
+# To display today's visitor count somewhere in your app, for example sidebar:
+st.sidebar.markdown(f"📅 Today's Visitors: **{st.session_state.visitor_count}**")
+
 
 # Utility to hash password string
 def hash_password(password):

@@ -447,7 +447,14 @@ link_columns_map = {
 
 possible_links = link_columns_map.get(selected_tab, ["Links", "Link", "Link to the codes", "Tool Link", "Course Link", "Tutorial Link"])
 
-# If in Favorites tab, dynamically adjust possible_links based on each row's category
+def highlight_search(text, term):
+    if not term:
+        return text
+    regex = re.compile(re.escape(term), re.IGNORECASE)
+    return regex.sub(lambda match: f"**:yellow[{match.group(0)}]**", str(text))
+
+view_mode = st.sidebar.radio("View Mode", ["Detailed", "Compact"])
+
 for idx, row in df.iterrows():
     if selected_tab == "Favorites":
         category_key = row.get("Category", None)
@@ -455,26 +462,20 @@ for idx, row in df.iterrows():
         resource_title = row.get(fav_title_col, None)
         if not resource_title or str(resource_title).strip() == "":
             resource_title = f"Resource-{idx+1}"
-
-        # Use link columns for the specific category of the favorite row
-        possible_links_for_row = link_columns_map.get(category_key, possible_links)
     else:
         resource_title = row.get(title_col)
         if not resource_title or str(resource_title).strip() == "":
             resource_title = f"Resource-{idx+1}"
-        possible_links_for_row = possible_links
 
     displayed_title = highlight_search(resource_title, search_term)
 
     links = []
-    for col in possible_links_for_row:
+    for col in possible_links:
         if col in df.columns and pd.notna(row.get(col)):
             val = str(row[col]).strip()
             if val.lower().startswith(("http://", "https://", "www.")):
                 links.append((col, val))
-    
-    # Then use links as usual for displaying in your UI...
-
+   
     category_key = selected_tab
     if selected_tab == "Favorites" and "Category" in row:
         category_key = row["Category"]

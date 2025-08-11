@@ -480,37 +480,26 @@ for idx, row in df.iterrows():
                 links.append((col, val))
 
     if view_mode == "Detailed":
-        # existing detailed view code for displaying resource and links
-        ...
-    else:  # Compact view
-        compact_col1, compact_col2, compact_col3 = st.columns([6, 3, 1])
-        with compact_col1:
-            st.markdown(f"🔹 {displayed_title}")
-        with compact_col2:
-            if links:
-                for link_name, link_url in links:
-                    st.markdown(f"[🔗 {link_name}]({link_url})", unsafe_allow_html=True)
-        with compact_col3:
-            fav_checkbox = st.checkbox("⭐", value=idx in st.session_state.favorites.get(category_key, []), key=f"compact_{category_key}_{idx}")
-            if fav_checkbox and idx not in st.session_state.favorites.get(category_key, []):
-                st.session_state.favorites.setdefault(category_key, []).append(idx)
-            elif not fav_checkbox and idx in st.session_state.favorites.get(category_key, []):
-                st.session_state.favorites[category_key].remove(idx)
-
-    else:
-        compact_col1, compact_col2, compact_col3 = st.columns([6, 3, 1])
-        with compact_col1:
-            st.markdown(f"🔹 {displayed_title}")
-        with compact_col2:
-            if links:
-                for link_name, link_url in links:
-                    st.markdown(f"[🔗 {link_name}]({link_url})", unsafe_allow_html=True)
-        with compact_col3:
-            fav_checkbox = st.checkbox("⭐", value=checked, key=f"compact_{category_key}_{idx}")
-            if fav_checkbox and idx not in st.session_state.favorites.get(category_key, []):
-                st.session_state.favorites.setdefault(category_key, []).append(idx)
-            elif not fav_checkbox and idx in st.session_state.favorites.get(category_key, []):
-                st.session_state.favorites[category_key].remove(idx)
+    # existing detailed view code for displaying resource and links
+    ...
+else:  # Compact view
+    compact_col1, compact_col2, compact_col3 = st.columns([6, 3, 1])
+    with compact_col1:
+        st.markdown(f"🔹 {displayed_title}")
+    with compact_col2:
+        if links:
+            for link_name, link_url in links:
+                st.markdown(f"[🔗 {link_name}]({link_url})", unsafe_allow_html=True)
+    with compact_col3:
+        fav_checkbox = st.checkbox(
+            "⭐", 
+            value=idx in st.session_state.favorites.get(category_key, []), 
+            key=f"compact_{category_key}_{idx}"
+        )
+        if fav_checkbox and idx not in st.session_state.favorites.get(category_key, []):
+            st.session_state.favorites.setdefault(category_key, []).append(idx)
+        elif not fav_checkbox and idx in st.session_state.favorites.get(category_key, []):
+            st.session_state.favorites[category_key].remove(idx)
 
 st.markdown("""
 <p style='text-align:center; font-size:12px; color:gray;'>

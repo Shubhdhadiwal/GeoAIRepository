@@ -251,6 +251,15 @@ if selected_tab == "Dashboards":
             width=1400,
             scrolling=True
         )
+    
+    with st.expander("▶️ Choropleth Map (Natural Earth Dataset)"):
+        st.write("This map shows continents from the Natural Earth dataset using GeoPlot.")
+        # Load data and plot as above
+        world = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
+        fig, ax = plt.subplots(figsize=(10, 6))
+        gplt.choropleth(world, hue='continent', cmap='Set2', ax=ax)
+        ax.set_title("World Map by Continent")
+        st.pyplot(fig)
 
     st.stop()
 

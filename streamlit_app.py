@@ -250,7 +250,22 @@ if selected_tab == "Dashboards":
 
         st.components.v1.html(leaflet_html, height=550)
 
-    st.stop()  # Stop execution here for dashboards so no other code runs below
+    # New expander for BBBike Extract
+    with st.expander("▶️ BBBike Extract Service"):
+        st.markdown("""
+        BBBike Extract is a service to extract OpenStreetMap data for custom-defined areas worldwide. It allows users to select any region and download geospatial data extracts.
+        """)
+        st.markdown("🔗 [Visit BBBike Extract Website](https://extract.bbbike.org/)")
+        
+        # Embed BBBike website in an iframe
+        components.iframe(
+            "https://extract.bbbike.org/",
+            height=700,
+            width=1000,
+            scrolling=True
+        )
+
+   st.stop()  # Stop execution here for dashboards so no other code runs below
 
 
 # ===== NON-SHEET TABS: About, Submit New Resource, FAQ ===== #

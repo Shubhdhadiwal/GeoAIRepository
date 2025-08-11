@@ -464,17 +464,17 @@ st.write(f"Selected tab: '{selected_tab}'")
 
 for idx, row in df.iterrows():
     # Handle title and category keys
-    if selected_tab.strip().lower() == "favorites":
-        category_key = row.get("Category", None)
-        title_for_fav = title_map.get(category_key, df.columns[0] if not df.empty else None)
-        resource_title = row.get(title_for_fav)
-        if not resource_title or str(resource_title).strip() == "":
-            resource_title = f"Resource-{idx+1}"
-    else:
-        category_key = selected_tab
-        resource_title = row.get(title_col)
-        if not resource_title or str(resource_title).strip() == "":
-            resource_title = f"Resource-{idx+1}"
+if selected_tab.strip().lower() == "favorites":
+    category_key = row.get("Category", None)
+    title_for_fav = title_map.get(category_key, title_col)  # fallback to default title_col
+    resource_title = row.get(title_for_fav)
+    if not resource_title or str(resource_title).strip() == "":
+        resource_title = f"Resource-{idx+1}"
+else:
+    category_key = selected_tab
+    resource_title = row.get(title_col)
+    if not resource_title or str(resource_title).strip() == "":
+        resource_title = f"Resource-{idx+1}"
 
     displayed_title = highlight_search(resource_title, search_term)
 

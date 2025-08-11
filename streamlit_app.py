@@ -352,7 +352,7 @@ if selected_tab == "About":
 
     st.markdown("---")
 
-    # Manually set last updated date here (YYYY-MM-DD or full datetime string)
+  # Manually set last updated date here (YYYY-MM-DD or full datetime string)
 LAST_UPDATED_DATE = "2025-08-11 11:45:00"
 
 # Footer content
@@ -382,7 +382,7 @@ Last Updated: {LAST_UPDATED_DATE}
 </p>
 """, unsafe_allow_html=True)
 
-    st.stop()
+st.stop()
 
 if selected_tab == "Submit New Resource":
     st.title("📤 Submit a New Resource")

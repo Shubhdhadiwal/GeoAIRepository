@@ -284,7 +284,7 @@ if selected_tab == "Dashboards":
         components.iframe(
             "https://extract.bbbike.org/",
             height=700,
-            width=1000,
+            width=1300,
             scrolling=True
         )
 

@@ -78,7 +78,7 @@ def hash_password(password):
 
 # Store username and hashed password
 USER_CREDENTIALS = {
-    "Shubh4016": hash_password("Shubh9834421314")
+    "Shubh1301": hash_password("Shubh130100")
 }
 
 if 'authenticated' not in st.session_state:

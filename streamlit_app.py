@@ -480,8 +480,10 @@ for idx, row in df.iterrows():
                 links.append((col, val))
 
     if view_mode == "Detailed":
-    # existing detailed view code for displaying resource and links
-    ...
+    pass  # TODO: add detailed view code here
+else:
+    # your else code here
+
 else:  # Compact view
     compact_col1, compact_col2, compact_col3 = st.columns([6, 3, 1])
     with compact_col1:

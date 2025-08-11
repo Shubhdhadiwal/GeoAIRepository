@@ -285,39 +285,53 @@ if selected_tab == "Dashboards":
     with st.expander("▶️ BBBike Extract Service"):
         st.markdown("""
         BBBike Extract is a service to extract OpenStreetMap data for custom-defined areas worldwide. It allows users to select any region and download geospatial data extracts.
-
-        ---
-
-        **Welcome to the BBBike Extract Service!**
-
-        BBBike extracts allows you to extract areas from Planet.osm in OSM, PBF, o5m, Garmin, Organic Maps, Osmand, mapsforge CSV, SVG, libosmium OPL, GeoJSON, SQLite, text, or Esri shapefile format. The maximum area size is 24,000,000 square km, or up to 512MB file size. It takes between 2-7 minutes to extract an area. The email field is required, you will be notified by email if your extract is ready for download. Please use a meaningful name for the extract. For more information, please read the extract help page.
-
-        **How to use the BBBike extract service (YouTube tutorials):**
-
-        1. Now move the map to your desired location.  
-        2. Then click the **here** button to create the bounding box.  
-        3. Move or resize the bounding box, or add new points to the polygon.  
-        4. Select a Format, enter Your email address and Name of area to extract.  
-        5. Click the extract button. Wait for email notification and download the map. Done!
-
-        Supported formats include:  
-        - Shapefile (Esri)  
-        - Garmin OSM  
-        - Garmin Leisure  
-        - Organic Maps  
-        - mapsforge  
-        - OsmAnd  
-        - SVG
-
-        For a full guide, visit [BBBike Extract Website](https://extract.bbbike.org/).
-
-        ---
         """)
 
         components.iframe(
             "https://extract.bbbike.org/",
             height=700,
             width=1300,
+            scrolling=True
+        )
+
+    with st.expander("▶️ NASA AppEEARS (Area Request Tool)"):
+        st.markdown("""
+        The **Application for Extracting and Exploring Analysis Ready Samples (AppEEARS)** from NASA allows users to subset, extract, and download geospatial datasets 
+        for a specified area or point. It supports a variety of NASA Earth observation datasets, such as MODIS, VIIRS, and SMAP, and provides convenient analysis-ready formats.
+        
+        With the **Area Request Tool**, you can:
+        - Select an area of interest via shapefile upload or by drawing a polygon
+        - Choose specific datasets and variables
+        - Set time ranges and request processing
+        - Download your results in GeoTIFF, NetCDF, CSV, or other formats
+
+        🔗 [Official AppEEARS Website](https://appeears.earthdatacloud.nasa.gov/)
+        """)
+        
+        components.iframe(
+            "https://appeears.earthdatacloud.nasa.gov/task/area",
+            height=900,
+            width=1400,
+            scrolling=True
+        )
+
+    with st.expander("▶️ DIVA-GIS Global Data Access"):
+        st.markdown("""
+        **DIVA-GIS** provides free spatial data for any country in the world, including:
+        - Administrative boundaries
+        - Roads, railways, and population density
+        - Elevation and climate data
+        - Land cover maps
+
+        This is especially useful for GIS analysis, ecological studies, and spatial planning.
+
+        🔗 [Official DIVA-GIS Website](https://diva-gis.org/data.html)
+        """)
+        
+        components.iframe(
+            "https://diva-gis.org/data.html",
+            height=900,
+            width=1400,
             scrolling=True
         )
 

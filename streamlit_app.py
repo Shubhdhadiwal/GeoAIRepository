@@ -20,7 +20,6 @@ VISITOR_COUNT_FILE = "visitor_count_by_date.json"
 def get_visitor_count_today():
     today_str = str(date.today())
     if not os.path.exists(VISITOR_COUNT_FILE):
-        # Create empty JSON if file doesn't exist
         with open(VISITOR_COUNT_FILE, "w") as f:
             json.dump({}, f)
         return 0
@@ -30,6 +29,16 @@ def get_visitor_count_today():
         except json.JSONDecodeError:
             counts = {}
     return counts.get(today_str, 0)
+
+def get_total_visitor_count():
+    if not os.path.exists(VISITOR_COUNT_FILE):
+        return 0
+    with open(VISITOR_COUNT_FILE, "r") as f:
+        try:
+            counts = json.load(f)
+        except json.JSONDecodeError:
+            counts = {}
+    return sum(counts.values())
 
 def increment_visitor_count_today():
     today_str = str(date.today())
@@ -46,12 +55,22 @@ def increment_visitor_count_today():
         json.dump(counts, f)
     return counts[today_str]
 
+# Only increment once per session
 if 'visitor_counted' not in st.session_state:
-    st.session_state.visitor_count = increment_visitor_count_today()
+    st.session_state.today_visitor_count = increment_visitor_count_today()
+    st.session_state.total_visitor_count = get_total_visitor_count()
     st.session_state.visitor_counted = True
 
-# Then to display today's visitors anywhere in your app:
-# st.sidebar.markdown(f"📅 Today's Visitors: **{st.session_state.visitor_count}**")
+# Now show welcome and visitor counts nicely formatted
+st.write("### Welcome to GeoAI Repository!")
+
+st.markdown(f"""
+<p style='font-size:14px; color:gray; margin-top: 0;'>
+📅 Today's Visitors: <b>{st.session_state.today_visitor_count}</b> &nbsp;&nbsp;|&nbsp;&nbsp; 
+📈 Total Visitors: <b>{st.session_state.total_visitor_count}</b>
+</p>
+""", unsafe_allow_html=True)
+
 
 # Utility to hash password string
 def hash_password(password):
@@ -116,9 +135,6 @@ sheet_options = {
     "Favorites": "Favorites",
     "FAQ": "FAQ"
 }
-
-# Display real-time visitor count
-st.sidebar.markdown(f"📅 Total Visitors: **{st.session_state.visitor_count}**")
 
 @st.cache_data(show_spinner=False)
 def load_data(sheet_name):

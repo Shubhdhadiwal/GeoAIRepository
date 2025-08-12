@@ -279,7 +279,7 @@ if selected_tab == "Dashboards":
         Center for International Earth Science Information Network - CIESIN - Columbia University. 2018.  
         Gridded Population of the World, Version 4 (GPWv4.11): Population Density Adjusted to Match 2015 Revision of UN WPP Country Totals, Revision 11.  
         Palisades, NY: NASA Socioeconomic Data and Applications Center (SEDAC).  
-        https://doi.org/10.7927/H4F47M65. Accessed DAY MONTH YEAR.
+        https://doi.org/10.7927/H4F47M65. Accessed 12 August 2025.
         """)
 
     st.stop()

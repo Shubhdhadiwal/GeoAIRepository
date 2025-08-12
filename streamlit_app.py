@@ -281,6 +281,7 @@ if selected_tab == "Dashboards":
         Palisades, NY: NASA Socioeconomic Data and Applications Center (SEDAC).  
         https://doi.org/10.7927/H4F47M65. Accessed 12 August 2025.
         """)
+    
     with st.expander("▶️ Global Landsat LST Explorer"):
         st.markdown("""
         The **Global Landsat LST Explorer** is an interactive Google Earth Engine (GEE) application for analyzing Land Surface Temperature (LST) using Landsat 8 and Landsat 9 Collection 2 Level-2 data.  
@@ -312,7 +313,7 @@ if selected_tab == "Dashboards":
         )
         st.markdown("""
         Dashboard created by Shubh Dhadiwal using Google Earth Engine.  
-        [🚀 Open Earth Engine Code Editor here](https://code.earthengine.google.com/YOUR_SCRIPT_ID?hideCode=true)
+        [🚀 Open Earth Engine Code Editor here](https://code.earthengine.google.com/e4830267a6dae171f1bf1057f52e19bc)
         """, unsafe_allow_html=True)
 
 

@@ -251,6 +251,36 @@ if selected_tab == "Dashboards":
             width=1400,
             scrolling=True
         )  
+    
+    with st.expander("▶️ Gridded Population of World 2020"):
+        st.markdown("""
+        This dataset contains estimates of the number of persons per 30 arc-second (~1 km) grid cell, consistent with national censuses and population registers with respect to relative spatial distribution but adjusted to match the 2015 Revision of UN World Population Prospects country totals.  
+        There is one image for each modeled year (2000, 2005, 2010, 2015, and 2020). Population is distributed to cells using proportional allocation of population from census and administrative units.
+        """)
+        st.markdown("🔗 [General Dataset Documentation - GPWv4, CIESIN, Columbia University](https://doi.org/10.7927/H4F47M65)")
+        st.markdown("---")
+        st.markdown(
+            """
+            <iframe 
+                src="https://ee-shubhdhadiwal.projects.earthengine.app/view/gridded-population-of-world-2020" 
+                width="100%" height="600" frameborder="0" allowfullscreen>
+            </iframe>
+            """,
+            unsafe_allow_html=True
+        )
+        st.markdown("""
+        Dashboard created by Shubh Dhadiwal using Google Earth Engine.  
+        [🚀 Open Earth Engine Code Editor here](https://code.earthengine.google.com/272ebbc2fd09e86a3b256c9c2f259b9f?hideCode=true)
+        """, unsafe_allow_html=True)
+    
+        st.markdown("""
+        ---
+        **Citation:**  
+        Center for International Earth Science Information Network - CIESIN - Columbia University. 2018.  
+        Gridded Population of the World, Version 4 (GPWv4.11): Population Density Adjusted to Match 2015 Revision of UN WPP Country Totals, Revision 11.  
+        Palisades, NY: NASA Socioeconomic Data and Applications Center (SEDAC).  
+        https://doi.org/10.7927/H4F47M65. Accessed DAY MONTH YEAR.
+        """)
 
     st.stop()
 

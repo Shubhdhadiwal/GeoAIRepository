@@ -216,7 +216,21 @@ The LCZ scheme complements other land use / land cover schemes by its focus on u
 
     with st.expander("▶️ NASA Sea Level Evaluation Tool"):
         st.markdown("""
-        The NASA Sea Level Evaluation Tool provides interactive visualization and analysis of global sea level data...
+        The **NASA Sea Level Evaluation Tool** provides interactive visualization and analysis of global sea level data from multiple satellite altimetry missions.  
+        Users can:
+        - Explore sea level trends and anomalies
+        - Compare data from different missions (e.g., TOPEX/Poseidon, Jason-1/2/3, Sentinel-6)
+        - Analyze time series for specific regions or globally
+        - Overlay climate indices for correlation studies
+    
+        **Data Sources:**  
+        - Satellite altimetry measurements from NASA, NOAA, CNES, and ESA missions  
+        - Climate indices (ENSO, PDO, NAO, etc.)
+    
+        **Key Features:**  
+        - Interactive maps and charts
+        - Regional or global data selection
+        - Downloadable CSV datasets for custom analysis
         """)
         st.markdown("🔗 [NASA Sea Level Evaluation Tool Website](https://sealevel.nasa.gov/sea-level-evaluation-tool)")
         components.iframe(
@@ -230,9 +244,26 @@ The LCZ scheme complements other land use / land cover schemes by its focus on u
         </p>
         """, unsafe_allow_html=True)
 
-    with st.expander("▶️ BBBike Extract Service"):
+
+    with st.expander("▶️ BBBike OSM Extract Service"):
         st.markdown("""
-        BBBike Extract is a service to extract OpenStreetMap data for custom-defined areas worldwide...
+        The **BBBike OSM Extract Service** is a free web-based tool for extracting **OpenStreetMap (OSM)** data for custom-defined areas anywhere in the world.  
+        Users can:
+        - Select a region by drawing a polygon or choosing from predefined cities
+        - Download OSM data in multiple formats (Shapefile, GeoJSON, Garmin IMG, KML, PBF, CSV, etc.)
+        - Filter datasets to include only desired layers (roads, buildings, land use, points of interest, etc.)
+    
+        **Key Features:**  
+        - Global coverage
+        - Multiple coordinate reference systems supported
+        - Regularly updated extracts (usually weekly)
+        - Free to use with generous area limits
+    
+        **Typical Uses:**  
+        - GIS analysis
+        - Urban planning
+        - Navigation system development
+        - Research projects
         """)
         components.iframe(
             "https://extract.bbbike.org/",

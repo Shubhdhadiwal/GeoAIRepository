@@ -270,7 +270,7 @@ if selected_tab == "Dashboards":
         )
         st.markdown("""
         Dashboard created by Shubh Dhadiwal using Google Earth Engine.  
-        [🚀 Open Earth Engine Code Editor here](https://code.earthengine.google.com/272ebbc2fd09e86a3b256c9c2f259b9f?hideCode=true)
+        [🚀 Open Earth Engine Code Editor here](https://code.earthengine.google.com/dca1dbdd9db97db7276ffab3cf5b2fe6)
         """, unsafe_allow_html=True)
     
         st.markdown("""

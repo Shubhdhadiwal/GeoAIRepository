@@ -10,8 +10,8 @@ from datetime import date
 
 import streamlit as st
 import pandas as pd
-import json
 import os
+import json
 import hashlib
 from datetime import date
 
@@ -72,7 +72,7 @@ def increment_visitor_count_today():
         json.dump(counts, f)
     return counts[today_str]
 
-# Only increment once per session
+# Increment visitor count once per session
 if 'visitor_counted' not in st.session_state:
     st.session_state.today_visitor_count = increment_visitor_count_today()
     st.session_state.total_visitor_count = get_total_visitor_count()
@@ -83,7 +83,7 @@ st.markdown("### Welcome to GeoAI Repository!")
 st.markdown(
     f"""
     <p style='font-size:14px; color:gray;'>
-    📅 Today's Visitors: <b>{st.session_state.today_visitor_count}</b>  
+    📅 Today's Visitors: <b>{st.session_state.today_visitor_count}</b><br>
     📈 Total Visitors: <b>{st.session_state.total_visitor_count}</b>
     </p>
     """,
@@ -105,9 +105,14 @@ if 'authenticated' not in st.session_state:
     st.session_state['username'] = None
 
 def login():
+    # Add GeoAI login image
+    st.image(
+        "https://raw.githubusercontent.com/Shubhdhadiwal/GeoAIRepository/main/geoai_login.png",
+        use_column_width=True
+    )
+
     st.title("🔐 Login to GeoAI Repository")
 
-    # Support/contact info
     st.markdown("""
     <hr>
     <p style="font-size:12px; color:gray;">
@@ -129,6 +134,7 @@ def login():
         else:
             st.error("❌ Invalid username or password")
 
+# ===== LOGIN CHECK =====
 if not st.session_state['authenticated']:
     login()
     st.stop()

@@ -89,7 +89,7 @@ def hash_password(password):
 
 # ===== USER CREDENTIALS =====
 USER_CREDENTIALS = {
-    "Shubh1301": hash_password("Shubh130100")
+    "Shubh1301": hash_password("Shubh130127")
 }
 
 # ===== SESSION AUTH SETUP =====

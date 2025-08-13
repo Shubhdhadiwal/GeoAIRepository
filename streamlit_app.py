@@ -10,9 +10,9 @@ from datetime import date
 
 import streamlit as st
 import pandas as pd
+import hashlib
 import os
 import json
-import hashlib
 from datetime import date
 
 # ===== PAGE CONFIG =====
@@ -22,11 +22,29 @@ st.set_page_config(
     layout="wide"
 )
 
-# ===== LOGO =====
-st.image(
-    "https://raw.githubusercontent.com/Shubhdhadiwal/GeoAIRepository/main/geoai_logo.png",
-    width=200
-)
+# ===== CSS FOR BACKGROUND =====
+page_bg_img = """
+<style>
+[data-testid="stAppViewContainer"] {
+    background-image: url("https://raw.githubusercontent.com/Shubhdhadiwal/GeoAIRepository/main/geoai_login.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+[data-testid="stHeader"], [data-testid="stToolbar"] {
+    background: rgba(0,0,0,0);
+}
+.login-box {
+    background: rgba(255, 255, 255, 0.88);
+    padding: 2rem;
+    border-radius: 15px;
+    max-width: 400px;
+    margin: auto;
+    box-shadow: 0px 4px 12px rgba(0,0,0,0.3);
+}
+</style>
+"""
+st.markdown(page_bg_img, unsafe_allow_html=True)
 
 # ===== GITHUB RAW EXCEL URL =====
 GITHUB_RAW_URL = "https://github.com/Shubhdhadiwal/GeoAIRepository/raw/main/Geospatial%20Data%20Repository%20(2).xlsx"
@@ -78,18 +96,6 @@ if 'visitor_counted' not in st.session_state:
     st.session_state.total_visitor_count = get_total_visitor_count()
     st.session_state.visitor_counted = True
 
-# ===== WELCOME MESSAGE =====
-st.markdown("### Welcome to GeoAI Repository!")
-st.markdown(
-    f"""
-    <p style='font-size:14px; color:gray;'>
-    📅 Today's Visitors: <b>{st.session_state.today_visitor_count}</b><br>
-    📈 Total Visitors: <b>{st.session_state.total_visitor_count}</b>
-    </p>
-    """,
-    unsafe_allow_html=True
-)
-
 # ===== PASSWORD UTILS =====
 def hash_password(password):
     return hashlib.sha256(password.encode()).hexdigest()
@@ -105,34 +111,42 @@ if 'authenticated' not in st.session_state:
     st.session_state['username'] = None
 
 def login():
-    # Add GeoAI login image
-    st.image(
-        "https://raw.githubusercontent.com/Shubhdhadiwal/GeoAIRepository/main/geoai_login.png",
-        use_column_width=True
-    )
-
-    st.title("🔐 Login to GeoAI Repository")
-
-    st.markdown("""
-    <hr>
-    <p style="font-size:12px; color:gray;">
-    🛠️ <b>Need login access or help?</b><br>
-    Please contact the developer for login credentials:<br>
-    👉 <a href="https://www.linkedin.com/in/shubh-dhadiwal/" target="_blank">Shubh Dhadiwal on LinkedIn</a>
-    </p>
-    <hr>
-    """, unsafe_allow_html=True)
-    
-    username = st.text_input("Username", key="username_input")
-    password = st.text_input("Password", type="password", key="password_input")
-    
-    if st.button("Login"):
-        hashed_input = hash_password(password)
-        if username in USER_CREDENTIALS and USER_CREDENTIALS[username] == hashed_input:
-            st.session_state['authenticated'] = True
-            st.session_state['username'] = username
-        else:
-            st.error("❌ Invalid username or password")
+    st.markdown("<br><br><br>", unsafe_allow_html=True)
+    col1, col2, col3 = st.columns([1, 2, 1])
+    with col2:
+        st.markdown('<div class="login-box">', unsafe_allow_html=True)
+        st.image(
+            "https://raw.githubusercontent.com/Shubhdhadiwal/GeoAIRepository/main/geoai_logo.png",
+            width=200
+        )
+        st.markdown("### 🔐 Login to GeoAI Repository")
+        st.markdown(
+            f"""
+            <p style='font-size:14px; color:gray;'>
+            📅 Today's Visitors: <b>{st.session_state.today_visitor_count}</b><br>
+            📈 Total Visitors: <b>{st.session_state.total_visitor_count}</b>
+            </p>
+            """,
+            unsafe_allow_html=True
+        )
+        username = st.text_input("Username", key="username_input")
+        password = st.text_input("Password", type="password", key="password_input")
+        if st.button("Login"):
+            hashed_input = hash_password(password)
+            if username in USER_CREDENTIALS and USER_CREDENTIALS[username] == hashed_input:
+                st.session_state['authenticated'] = True
+                st.session_state['username'] = username
+            else:
+                st.error("❌ Invalid username or password")
+        st.markdown("""
+        <hr>
+        <p style="font-size:12px; color:gray;">
+        🛠️ <b>Need login access or help?</b><br>
+        Please contact the developer for login credentials:<br>
+        👉 <a href="https://www.linkedin.com/in/shubh-dhadiwal/" target="_blank">Shubh Dhadiwal on LinkedIn</a>
+        </p>
+        """, unsafe_allow_html=True)
+        st.markdown('</div>', unsafe_allow_html=True)
 
 # ===== LOGIN CHECK =====
 if not st.session_state['authenticated']:

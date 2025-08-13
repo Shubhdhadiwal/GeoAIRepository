@@ -8,13 +8,30 @@ import json
 import os
 from datetime import date
 
-# ===== PAGE CONFIG =====
-st.set_page_config(page_title="GeoAI Repository", layout="wide")
+import streamlit as st
+import pandas as pd
+import json
+import os
+import hashlib
+from datetime import date
 
-# GitHub raw Excel file URL
+# ===== PAGE CONFIG =====
+st.set_page_config(
+    page_title="GeoAI Repository",
+    page_icon="https://raw.githubusercontent.com/Shubhdhadiwal/GeoAIRepository/main/geoai_logo.png",
+    layout="wide"
+)
+
+# ===== LOGO =====
+st.image(
+    "https://raw.githubusercontent.com/Shubhdhadiwal/GeoAIRepository/main/geoai_logo.png",
+    width=200
+)
+
+# ===== GITHUB RAW EXCEL URL =====
 GITHUB_RAW_URL = "https://github.com/Shubhdhadiwal/GeoAIRepository/raw/main/Geospatial%20Data%20Repository%20(2).xlsx"
 
-# ===== VISITOR COUNTER SETUP =====
+# ===== VISITOR COUNTER =====
 VISITOR_COUNT_FILE = "visitor_count_by_date.json"
 
 def get_visitor_count_today():
@@ -61,26 +78,28 @@ if 'visitor_counted' not in st.session_state:
     st.session_state.total_visitor_count = get_total_visitor_count()
     st.session_state.visitor_counted = True
 
-# Now show welcome and visitor counts nicely formatted
-st.write("### Welcome to GeoAI Repository!")
+# ===== WELCOME MESSAGE =====
+st.markdown("### Welcome to GeoAI Repository!")
+st.markdown(
+    f"""
+    <p style='font-size:14px; color:gray;'>
+    📅 Today's Visitors: <b>{st.session_state.today_visitor_count}</b>  
+    📈 Total Visitors: <b>{st.session_state.total_visitor_count}</b>
+    </p>
+    """,
+    unsafe_allow_html=True
+)
 
-st.markdown(f"""
-<p style='font-size:14px; color:gray; margin-top: 0;'>
-📅 Today's Visitors: <b>{st.session_state.today_visitor_count}</b> &nbsp;&nbsp;|&nbsp;&nbsp; 
-📈 Total Visitors: <b>{st.session_state.total_visitor_count}</b>
-</p>
-""", unsafe_allow_html=True)
-
-
-# Utility to hash password string
+# ===== PASSWORD UTILS =====
 def hash_password(password):
     return hashlib.sha256(password.encode()).hexdigest()
 
-# Store username and hashed password
+# ===== USER CREDENTIALS =====
 USER_CREDENTIALS = {
     "Shubh1301": hash_password("Shubh130100")
 }
 
+# ===== SESSION AUTH SETUP =====
 if 'authenticated' not in st.session_state:
     st.session_state['authenticated'] = False
     st.session_state['username'] = None
@@ -88,41 +107,41 @@ if 'authenticated' not in st.session_state:
 def login():
     st.title("🔐 Login to GeoAI Repository")
 
- # Support/contact info on login page with smaller font
+    # Support/contact info
     st.markdown("""
     <hr>
     <p style="font-size:12px; color:gray;">
     🛠️ <b>Need login access or help?</b><br>
-    Please contact the developer for login credentials:<br><br>
-    👉 <a href="https://www.linkedin.com/in/shubh-dhadiwal/" target="_blank">Shubh Dhadiwal on LinkedIn</a><br>
-    Send a message mentioning your request for login details.
+    Please contact the developer for login credentials:<br>
+    👉 <a href="https://www.linkedin.com/in/shubh-dhadiwal/" target="_blank">Shubh Dhadiwal on LinkedIn</a>
     </p>
     <hr>
     """, unsafe_allow_html=True)
     
     username = st.text_input("Username", key="username_input")
     password = st.text_input("Password", type="password", key="password_input")
-    login_pressed = st.button("Login")
-
-    if login_pressed:
+    
+    if st.button("Login"):
         hashed_input = hash_password(password)
         if username in USER_CREDENTIALS and USER_CREDENTIALS[username] == hashed_input:
             st.session_state['authenticated'] = True
             st.session_state['username'] = username
         else:
-            st.error("Invalid username or password")
+            st.error("❌ Invalid username or password")
 
 if not st.session_state['authenticated']:
     login()
     st.stop()
 
+# ===== SIDEBAR =====
 if st.sidebar.button("Logout"):
     st.session_state['authenticated'] = False
     st.session_state['username'] = None
+    st.experimental_rerun()
 
 st.sidebar.title(f"Welcome, {st.session_state['username']}!")
 
-# Sheet options mapping tab name → Excel sheet name (except Dashboards etc. which don't have sheets)
+# ===== SHEET OPTIONS =====
 sheet_options = {
     "About": "About",
     "Data Sources": "Data Sources",
@@ -130,25 +149,23 @@ sheet_options = {
     "Free Tutorials": "Free Tutorials",
     "Python Codes (GEE)": "Google Earth EnginePython Codes",
     "Courses": "Courses",
-    "Dashboards": "Dashboards",  # note: no sheet actually called "Dashboards"
+    "Dashboards": "Dashboards",
     "Submit New Resource": "Submit New Resource",
     "Favorites": "Favorites",
     "FAQ": "FAQ"
 }
 
+# ===== DATA LOADING =====
 @st.cache_data(show_spinner=False)
 def load_data(sheet_name):
     try:
-        # You may want to change here to load directly from URL if needed
-        # For now assumes local file:
         df = pd.read_excel("Geospatial Data Repository (2).xlsx", sheet_name=sheet_name)
-        df.columns = df.iloc[0]  # Use first row as header
-        df = df[1:]  # Skip header row from data
-        df = df.dropna(subset=[df.columns[0]])  # Drop rows with empty first col
-        df = df.loc[:, ~df.columns.str.contains("^Unnamed")]  # Drop unnamed columns
+        df.columns = df.iloc[0]
+        df = df[1:]
+        df = df.dropna(subset=[df.columns[0]])
+        df = df.loc[:, ~df.columns.str.contains("^Unnamed")]
 
         if sheet_name == "Tools":
-            # Rename any "Column X" columns to "Link"
             new_cols = {col: "Link" for col in df.columns if isinstance(col, str) and col.startswith("Column")}
             if new_cols:
                 df = df.rename(columns=new_cols)

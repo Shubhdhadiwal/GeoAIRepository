@@ -365,6 +365,45 @@ The LCZ scheme complements other land use / land cover schemes by its focus on u
         [🚀 Open Earth Engine Code Editor here](https://code.earthengine.google.com/e4830267a6dae171f1bf1057f52e19bc)
         """, unsafe_allow_html=True)
 
+    with st.expander("▶️ NASA POWER Data Access Viewer"):
+        st.markdown("""
+        The **NASA POWER (Prediction Of Worldwide Energy Resources) Data Access Viewer** is a web-based tool that provides access to global meteorological and solar energy data.  
+        It is widely used for:
+        - Renewable energy assessments
+        - Agricultural planning
+        - Climate research and environmental studies
+        - Weather-related analytics
+
+        **Key Features:**
+        - Download daily, hourly, or climatological datasets
+        - Access variables like temperature, humidity, wind speed, precipitation, and solar radiation
+        - Select specific geographic coordinates or regions
+        - Multiple output formats (CSV, GeoJSON, NetCDF, etc.)
+        - Easy visualization of time series and maps
+
+        **Data Sources:**
+        - NASA's MERRA-2 (Modern-Era Retrospective Analysis for Research and Applications, Version 2)
+        - GEOS (Goddard Earth Observing System) models
+
+        **Applications:**
+        - Solar energy project design
+        - Crop modeling
+        - Hydrology and water resource management
+        - Climate variability analysis
+        """)
+        st.markdown("🔗 [NASA POWER Data Access Viewer Website](https://power.larc.nasa.gov/data-access-viewer/)")
+        st.components.v1.iframe(
+            "https://power.larc.nasa.gov/data-access-viewer/",
+            height=900,
+            width=1400,
+            scrolling=True
+        )
+        st.markdown("""
+        <p style='font-size:15px; color:gray;'>
+        Source: NASA POWER Project, <a href="https://power.larc.nasa.gov/data-access-viewer/" target="_blank">https://power.larc.nasa.gov/data-access-viewer/</a><br>
+        Credit: NASA Langley Research Center (LaRC) — Prediction Of Worldwide Energy Resources (POWER) Project
+        </p>
+        """, unsafe_allow_html=True)
 
     st.stop()
 

@@ -430,8 +430,6 @@ with st.expander("▶️ MODIS Land Use Land Cover (LULC) Change Analysis 2010-2
     *This dashboard is created by Shubh Dhadiwal using Google Earth Engine.*
     """, unsafe_allow_html=True)
 
-st.stop()
-
 def show_about():
     st.title("📘 About GeoAI Repository")
     

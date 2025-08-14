@@ -381,7 +381,7 @@ See also:
         """)
         st.markdown("---")
         st.markdown(f"""
-            <iframe src="https://ee-shubhdhadiwal.projects.earthengine.app/view/esa-lulc-2020-21" width="100%" height="600" frameborder="0" allowfullscreen> </iframe>
+            <iframe src="https://ee-shubhdhadiwal.projects.earthengine.app/view/esa-lulc-2020-2021" width="100%" height="600" frameborder="0" allowfullscreen> </iframe>
         """, unsafe_allow_html=True)
         st.markdown("**Note:**")
         st.markdown("""

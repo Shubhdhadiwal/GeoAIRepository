@@ -5,27 +5,26 @@ import re
 import os
 import streamlit.components.v1 as components
 import json
-from datetime import date
 import os
-
+from datetime import date
 
 # ===== PAGE CONFIG =====
-st.set_page_config(page_title="GeoAI Repository", layout="wide")
+st.set_page_config(
+    page_title="GeoAI Repository",
+    page_icon="https://raw.githubusercontent.com/Shubhdhadiwal/GeoAIRepository/main/geoai_logo.png",
+    layout="wide"
+)
 
-# GitHub raw Excel file URL
+# ===== LOGO =====
+st.image(
+    "https://raw.githubusercontent.com/Shubhdhadiwal/GeoAIRepository/main/geoai_logo.png",
+    width=200
+)
+
+# ===== GITHUB RAW EXCEL URL =====
 GITHUB_RAW_URL = "https://github.com/Shubhdhadiwal/GeoAIRepository/raw/main/Geospatial%20Data%20Repository%20(2).xlsx"
 
-import os
-import json
-from datetime import date
-import streamlit as st
-
-import streamlit as st
-import os
-import json
-from datetime import date
-
-# ===== VISITOR COUNTER SETUP =====
+# ===== VISITOR COUNTER =====
 VISITOR_COUNT_FILE = "visitor_count_by_date.json"
 
 def get_visitor_count_today():
@@ -72,25 +71,28 @@ if 'visitor_counted' not in st.session_state:
     st.session_state.total_visitor_count = get_total_visitor_count()
     st.session_state.visitor_counted = True
 
-# Now show welcome and visitor counts nicely formatted
-st.write("### Welcome to GeoAI Repository!")
+# ===== WELCOME MESSAGE =====
+st.markdown("### Welcome to GeoAI Repository!")
+st.markdown(
+    f"""
+    <p style='font-size:14px; color:gray;'>
+    📅 Today's Visitors: <b>{st.session_state.today_visitor_count}</b>  
+    📈 Total Visitors: <b>{st.session_state.total_visitor_count}</b>
+    </p>
+    """,
+    unsafe_allow_html=True
+)
 
-st.markdown(f"""
-<p style='font-size:14px; color:gray; margin-top: 0;'>
-📅 Today's Visitors: <b>{st.session_state.today_visitor_count}</b> &nbsp;&nbsp;|&nbsp;&nbsp; 
-📈 Total Visitors: <b>{st.session_state.total_visitor_count}</b>
-</p>
-""", unsafe_allow_html=True)
-
-# Utility to hash password string
+# ===== PASSWORD UTILS =====
 def hash_password(password):
     return hashlib.sha256(password.encode()).hexdigest()
 
-# Store username and hashed password
+# ===== USER CREDENTIALS =====
 USER_CREDENTIALS = {
-    "Shubh1301": hash_password("Shubh130100")
+    "Shubh1301": hash_password("Shubh130127")
 }
 
+# ===== SESSION AUTH SETUP =====
 if 'authenticated' not in st.session_state:
     st.session_state['authenticated'] = False
     st.session_state['username'] = None
@@ -98,41 +100,41 @@ if 'authenticated' not in st.session_state:
 def login():
     st.title("🔐 Login to GeoAI Repository")
 
- # Support/contact info on login page with smaller font
+    # Support/contact info
     st.markdown("""
     <hr>
     <p style="font-size:12px; color:gray;">
     🛠️ <b>Need login access or help?</b><br>
-    Please contact the developer for login credentials:<br><br>
-    👉 <a href="https://www.linkedin.com/in/shubh-dhadiwal/" target="_blank">Shubh Dhadiwal on LinkedIn</a><br>
-    Send a message mentioning your request for login details.
+    Please contact the developer for login credentials:<br>
+    👉 <a href="https://www.linkedin.com/in/shubh-dhadiwal/" target="_blank">Shubh Dhadiwal on LinkedIn</a>
     </p>
     <hr>
     """, unsafe_allow_html=True)
     
     username = st.text_input("Username", key="username_input")
     password = st.text_input("Password", type="password", key="password_input")
-    login_pressed = st.button("Login")
-
-    if login_pressed:
+    
+    if st.button("Login"):
         hashed_input = hash_password(password)
         if username in USER_CREDENTIALS and USER_CREDENTIALS[username] == hashed_input:
             st.session_state['authenticated'] = True
             st.session_state['username'] = username
         else:
-            st.error("Invalid username or password")
+            st.error("❌ Invalid username or password")
 
 if not st.session_state['authenticated']:
     login()
     st.stop()
 
+# ===== SIDEBAR =====
 if st.sidebar.button("Logout"):
     st.session_state['authenticated'] = False
     st.session_state['username'] = None
-
+    st.rerun()
+    
 st.sidebar.title(f"Welcome, {st.session_state['username']}!")
 
-# Sheet options mapping tab name → Excel sheet name (except Dashboards etc. which don't have sheets)
+# ===== SHEET OPTIONS =====
 sheet_options = {
     "About": "About",
     "Data Sources": "Data Sources",
@@ -140,25 +142,23 @@ sheet_options = {
     "Free Tutorials": "Free Tutorials",
     "Python Codes (GEE)": "Google Earth EnginePython Codes",
     "Courses": "Courses",
-    "Dashboards": "Dashboards",  # note: no sheet actually called "Dashboards"
+    "Dashboards": "Dashboards",
     "Submit New Resource": "Submit New Resource",
     "Favorites": "Favorites",
     "FAQ": "FAQ"
 }
 
+# ===== DATA LOADING =====
 @st.cache_data(show_spinner=False)
 def load_data(sheet_name):
     try:
-        # You may want to change here to load directly from URL if needed
-        # For now assumes local file:
         df = pd.read_excel("Geospatial Data Repository (2).xlsx", sheet_name=sheet_name)
-        df.columns = df.iloc[0]  # Use first row as header
-        df = df[1:]  # Skip header row from data
-        df = df.dropna(subset=[df.columns[0]])  # Drop rows with empty first col
-        df = df.loc[:, ~df.columns.str.contains("^Unnamed")]  # Drop unnamed columns
+        df.columns = df.iloc[0]
+        df = df[1:]
+        df = df.dropna(subset=[df.columns[0]])
+        df = df.loc[:, ~df.columns.str.contains("^Unnamed")]
 
         if sheet_name == "Tools":
-            # Rename any "Column X" columns to "Link"
             new_cols = {col: "Link" for col in df.columns if isinstance(col, str) and col.startswith("Column")}
             if new_cols:
                 df = df.rename(columns=new_cols)
@@ -178,152 +178,89 @@ if selected_tab == "Dashboards":
 
     with st.expander("▶️ Google Open Building Dashboard"):
         st.markdown("""
-        Google Open Buildings is a global dataset developed by Google that provides high-resolution building footprints extracted from satellite imagery using advanced machine learning techniques. It covers millions of buildings across many countries, especially focusing on regions where accurate building data was previously unavailable or incomplete.
-    
-        This dataset is an invaluable resource for urban planners, researchers, governments, and humanitarian organizations. It supports applications such as disaster response, infrastructure planning, population estimation, and sustainable development by providing detailed and up-to-date information on building locations and shapes.
-    
-        Google Open Buildings is openly available and continues to grow, helping bridge data gaps and enabling data-driven decision-making at scale.
+        This large-scale open dataset consists of outlines of buildings derived from high-resolution 50 cm satellite imagery. It contains 1.8B building detections in Africa, Latin America, Caribbean, South Asia and Southeast Asia. The inference spanned an area of 58M km².
+
+For each building in this dataset we include the polygon describing its footprint on the ground, a confidence score indicating how sure we are that this is a building, and a Plus Code corresponding to the center of the building. There is no information about the type of building, its street address, or any details other than its geometry.
+
+Building footprints are useful for a range of important applications: from population estimation, urban planning and humanitarian response to environmental and climate science.
+
+The project is based in Ghana, with an initial focus on the continent of Africa and new updates on South Asia, South-East Asia, Latin America and the Caribbean. Inference was carried out during May 2023.
         """)
-    
         st.markdown("🔗 [Official Dataset Documentation](https://developers.google.com/earth-engine/datasets/catalog/GOOGLE_Research_open-buildings_v3_polygons)")
-    
         st.markdown("---")
-    
         st.markdown(
             """
-            <iframe 
-                src="https://ee-shubhdhadiwal.projects.earthengine.app/view/geoai" 
-                width="100%" height="600" frameborder="0" allowfullscreen>
-            </iframe>
+            <iframe src="https://ee-shubhdhadiwal.projects.earthengine.app/view/geoai" width="100%" height="600" frameborder="0" allowfullscreen> </iframe>
             """,
             unsafe_allow_html=True
         )
-    
-        st.markdown(
-            """
-            Dashboard created by Shubh Dhadiwal using Google Earth Engine.
-            
-            To download the data, click on the Code Editor link below:  
-            [🚀 Open Earth Engine Code Editor here](https://code.earthengine.google.com/272ebbc2fd09e86a3b256c9c2f259b9f?hideCode=true)
-            """,
-            unsafe_allow_html=True,
-        )
-    
+        st.markdown("""Dashboard created by Shubh Dhadiwal using Google Earth Engine. [🚀 Open Earth Engine Code Editor here](https://code.earthengine.google.com/272ebbc2fd09e86a3b256c9c2f259b9f?hideCode=true)""", unsafe_allow_html=True)
+
     with st.expander("▶️ Local Climate Zones (LCZ) Dashboard"):
         st.markdown("""
-        Local Climate Zones (LCZs), introduced in 2012, provide a standardized classification for urban and rural landscapes at a micro-scale. This classification captures detailed land-cover and physical properties critical for understanding urban climate phenomena such as urban heat islands.
+        This global map of Local Climate Zones, at 100m pixel size and representative for the nominal year 2018, is derived from multiple earth observation datasets and expert LCZ class labels. LCZ_Filter is the recommended band for most users. The other classification band, LCZ, is only provided as it is used to calculate the LCZ_Probability band.
 
-        The global LCZ map shown here has a spatial resolution of 100 meters, representing the nominal year 2018. It is derived from multiple Earth observation datasets combined with expert LCZ class labels. The recommended band for most users is **LCZ_Filter**, which provides the primary classification. Another band, **LCZ**, is available but mainly used internally for calculating the probability layer.
+The LCZ scheme complements other land use / land cover schemes by its focus on urban and rural landscape types, which can be described by any of the 17 classes in the LCZ scheme. Out of the 17 LCZ classes, 10 reflect the 'built' environment, and each LCZ type is associated with generic numerical descriptions of key urban canopy parameters critical to model atmospheric responses to urbanisation.
 
-        The LCZ scheme classifies landscapes into 17 classes: 10 representing built environments (urban forms) and 7 representing natural land-cover types. Each LCZ type includes generic numerical descriptions of urban canopy parameters, making this dataset valuable for urban climate modeling and impact assessment.
+In addition, since LCZs were originally designed as a new framework for urban heat island studies, they also contain a limited set (7) of 'natural' land-cover classes that can be used as 'control' or 'natural reference' areas.
         """)
-
         st.markdown("🔗 [Official Dataset Documentation](https://developers.google.com/earth-engine/datasets/catalog/RUB_RUBCLIM_LCZ_global_lcz_map_latest#description)")
-
         st.markdown("---")
-
         st.markdown(
             """
-            <iframe 
-                src="https://ee-shubhdhadiwal.projects.earthengine.app/view/lcz-dashboard" 
-                width="100%" height="600" frameborder="0" allowfullscreen>
-            </iframe>
+            <iframe src="https://ee-shubhdhadiwal.projects.earthengine.app/view/lcz-dashboard" width="100%" height="600" frameborder="0" allowfullscreen> </iframe>
             """,
             unsafe_allow_html=True
         )
-
-        st.markdown(
-            """
-            Dashboard created by Shubh Dhadiwal using Google Earth Engine.
-            
-            To download the LCZ data, open the Earth Engine Code Editor link below:  
-            [🚀 Open Earth Engine Code Editor here](https://code.earthengine.google.com/db65e6b4ece8341249a978d4a1509f0e)
-            """,
-            unsafe_allow_html=True,
-        )
+        st.markdown("""Dashboard created by Shubh Dhadiwal using Google Earth Engine. [🚀 Open Earth Engine Code Editor here](https://code.earthengine.google.com/db65e6b4ece8341249a978d4a1509f0e)""", unsafe_allow_html=True)
 
     with st.expander("▶️ NASA Sea Level Evaluation Tool"):
         st.markdown("""
-        The NASA Sea Level Evaluation Tool provides interactive visualization and analysis of global sea level data, enabling researchers and policymakers to understand rising sea levels and their impacts.
+        The **NASA Sea Level Evaluation Tool** provides interactive visualization and analysis of global sea level data from multiple satellite altimetry missions. Users can:
+        - Explore sea level trends and anomalies
+        - Compare data from different missions (e.g., TOPEX/Poseidon, Jason-1/2/3, Sentinel-6)
+        - Analyze time series for specific regions or globally
+        - Overlay climate indices for correlation studies
+
+**Data Sources:**
+- Satellite altimetry measurements from NASA, NOAA, CNES, and ESA missions
+- Climate indices (ENSO, PDO, NAO, etc.)
+
+**Key Features:**
+- Interactive maps and charts
+- Regional or global data selection
+- Downloadable CSV datasets for custom analysis
         """)
-
         st.markdown("🔗 [NASA Sea Level Evaluation Tool Website](https://sealevel.nasa.gov/sea-level-evaluation-tool)")
-
         components.iframe(
             "https://sealevel.nasa.gov/sea-level-evaluation-tool",
             height=1200,
             width=1400,
         )
+        st.markdown(
+            """<p style='font-size:15px; color:gray;'> Source: NASA, <a href="https://sealevel.nasa.gov/sea-level-evaluation-tool" target="_blank">https://sealevel.nasa.gov/sea-level-evaluation-tool</a> </p>""",
+            unsafe_allow_html=True
+        )
 
+    with st.expander("▶️ BBBike OSM Extract Service"):
         st.markdown("""
-        <p style='font-size:15px; color:gray;'>
-        Source: NASA, <a href="https://sealevel.nasa.gov/sea-level-evaluation-tool" target="_blank">https://sealevel.nasa.gov/sea-level-evaluation-tool</a>
-        </p>
-        """, unsafe_allow_html=True)
+        The **BBBike OSM Extract Service** is a free web-based tool for extracting **OpenStreetMap (OSM)** data for custom-defined areas anywhere in the world. Users can:
+        - Select a region by drawing a polygon or choosing from predefined cities
+        - Download OSM data in multiple formats (Shapefile, GeoJSON, Garmin IMG, KML, PBF, CSV, etc.)
+        - Filter datasets to include only desired layers (roads, buildings, land use, points of interest, etc.)
 
-    with st.expander("▶️ Global Surface Water Explorer"):
-        st.markdown("""
-        The **Global Surface Water Explorer** (GSWE), developed by the European Commission's Joint Research Centre, provides high-resolution mapping of global surface water distribution and long-term changes from 1984 to 2021. 
+**Key Features:**
+- Global coverage
+- Multiple coordinate reference systems supported
+- Regularly updated extracts (usually weekly)
+- Free to use with generous area limits
 
-        It utilizes Landsat satellite imagery to analyze water occurrence, seasonality, recurrence, transitions, and maximum extent worldwide. This dataset supports water resource management, climate change studies, biodiversity conservation, and food security.
-
-        **Citation:**  
-        Pekel, J.-F., Cottam, A., Gorelick, N., & Belward, A. S. (2016). High-resolution mapping of global surface water and its long-term changes. *Nature*, 540(7633), 418–422. [https://doi.org/10.1038/nature20584](https://doi.org/10.1038/nature20584)
-
-        **Data Access:**  
-        Download the data at the [Global Surface Water Explorer Download Page](https://global-surface-water.appspot.com/download)
+**Typical Uses:**
+- GIS analysis
+- Urban planning
+- Navigation system development
+- Research projects
         """)
-
-        leaflet_html = """
-        <div id="map" style="width: 1400px; height: 700px;"></div>
-        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
-        <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-        <script>
-        var map = L.map('map').setView([20, 0], 2);
-
-        var transitions = L.tileLayer('https://storage.googleapis.com/global-surface-water/tiles2021/transitions/{z}/{x}/{y}.png', {
-            format: 'image/png',
-            maxZoom: 13,
-            errorTileUrl: 'https://storage.googleapis.com/global-surface-water/downloads_ancillary/blank.png',
-            attribution: '© 2016 EC JRC/Google'
-        }).addTo(map);
-        </script>
-        """
-
-        st.components.v1.html(leaflet_html, height=550)
-
-    with st.expander("▶️ BBBike Extract Service"):
-        st.markdown("""
-        BBBike Extract is a service to extract OpenStreetMap data for custom-defined areas worldwide. It allows users to select any region and download geospatial data extracts.
-
-        ---
-
-        **Welcome to the BBBike Extract Service!**
-
-        BBBike extracts allows you to extract areas from Planet.osm in OSM, PBF, o5m, Garmin, Organic Maps, Osmand, mapsforge CSV, SVG, libosmium OPL, GeoJSON, SQLite, text, or Esri shapefile format. The maximum area size is 24,000,000 square km, or up to 512MB file size. It takes between 2-7 minutes to extract an area. The email field is required, you will be notified by email if your extract is ready for download. Please use a meaningful name for the extract. For more information, please read the extract help page.
-
-        **How to use the BBBike extract service (YouTube tutorials):**
-
-        1. Now move the map to your desired location.  
-        2. Then click the **here** button to create the bounding box.  
-        3. Move or resize the bounding box, or add new points to the polygon.  
-        4. Select a Format, enter Your email address and Name of area to extract.  
-        5. Click the extract button. Wait for email notification and download the map. Done!
-
-        Supported formats include:  
-        - Shapefile (Esri)  
-        - Garmin OSM  
-        - Garmin Leisure  
-        - Organic Maps  
-        - mapsforge  
-        - OsmAnd  
-        - SVG
-
-        For a full guide, visit [BBBike Extract Website](https://extract.bbbike.org/).
-
-        ---
-        """)
-
         components.iframe(
             "https://extract.bbbike.org/",
             height=700,
@@ -331,20 +268,231 @@ if selected_tab == "Dashboards":
             scrolling=True
         )
 
-    st.stop()  # Stop execution here for dashboards so no other code runs below
+    with st.expander("▶️ DIVA-GIS Global Data Access"):
+        st.markdown("""
+        **DIVA-GIS** provides free spatial data for any country in the world, including:
+        - Administrative boundaries
+        - Roads, railways, and population density
+        - Elevation and climate data
+        - Land cover maps
+
+This is especially useful for GIS analysis, ecological studies, and spatial planning.
+
+🔗 [Official DIVA-GIS Website](https://diva-gis.org/data.html)
+        """)
+        st.components.v1.iframe(
+            "https://diva-gis.org/data.html",
+            height=900,
+            width=1400,
+            scrolling=True
+        )
+
+    with st.expander("▶️ Gridded Population of World 2020"):
+        st.markdown("""
+        This dataset contains estimates of the number of persons per 30 arc-second (~1 km) grid cell, consistent with national censuses and population registers with respect to relative spatial distribution but adjusted to match the 2015 Revision of UN World Population Prospects country totals.
+
+There is one image for each modeled year (2000, 2005, 2010, 2015, and 2020). Population is distributed to cells using proportional allocation of population from census and administrative units.
+        """)
+        st.markdown("🔗 [General Dataset Documentation - GPWv4, CIESIN, Columbia University](https://doi.org/10.7927/H4F47M65)")
+        st.markdown("---")
+        st.markdown(
+            """
+            <iframe src="https://ee-shubhdhadiwal.projects.earthengine.app/view/gridded-population-of-world-2020" width="100%" height="600" frameborder="0" allowfullscreen> </iframe>
+            """,
+            unsafe_allow_html=True
+        )
+        st.markdown("""Dashboard created by Shubh Dhadiwal using Google Earth Engine. [🚀 Open Earth Engine Code Editor here](https://code.earthengine.google.com/dca1dbdd9db97db7276ffab3cf5b2fe6)""", unsafe_allow_html=True)
+        st.markdown(
+            """--- **Citation:** Center for International Earth Science Information Network - CIESIN - Columbia University. 2018. Gridded Population of the World, Version 4 (GPWv4.11): Population Density Adjusted to Match 2015 Revision of UN WPP Country Totals, Revision 11. Palisades, NY: NASA Socioeconomic Data and Applications Center (SEDAC). https://doi.org/10.7927/H4F47M65. Accessed 12 August 2025."""
+        )
+
+    with st.expander("▶️ Global Landsat LST Explorer"):
+        st.markdown("""
+        The **Global Landsat LST Explorer** is an interactive Google Earth Engine (GEE) application for analyzing Land Surface Temperature (LST) using Landsat 8 and Landsat 9 Collection 2 Level-2 data.
+
+Features include:
+- Selecting **country**, **state/province**, and **year (March–June period)**
+- Visualizing **median LST**
+- Displaying **discrete temperature classes** (e.g., 0–10 °C, 10–20 °C, …, 60–70 °C)
+- Viewing **yearly min/max trend charts** (2015–2024)
+- Exporting processed LST as **GeoTIFF**
+
+**Data Sources & Processing Highlights:**
+- Landsat 8 (LANDSAT/LC08/C02/T1_L2) & Landsat 9 (LANDSAT/LC09/C02/T1_L2) thermal band ST_B10 (Kelvin → °C)
+- Cloud masking via QA_PIXEL band
+- Median compositing (March 1 – June 30)
+- FAO GAUL 2015 boundaries for administrative regions
+- Spatial resolution: 30 m
+        """)
+        st.markdown("🔗 [Landsat 8 Collection 2 L2 Documentation](https://developers.google.com/earth-engine/datasets/catalog/LANDSAT_LC08_C02_T1_L2)")
+        st.markdown("🔗 [Landsat 9 Collection 2 L2 Documentation](https://developers.google.com/earth-engine/datasets/catalog/LANDSAT_LC09_C02_T1_L2)")
+        st.markdown("---")
+        st.markdown(
+            """
+            <iframe src="https://ee-shubhdhadiwal.projects.earthengine.app/view/global-landsat-lst-explorer" width="100%" height="600" frameborder="0" allowfullscreen> </iframe>
+            """,
+            unsafe_allow_html=True
+        )
+        st.markdown("""Dashboard created by Shubh Dhadiwal using Google Earth Engine. [🚀 Open Earth Engine Code Editor here](https://code.earthengine.google.com/e4830267a6dae171f1bf1057f52e19bc)""", unsafe_allow_html=True)
+
+    with st.expander("▶️ NASA POWER Data Access Viewer"):
+        st.markdown("""
+        The **NASA POWER (Prediction Of Worldwide Energy Resources) Data Access Viewer** is a web-based tool that provides access to global meteorological and solar energy data. It is widely used for:
+        - Renewable energy assessments
+        - Agricultural planning
+        - Climate research and environmental studies
+        - Weather-related analytics
+
+**Key Features:**
+- Download daily, hourly, or climatological datasets
+- Access variables like temperature, humidity, wind speed, precipitation, and solar radiation
+- Select specific geographic coordinates or regions
+- Multiple output formats (CSV, GeoJSON, NetCDF, etc.)
+- Easy visualization of time series and maps
+
+**Data Sources:**
+- NASA's MERRA-2 (Modern-Era Retrospective Analysis for Research and Applications, Version 2)
+- GEOS (Goddard Earth Observing System) models
+
+**Applications:**
+- Solar energy project design
+- Crop modeling
+- Hydrology and water resource management
+- Climate variability analysis
+        """)
+        st.markdown("🔗 [NASA POWER Data Access Viewer Website](https://power.larc.nasa.gov/data-access-viewer/)")
+        st.components.v1.iframe(
+            "https://power.larc.nasa.gov/data-access-viewer/",
+            height=900,
+            width=1400,
+            scrolling=True
+        )
+        st.markdown(
+            """<p style='font-size:15px; color:gray;'> Source: NASA POWER Project, <a href="https://power.larc.nasa.gov/data-access-viewer/" target="_blank">https://power.larc.nasa.gov/data-access-viewer/</a><br> Credit: NASA Langley Research Center (LaRC) — Prediction Of Worldwide Energy Resources (POWER) Project </p>""",
+            unsafe_allow_html=True
+        )
+
+    with st.expander("▶️ ESA WorldCover LULC Change Analysis 2020-2021"):
+        st.markdown("""
+        The European Space Agency (ESA) WorldCover 10 m products provide global land cover maps at 10 m spatial resolution based on Sentinel-1 and Sentinel-2 data. Available years: **2020** and **2021**.
+
+The WorldCover products have been generated as part of the ESA WorldCover project, under the 5th Earth Observation Envelope Programme (EOEP-5) of the European Space Agency.
+
+**Citation:** Zanaga, D., Van De Kerchove, R., De Keersmaecker, W., Souverijns, N., Brockmann, C., Quast, R., Wevers, J., Grosu, A., Paccini, A., Vergnaud, S., Cartus, O., Santoro, M., Fritz, S., Georgieva, I., Lesiv, M., Carter, S., Herold, M., Li, Linlin, Tsendbazar, N.E., Ramoino, F., Arino, O., 2021. ESA WorldCover 10 m 2020 v100. (doi:10.5281/zenodo.5571936)
+
+See also:
+- [ESA WorldCover website](https://esa-worldcover.org/en)
+- [User Manual and Validation Report](https://esa-worldcover.org/en/data-access)
+        """)
+        st.markdown("---")
+        st.markdown(f"""
+            <iframe src="https://ee-shubhdhadiwal.projects.earthengine.app/view/esa-lulc-2020-21" width="100%" height="600" frameborder="0" allowfullscreen> </iframe>
+        """, unsafe_allow_html=True)
+        st.markdown("**Note:**")
+        st.markdown("""
+1. This dashboard displays the results only; advanced analysis as per the needs to be performed in GIS after downloading the data.
+2. To get access to the code and download the data, please contact the developer. Customization of the code tailored to your study can also be requested (it may be subject to service fees).
+This dashboard is created by Shubh Dhadiwal using Google Earth Engine.
+        """, unsafe_allow_html=True)
+
+# Set Streamlit to wide mode for more map space
+st.set_page_config(layout="wide")
+
+# Set Streamlit to wide mode for more map space
+st.set_page_config(layout="wide")
+
+# CSS for fullscreen iframe
+st.markdown("""
+<style>
+.block-container {
+    max-width: 98% !important;
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+iframe.fullscreen-map {
+    height: 90vh; /* 90% of viewport height */
+    width: 100%;
+    border: none;
+}
+</style>
+""", unsafe_allow_html=True)
+
+with st.expander("▶️ MODIS Land Use Land Cover (LULC) Change Analysis 2010-2024"):
+    st.markdown("""
+    The **Terra and Aqua combined Moderate Resolution Imaging Spectroradiometer (MODIS)** Land Cover Type (MCD12Q1) Version 6.1 data product provides global land cover types at yearly intervals.
+
+The MCD12Q1 Version 6.1 product is derived using **supervised classifications** of MODIS Terra and Aqua reflectance data. Land cover types are derived from the **International Geosphere-Biosphere Programme (IGBP)**, **University of Maryland (UMD)**, **Leaf Area Index (LAI)**, **BIOME-Biogeochemical Cycles (BGC)**, and **Plant Functional Types (PFT)** classification schemes.
+
+The supervised classifications undergo **post-processing** that incorporates prior knowledge and ancillary information to refine specific classes. Additional land cover property assessment layers are provided by the **FAO Land Cover Classification System (LCCS)** for land cover, land use, and surface hydrology.
+
+**Applications include:**
+- Monitoring long-term land cover change.
+- Tracking transitions between cropland, forest, urban, grassland, and other categories.
+- Supporting climate, hydrology, and biodiversity research.
+
+**Citation:** Please visit the [LP DAAC 'Citing Our Data'](https://lpdaac.usgs.gov/citing-data/) page for information on citing LP DAAC datasets.
+Dataset reference: *Friedl, M.A., Sulla-Menashe, D., 2021. MCD12Q1 MODIS/Terra+Aqua Land Cover Type Yearly L3 Global 500 m SIN Grid V061. NASA EOSDIS Land Processes DAAC.* (doi:[10.5067/MODIS/MCD12Q1.061](https://doi.org/10.5067/MODIS/MCD12Q1.061))
+
+**See also:**
+- [MODIS Land Cover Overview (NASA LP DAAC)](https://lpdaac.usgs.gov/products/mcd12q1v061/)
+- [User Guide and Documentation](https://lpdaac.usgs.gov/documents/101/MCD12_User_Guide_V6.pdf)
+    """)
+    st.markdown("---")
+    # Fullscreen responsive map
+    st.markdown(f"""
+        <iframe class="fullscreen-map" src="https://ee-shubhdhadiwal.projects.earthengine.app/view/modis-lulc-change-analysis-2010-2024" allowfullscreen></iframe>
+    """, unsafe_allow_html=True)
+    st.markdown("**Note:**")
+    st.markdown("""
+1. This dashboard visualizes annual MODIS LULC maps from 2010 to 2024; detailed statistical analysis can be performed in GIS or Earth Engine using the raw dataset.
+2. To get access to the processing scripts and download the data, please contact the developer. Custom analysis and tailored LULC change detection services are available upon request (may be subject to service fees).
+*This dashboard is created by Shubh Dhadiwal using Google Earth Engine.*
+    """, unsafe_allow_html=True)
+
+st.stop()
+
 
 # ===== NON-SHEET TABS: About, Submit New Resource, FAQ ===== #
 if selected_tab == "About":
     st.title("📘 About GeoAI Repository")
+    
     st.markdown("""
-    The **GeoAI Repository** is a free and open resource hub for students, researchers, and professionals 
-    working in geospatial analytics, machine learning, and urban/climate planning.
+    The **GeoAI Repository** is an interactive and open-access platform designed for 
+    **students, researchers, and professionals** in geospatial analytics, urban planning, 
+    and climate action. It integrates **Google Earth Engine (GEE)**, Python, and other 
+    open-source tools to provide powerful, cloud-based geospatial analysis.
     """)
+    
     st.info("""
-    - 🌐 Public geospatial datasets  
-    - 🛠️ Open-source tools  
-    - 📘 Free tutorials  
-    - 💻 Python codes for Google Earth Engine  
+    - 🌐 **Public Geospatial Datasets**: Access global and regional datasets on land use, climate, 
+      urban infrastructure, and environmental change.  
+    - 🛠️ **Open-Source Tools & Platforms**: Built on GEE, Python, and other open-source frameworks 
+      for reproducible geospatial analysis.  
+    - 📘 **Tutorials & Workflows**: Step-by-step guides and examples for implementing geospatial AI projects.  
+    - 💻 **Python & GEE Scripts**: Ready-to-use scripts for satellite data processing, land cover analysis, 
+      and urban/climate modeling.  
+    - 📊 **Interactive Visualizations**: Explore dynamic maps, charts, and dashboards for real-time insights.
+    """)
+    
+    st.subheader("🌟 Vision")
+    st.markdown("""
+    To empower **researchers, students, policymakers, and urban/climate planners** with 
+    **accessible, AI-driven geospatial intelligence**, enabling informed decisions for a 
+    **sustainable, resilient, and smarter planet**.
+    """)
+    
+    st.subheader("🎯 Mission")
+    st.markdown("""
+    1. **Democratize Geospatial Data:** Provide open access to high-resolution satellite imagery, environmental, and urban datasets.  
+    2. **Leverage AI & Machine Learning:** Integrate advanced AI models for land cover classification, predictive analytics, and anomaly detection.  
+    3. **Promote Open-Source Tools:** Encourage reproducibility and innovation by offering Python/GEE scripts, tutorials, and workflows.  
+    4. **Enable Real-Time Insights:** Create interactive dashboards that visualize trends, patterns, and changes in the environment, climate, and urban landscapes.  
+    5. **Support Decision-Making:** Facilitate sustainable planning, climate action, and risk mitigation through data-driven insights.
+    """)
+    
+    st.markdown("""
+    This dashboard aims to **democratize geospatial intelligence**, enabling users to analyze, visualize, 
+    and interpret complex spatial data efficiently without heavy local computing resources.
     """)
 
     categories_to_check = ["Data Sources", "Tools", "Courses", "Free Tutorials", "Python Codes (GEE)"]
@@ -362,37 +510,26 @@ if selected_tab == "About":
 
     st.markdown("---")
 
-# Manually set last updated date here (YYYY-MM-DD or full datetime string)
-LAST_UPDATED_DATE = "2025-08-11 11:45:00"
+    # ADD CREATIVE COMMONS LICENSE INFO HERE
+    st.markdown("""
+    <p style='text-align:center; font-size:12px; color:gray;'>
+    Licensed under the <a href='https://creativecommons.org/licenses/by-nc/4.0/' target='_blank'>Creative Commons BY-NC 4.0 License</a>.
+    </p>
+    """, unsafe_allow_html=True)
 
-# Footer content
-st.markdown("""
+    st.markdown("""
+    <p style='text-align:center; font-size:12px; color:gray;'>
+    Developed by Shubh | 
+    <a href='https://www.linkedin.com/in/shubh-dhadiwal/' target='_blank'>LinkedIn</a>
+    </p>
+    """, unsafe_allow_html=True)
+    
+    st.markdown("""
 <p style='text-align:center; font-size:12px; color:gray;'>
-Licensed under the <a href='https://creativecommons.org/licenses/by-nc/4.0/' target='_blank'>Creative Commons BY-NC 4.0 License</a>.
-</p>
-""", unsafe_allow_html=True)
-
-st.markdown("""
-<p style='text-align:center; font-size:12px; color:gray;'>
-Developed by Shubh | 
-<a href='https://www.linkedin.com/in/shubh-dhadiwal/' target='_blank'>LinkedIn</a>
-</p>
-""", unsafe_allow_html=True)
-
-st.markdown("""
-<p style='text-align:center; font-size:12px; color:gray; margin-top: 0;'>
 © 2025 GeoAI Repository
-</p>
 """, unsafe_allow_html=True)
 
-# Display the manually set last updated date
-st.markdown(f"""
-<p style='text-align:center; font-size:12px; color:gray; margin-top: 0;'>
-Last Updated: {LAST_UPDATED_DATE}
-</p>
-""", unsafe_allow_html=True)
-
-st.stop()
+    st.stop()
 
 if selected_tab == "Submit New Resource":
     st.title("📤 Submit a New Resource")
@@ -416,11 +553,14 @@ if selected_tab == "FAQ":
             st.write(answer)
     st.stop()
 
+# ===== INITIALIZE FAVORITES ===== #
+if "favorites" not in st.session_state:
+    st.session_state.favorites = {}
+
 # ===== LOAD DATA FOR OTHER TABS INCLUDING FAVORITES ===== #
 if selected_tab != "Favorites":
     df = load_data(sheet_options[selected_tab])
 else:
-    # For favorites, combine favorites from all categories
     all_fav_items = []
     for key, items in st.session_state.favorites.items():
         df_cat = load_data(sheet_options.get(key, key))
@@ -466,10 +606,6 @@ if df.empty:
     st.info("No resources to display.")
     st.stop()
 
-# ===== FAVORITES STORAGE ===== #
-if "favorites" not in st.session_state:
-    st.session_state.favorites = {}
-
 # ===== DISPLAY DATA ===== #
 exclude_cols = [title_col, "Description", "Purpose", "S.No", "Category"]
 
@@ -484,10 +620,6 @@ link_columns_map = {
 
 possible_links = link_columns_map.get(selected_tab, ["Links", "Link", "Link to the codes", "Tool Link", "Course Link", "Tutorial Link"])
 
-# Initialize favorites in session_state if not present
-if "favorites" not in st.session_state:
-    st.session_state.favorites = {}
-
 def highlight_search(text, term):
     if not term:
         return text
@@ -496,11 +628,7 @@ def highlight_search(text, term):
 
 view_mode = st.sidebar.radio("View Mode", ["Detailed", "Compact"])
 
-# Debug print to check selected tab value
-st.write(f"Selected tab: '{selected_tab}'")
-
 for idx, row in df.iterrows():
-    # Handle title and category keys
     if selected_tab.strip().lower() == "favorites":
         category_key = row.get("Category", None)
         title_for_fav = title_map.get(category_key, title_col)  # fallback to default title_col
@@ -523,7 +651,8 @@ for idx, row in df.iterrows():
             if val.lower().startswith(("http://", "https://", "www.")):
                 links.append((col, val))
 
-    if view_mode == "Detailed":
+    if view_mode == "Detailed" or selected_tab.strip().lower() == "favorites":
+        # Show detailed view for Favorites always
         with st.expander(f"🔹 {displayed_title}", expanded=False):
             col1, col2 = st.columns([0.9, 0.1])
             with col2:
@@ -551,29 +680,24 @@ for idx, row in df.iterrows():
                 st.session_state.favorites[category_key].remove(idx)
 
     else:
-        # Compact mode ONLY if NOT Favorites tab
-        if selected_tab.strip().lower() != "favorites":
-            compact_col1, compact_col2, compact_col3 = st.columns([6, 3, 1])
-            with compact_col1:
-                st.markdown(f"🔹 {displayed_title}")
-            with compact_col2:
-                for link_name, link_url in links:
-                    st.markdown(f"[🔗 {link_name}]({link_url})", unsafe_allow_html=True)
-            with compact_col3:
-                fav_checkbox = st.checkbox(
-                    "⭐",
-                    value=idx in st.session_state.favorites.get(category_key, []),
-                    key=f"compact_{category_key}_{idx}"
-                )
-                if fav_checkbox and idx not in st.session_state.favorites.get(category_key, []):
-                    st.session_state.favorites.setdefault(category_key, []).append(idx)
-                elif not fav_checkbox and idx in st.session_state.favorites.get(category_key, []):
-                    st.session_state.favorites[category_key].remove(idx)
-        else:
-            # Favorites tab: no compact view - do nothing or add message if you want
-            pass
+        # Compact mode for non-favorites tabs only
+        compact_col1, compact_col2, compact_col3 = st.columns([6, 3, 1])
+        with compact_col1:
+            st.markdown(f"🔹 {displayed_title}")
+        with compact_col2:
+            for link_name, link_url in links:
+                st.markdown(f"[🔗 {link_name}]({link_url})", unsafe_allow_html=True)
+        with compact_col3:
+            fav_checkbox = st.checkbox(
+                "⭐",
+                value=idx in st.session_state.favorites.get(category_key, []),
+                key=f"compact_{category_key}_{idx}"
+            )
+            if fav_checkbox and idx not in st.session_state.favorites.get(category_key, []):
+                st.session_state.favorites.setdefault(category_key, []).append(idx)
+            elif not fav_checkbox and idx in st.session_state.favorites.get(category_key, []):
+                st.session_state.favorites[category_key].remove(idx)
 
-# Footer
 st.markdown("""
 <p style='text-align:center; font-size:12px; color:gray;'>
 Developed by Shubh | 

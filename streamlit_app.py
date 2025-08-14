@@ -405,6 +405,44 @@ The LCZ scheme complements other land use / land cover schemes by its focus on u
         </p>
         """, unsafe_allow_html=True)
 
+    import streamlit as st
+
+st.set_page_config(page_title="🌿 LULC Change Analysis Dashboard", layout="wide")
+
+    with st.expander("▶️ ESA WorldCover LULC Change Analysis 2020-2021"):
+        st.markdown("""
+        The European Space Agency (ESA) WorldCover 10 m products provide global land cover maps at 10 m spatial resolution based on Sentinel-1 and Sentinel-2 data.  
+        Available years: **2020** and **2021**.  
+    
+        The WorldCover products have been generated as part of the ESA WorldCover project, under the 5th Earth Observation Envelope Programme (EOEP-5) of the European Space Agency.
+    
+        See also:  
+        - [ESA WorldCover website](https://esa-worldcover.org/en)  
+        - [User Manual and Validation Report](https://esa-worldcover.org/en/data-access)
+        """)
+    
+        st.markdown("---")
+    
+        st.markdown(f"""
+        <iframe 
+            src="https://ee-shubhdhadiwal.projects.earthengine.app/view/esa-world-cover-lulc" 
+            width="100%" height="600" frameborder="0" allowfullscreen>
+        </iframe>
+        """, unsafe_allow_html=True)
+    
+        st.markdown("""
+        1. This dashboard displays the data only; advanced analysis needs to be performed in GIS after downloading the data.  
+        2. To get access to download the code, please contact the developer. Customization of the code tailored to your study can also be requested (it may be subject to service fees).  
+    
+        This dashboard is created by Shubh Dhadiwal using Google Earth Engine.
+        """, unsafe_allow_html=True)
+    
+        st.markdown("""
+        ---
+        **Citation:**  
+        Zanaga, D., Van De Kerchove, R., De Keersmaecker, W., Souverijns, N., Brockmann, C., Quast, R., Wevers, J., Grosu, A., Paccini, A., Vergnaud, S., Cartus, O., Santoro, M., Fritz, S., Georgieva, I., Lesiv, M., Carter, S., Herold, M., Li, Linlin, Tsendbazar, N.E., Ramoino, F., Arino, O., 2021. ESA WorldCover 10 m 2020 v100. (doi:10.5281/zenodo.5571936)
+        """)
+
     st.stop()
 
 

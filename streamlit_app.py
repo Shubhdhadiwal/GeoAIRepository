@@ -436,12 +436,14 @@ The LCZ scheme complements other land use / land cover schemes by its focus on u
 # ===== NON-SHEET TABS: About, Submit New Resource, FAQ ===== #
 if selected_tab == "About":
     st.title("📘 About GeoAI Dashboard")
+    
     st.markdown("""
     The **GeoAI Dashboard** is an interactive and open-access platform designed for 
     **students, researchers, and professionals** in geospatial analytics, urban planning, 
     and climate action. It integrates **Google Earth Engine (GEE)**, Python, and other 
     open-source tools to provide powerful, cloud-based geospatial analysis.
     """)
+    
     st.info("""
     - 🌐 **Public Geospatial Datasets**: Access global and regional datasets on land use, climate, 
       urban infrastructure, and environmental change.  
@@ -452,6 +454,23 @@ if selected_tab == "About":
       and urban/climate modeling.  
     - 📊 **Interactive Visualizations**: Explore dynamic maps, charts, and dashboards for real-time insights.
     """)
+    
+    st.subheader("🌟 Vision")
+    st.markdown("""
+    To empower **researchers, students, policymakers, and urban/climate planners** with 
+    **accessible, AI-driven geospatial intelligence**, enabling informed decisions for a 
+    **sustainable, resilient, and smarter planet**.
+    """)
+    
+    st.subheader("🎯 Mission")
+    st.markdown("""
+    1. **Democratize Geospatial Data:** Provide open access to high-resolution satellite imagery, environmental, and urban datasets.  
+    2. **Leverage AI & Machine Learning:** Integrate advanced AI models for land cover classification, predictive analytics, and anomaly detection.  
+    3. **Promote Open-Source Tools:** Encourage reproducibility and innovation by offering Python/GEE scripts, tutorials, and workflows.  
+    4. **Enable Real-Time Insights:** Create interactive dashboards that visualize trends, patterns, and changes in the environment, climate, and urban landscapes.  
+    5. **Support Decision-Making:** Facilitate sustainable planning, climate action, and risk mitigation through data-driven insights.
+    """)
+    
     st.markdown("""
     This dashboard aims to **democratize geospatial intelligence**, enabling users to analyze, visualize, 
     and interpret complex spatial data efficiently without heavy local computing resources.

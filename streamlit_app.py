@@ -440,7 +440,7 @@ Dataset reference: *Friedl, M.A., Sulla-Menashe, D., 2021. MCD12Q1 MODIS/Terra+A
     st.markdown("---")
     # Fullscreen responsive map
     st.markdown(f"""
-        <iframe class="fullscreen-map" src="https://ee-shubhdhadiwal.projects.earthengine.app/view/modis-lulc-2010-2024" allowfullscreen></iframe>
+        <iframe class="fullscreen-map" src="https://ee-shubhdhadiwal.projects.earthengine.app/view/modis-lulc-change-analysis-2010-2024" allowfullscreen></iframe>
     """, unsafe_allow_html=True)
     st.markdown("**Note:**")
     st.markdown("""

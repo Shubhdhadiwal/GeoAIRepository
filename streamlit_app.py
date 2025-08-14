@@ -156,10 +156,6 @@ if selected_tab == "About":
         unsafe_allow_html=True
     )
 
-    st.markdown("""
-    This repository hosts various **GeoAI datasets and dashboards**, including ESA WorldCover, MODIS LULC, and Global Surface Water visualizations using Google Earth Engine.
-    """)
-
 # =========================
 # DATA LOADER
 # =========================

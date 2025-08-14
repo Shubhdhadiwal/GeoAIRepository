@@ -428,6 +428,52 @@ This dashboard is created by Shubh Dhadiwal using Google Earth Engine.
     
         *This dashboard is created by Shubh Dhadiwal using Google Earth Engine.*
         """, unsafe_allow_html=True)
+    with st.expander("▶️ Global Surface Water (GSW) Explorer 1984-2021"):
+    st.markdown("""
+    The **Global Surface Water (GSW) dataset** provides a comprehensive view of the location and temporal distribution of surface water from **1984 to 2021**.  
+    It includes statistics on the extent, occurrence, change, and seasonality of water surfaces, enabling detailed hydrological and environmental analysis.
+
+    **Dataset Overview:**
+    - Generated using **4,716,475 Landsat 5, 7, and 8 scenes** acquired between 16 March 1984 and 31 December 2021.
+    - Each pixel is classified as water / non-water using an expert system.
+    - Provides monthly histories and two epochs (1984–1999 and 2000–2021) for change detection.
+    - The mapping layer product consists of **1 image with 7 bands**, mapping spatial and temporal water distribution over 38 years.
+
+    **Key Metrics:**
+    - **Occurrence:** The frequency with which water is present at a given location. Useful for identifying permanent versus intermittent water bodies.
+    - **Seasonality:** The typical timing and duration of water presence within a year. Helps understand wet and dry periods and plan water management.
+    - **Transition:** The change of a pixel from water to non-water or vice versa between two epochs. Indicates areas of water gain or loss.
+    - **Extent:** The total area covered by water at a given time. Critical for assessing flood risk, reservoir storage, and wetland health.
+    - **Change:** The difference in water presence between two time periods (e.g., 1984–1999 vs 2000–2021). Highlights trends due to climate, land use, or hydrological interventions.
+    - **Recurrence:** The probability that a location that was once water will return to being water in future observations. Helps identify persistent vs. ephemeral water bodies.
+
+    **Applications:**
+    - Monitoring long-term water surface changes
+    - Assessing impacts of climate change, urbanization, or irrigation
+    - Supporting water resource management, flood risk assessment, and environmental policy
+
+    **Citation:**  
+    Pekel, J.-F., Cottam, A., Gorelick, N., & Belward, A. S. (2016). High-resolution mapping of global surface water and its long-term changes. *Nature*, 540(7633), 418–422. [doi:10.1038/nature20584](https://doi.org/10.1038/nature20584)
+
+    **Data Users Guide:** [GSW Data User Guide](https://global-surface-water.appspot.com/)
+
+    """, unsafe_allow_html=True)
+
+    st.markdown("---")
+
+    st.markdown(
+        """<iframe src="https://ee-shubhdhadiwal.projects.earthengine.app/view/global-surface-water-explorer" width="100%" height="600" frameborder="0" allowfullscreen></iframe>""",
+        unsafe_allow_html=True
+    )
+
+    st.markdown("""
+    **Note:**
+    1. This dashboard visualizes Global Surface Water (GSW) metrics; detailed statistical analysis can be performed in GIS or Earth Engine using the raw dataset.
+    2. To get access to the processing scripts and download the data, please contact the developer. Custom analysis and tailored GSW studies are available upon request (may be subject to service fees).
+
+    *This dashboard is created by Shubh Dhadiwal using Google Earth Engine.*
+    """, unsafe_allow_html=True)
+
 
 def show_about():
     st.title("📘 About GeoAI Repository")

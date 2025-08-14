@@ -697,13 +697,3 @@ else:
     # All other tabs render the list interface (incl. Favorites)
     show_list_tab(selected_tab)
 
-# =========================
-# FOOTER
-# =========================
-st.markdown("""
-<p style='text-align:center; font-size:12px; color:gray;'>
-Developed by Shubh | 
-<a href='https://www.linkedin.com/in/shubh-dhadiwal/' target='_blank'>LinkedIn</a> | 
-© Copyright GeoAI Repository
-</p>
-""", unsafe_allow_html=True)

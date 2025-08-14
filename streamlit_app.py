@@ -8,7 +8,7 @@ from datetime import date
 import streamlit.components.v1 as components
 
 # =========================
-# PAGE CONFIG (once only)
+# PAGE CONFIG
 # =========================
 st.set_page_config(
     page_title="GeoAI Repository",
@@ -29,65 +29,7 @@ VISITOR_COUNT_FILE = "visitor_count_by_date.json"
 st.image(LOGO_URL, width=200)
 
 # =========================
-# VISITOR COUNTER
-# =========================
-def get_visitor_count_today():
-    today_str = str(date.today())
-    if not os.path.exists(VISITOR_COUNT_FILE):
-        with open(VISITOR_COUNT_FILE, "w") as f:
-            json.dump({}, f)
-        return 0
-    with open(VISITOR_COUNT_FILE, "r") as f:
-        try:
-            counts = json.load(f)
-        except json.JSONDecodeError:
-            counts = {}
-    return counts.get(today_str, 0)
-
-def get_total_visitor_count():
-    if not os.path.exists(VISITOR_COUNT_FILE):
-        return 0
-    with open(VISITOR_COUNT_FILE, "r") as f:
-        try:
-            counts = json.load(f)
-        except json.JSONDecodeError:
-            counts = {}
-    return sum(counts.values())
-
-def increment_visitor_count_today():
-    today_str = str(date.today())
-    if not os.path.exists(VISITOR_COUNT_FILE):
-        counts = {}
-    else:
-        with open(VISITOR_COUNT_FILE, "r") as f:
-            try:
-                counts = json.load(f)
-            except json.JSONDecodeError:
-                counts = {}
-    counts[today_str] = counts.get(today_str, 0) + 1
-    with open(VISITOR_COUNT_FILE, "w") as f:
-        json.dump(counts, f)
-    return counts[today_str]
-
-# Only increment once per session
-if 'visitor_counted' not in st.session_state:
-    st.session_state.today_visitor_count = increment_visitor_count_today()
-    st.session_state.total_visitor_count = get_total_visitor_count()
-    st.session_state.visitor_counted = True
-
-st.markdown("### Welcome to GeoAI Repository!")
-st.markdown(
-    f"""
-    <p style='font-size:14px; color:gray;'>
-    📅 Today's Visitors: <b>{st.session_state.today_visitor_count}</b><br>
-    📈 Total Visitors: <b>{st.session_state.total_visitor_count}</b>
-    </p>
-    """,
-    unsafe_allow_html=True
-)
-
-# =========================
-# AUTH
+# AUTHENTICATION
 # =========================
 def hash_password(password: str) -> str:
     return hashlib.sha256(password.encode()).hexdigest()
@@ -152,19 +94,84 @@ st.sidebar.header("🧭 GeoAI Repository")
 selected_tab = st.sidebar.radio("Select Section", list(sheet_options.keys()))
 
 # =========================
-# DATA LOADER (GitHub Raw)
+# VISITOR COUNTER FUNCTIONS
+# =========================
+def get_visitor_count_today():
+    today_str = str(date.today())
+    if not os.path.exists(VISITOR_COUNT_FILE):
+        with open(VISITOR_COUNT_FILE, "w") as f:
+            json.dump({}, f)
+        return 0
+    with open(VISITOR_COUNT_FILE, "r") as f:
+        try:
+            counts = json.load(f)
+        except json.JSONDecodeError:
+            counts = {}
+    return counts.get(today_str, 0)
+
+def get_total_visitor_count():
+    if not os.path.exists(VISITOR_COUNT_FILE):
+        return 0
+    with open(VISITOR_COUNT_FILE, "r") as f:
+        try:
+            counts = json.load(f)
+        except json.JSONDecodeError:
+            counts = {}
+    return sum(counts.values())
+
+def increment_visitor_count_today():
+    today_str = str(date.today())
+    if not os.path.exists(VISITOR_COUNT_FILE):
+        counts = {}
+    else:
+        with open(VISITOR_COUNT_FILE, "r") as f:
+            try:
+                counts = json.load(f)
+            except json.JSONDecodeError:
+                counts = {}
+    counts[today_str] = counts.get(today_str, 0) + 1
+    with open(VISITOR_COUNT_FILE, "w") as f:
+        json.dump(counts, f)
+    return counts[today_str]
+
+# =========================
+# ABOUT PAGE
+# =========================
+if selected_tab == "About":
+    st.title("About GeoAI Repository")
+
+    # Only increment visitor counter on About page
+    if 'visitor_counted' not in st.session_state:
+        st.session_state.today_visitor_count = increment_visitor_count_today()
+        st.session_state.total_visitor_count = get_total_visitor_count()
+        st.session_state.visitor_counted = True
+
+    st.markdown(
+        f"""
+        <p style='font-size:14px; color:gray;'>
+        📅 Today's Visitors: <b>{st.session_state.today_visitor_count}</b><br>
+        📈 Total Visitors: <b>{st.session_state.total_visitor_count}</b>
+        </p>
+        """,
+        unsafe_allow_html=True
+    )
+
+    st.markdown("""
+    This repository hosts various **GeoAI datasets and dashboards**, including ESA WorldCover, MODIS LULC, and Global Surface Water visualizations using Google Earth Engine.
+    """)
+
+# =========================
+# DATA LOADER
 # =========================
 @st.cache_data(show_spinner=False)
 def load_data(sheet_name):
     try:
-        # Read directly from GitHub raw xlsx
         df = pd.read_excel(GITHUB_RAW_URL, sheet_name=sheet_name)
         df.columns = df.iloc[0]
         df = df[1:]
         df = df.dropna(subset=[df.columns[0]])
         df = df.loc[:, ~df.columns.str.contains("^Unnamed")]
 
-        # Normalize Tools sheet's Column* to Link
         if sheet_name == "Tools":
             new_cols = {col: "Link" for col in df.columns if isinstance(col, str) and col.startswith("Column")}
             if new_cols:
@@ -176,7 +183,7 @@ def load_data(sheet_name):
         return pd.DataFrame()
 
 # =========================
-# HELPERS (search, favorites)
+# HELPERS
 # =========================
 def highlight_search(text, term):
     if not term:

@@ -214,7 +214,9 @@ The project is based in Ghana, with an initial focus on the continent of Africa 
         st.markdown("🔗 [Official Dataset Documentation](https://developers.google.com/earth-engine/datasets/catalog/GOOGLE_Research_open-buildings_v3_polygons)")
         st.markdown("---")
         st.markdown(
-            """<iframe src="https://ee-shubhdhadiwal.projects.earthengine.app/view/geoai" width="100%" height="600" frameborder="0" allowfullscreen></iframe>""",
+            """
+            <iframe src="https://ee-shubhdhadiwal.projects.earthengine.app/view/geoai" width="100%" height="600" frameborder="0" allowfullscreen> </iframe>
+            """,
             unsafe_allow_html=True
         )
         st.markdown("""Dashboard created by Shubh Dhadiwal using Google Earth Engine. [🚀 Open Earth Engine Code Editor here](https://code.earthengine.google.com/272ebbc2fd09e86a3b256c9c2f259b9f?hideCode=true)""", unsafe_allow_html=True)
@@ -230,7 +232,9 @@ In addition, since LCZs were originally designed as a new framework for urban he
         st.markdown("🔗 [Official Dataset Documentation](https://developers.google.com/earth-engine/datasets/catalog/RUB_RUBCLIM_LCZ_global_lcz_map_latest#description)")
         st.markdown("---")
         st.markdown(
-            """<iframe src="https://ee-shubhdhadiwal.projects.earthengine.app/view/lcz-dashboard" width="100%" height="600" frameborder="0" allowfullscreen></iframe>""",
+            """
+            <iframe src="https://ee-shubhdhadiwal.projects.earthengine.app/view/lcz-dashboard" width="100%" height="600" frameborder="0" allowfullscreen> </iframe>
+            """,
             unsafe_allow_html=True
         )
         st.markdown("""Dashboard created by Shubh Dhadiwal using Google Earth Engine. [🚀 Open Earth Engine Code Editor here](https://code.earthengine.google.com/db65e6b4ece8341249a978d4a1509f0e)""", unsafe_allow_html=True)
@@ -253,7 +257,11 @@ In addition, since LCZs were originally designed as a new framework for urban he
 - Downloadable CSV datasets for custom analysis
         """)
         st.markdown("🔗 [NASA Sea Level Evaluation Tool Website](https://sealevel.nasa.gov/sea-level-evaluation-tool)")
-        components.iframe("https://sealevel.nasa.gov/sea-level-evaluation-tool", height=1200, width=1400)
+        components.iframe(
+            "https://sealevel.nasa.gov/sea-level-evaluation-tool",
+            height=1200,
+            width=1400,
+        )
         st.markdown(
             """<p style='font-size:15px; color:gray;'> Source: NASA, <a href="https://sealevel.nasa.gov/sea-level-evaluation-tool" target="_blank">https://sealevel.nasa.gov/sea-level-evaluation-tool</a> </p>""",
             unsafe_allow_html=True
@@ -269,8 +277,21 @@ In addition, since LCZs were originally designed as a new framework for urban he
 **Key Features:**
 - Global coverage
 - Multiple coordinate reference systems supported
+- Regularly updated extracts (usually weekly)
+- Free to use with generous area limits
+
+**Typical Uses:**
+- GIS analysis
+- Urban planning
+- Navigation system development
+- Research projects
         """)
-        components.iframe("https://extract.bbbike.org/", height=700, width=1300, scrolling=True)
+        components.iframe(
+            "https://extract.bbbike.org/",
+            height=700,
+            width=1300,
+            scrolling=True
+        )
 
     with st.expander("▶️ DIVA-GIS Global Data Access"):
         st.markdown("""
@@ -284,7 +305,12 @@ This is especially useful for GIS analysis, ecological studies, and spatial plan
 
 🔗 [Official DIVA-GIS Website](https://diva-gis.org/data.html)
         """)
-        components.iframe("https://diva-gis.org/data.html", height=900, width=1400, scrolling=True)
+        st.components.v1.iframe(
+            "https://diva-gis.org/data.html",
+            height=900,
+            width=1400,
+            scrolling=True
+        )
 
     with st.expander("▶️ Gridded Population of World 2020"):
         st.markdown("""
@@ -295,31 +321,77 @@ There is one image for each modeled year (2000, 2005, 2010, 2015, and 2020). Pop
         st.markdown("🔗 [General Dataset Documentation - GPWv4, CIESIN, Columbia University](https://doi.org/10.7927/H4F47M65)")
         st.markdown("---")
         st.markdown(
-            """<iframe src="https://ee-shubhdhadiwal.projects.earthengine.app/view/gridded-population-of-world-2020" width="100%" height="600" frameborder="0" allowfullscreen></iframe>""",
+            """
+            <iframe src="https://ee-shubhdhadiwal.projects.earthengine.app/view/gridded-population-of-world-2020" width="100%" height="600" frameborder="0" allowfullscreen> </iframe>
+            """,
             unsafe_allow_html=True
         )
         st.markdown("""Dashboard created by Shubh Dhadiwal using Google Earth Engine. [🚀 Open Earth Engine Code Editor here](https://code.earthengine.google.com/dca1dbdd9db97db7276ffab3cf5b2fe6)""", unsafe_allow_html=True)
-        st.markdown("""--- **Citation:** Center for International Earth Science Information Network - CIESIN - Columbia University. 2018. Gridded Population of the World, Version 4 (GPWv4.11): Population Density Adjusted to Match 2015 Revision of UN WPP Country Totals, Revision 11. Palisades, NY: NASA Socioeconomic Data and Applications Center (SEDAC). https://doi.org/10.7927/H4F47M65. Accessed 12 August 2025.""")
+        st.markdown(
+            """--- **Citation:** Center for International Earth Science Information Network - CIESIN - Columbia University. 2018. Gridded Population of the World, Version 4 (GPWv4.11): Population Density Adjusted to Match 2015 Revision of UN WPP Country Totals, Revision 11. Palisades, NY: NASA Socioeconomic Data and Applications Center (SEDAC). https://doi.org/10.7927/H4F47M65. Accessed 12 August 2025."""
+        )
 
     with st.expander("▶️ Global Landsat LST Explorer"):
         st.markdown("""
         The **Global Landsat LST Explorer** is an interactive Google Earth Engine (GEE) application for analyzing Land Surface Temperature (LST) using Landsat 8 and Landsat 9 Collection 2 Level-2 data.
+
+Features include:
+- Selecting **country**, **state/province**, and **year (March–June period)**
+- Visualizing **median LST**
+- Displaying **discrete temperature classes** (e.g., 0–10 °C, 10–20 °C, …, 60–70 °C)
+- Viewing **yearly min/max trend charts** (2015–2024)
+- Exporting processed LST as **GeoTIFF**
+
+**Data Sources & Processing Highlights:**
+- Landsat 8 (LANDSAT/LC08/C02/T1_L2) & Landsat 9 (LANDSAT/LC09/C02/T1_L2) thermal band ST_B10 (Kelvin → °C)
+- Cloud masking via QA_PIXEL band
+- Median compositing (March 1 – June 30)
+- FAO GAUL 2015 boundaries for administrative regions
+- Spatial resolution: 30 m
         """)
         st.markdown("🔗 [Landsat 8 Collection 2 L2 Documentation](https://developers.google.com/earth-engine/datasets/catalog/LANDSAT_LC08_C02_T1_L2)")
         st.markdown("🔗 [Landsat 9 Collection 2 L2 Documentation](https://developers.google.com/earth-engine/datasets/catalog/LANDSAT_LC09_C02_T1_L2)")
         st.markdown("---")
         st.markdown(
-            """<iframe src="https://ee-shubhdhadiwal.projects.earthengine.app/view/global-landsat-lst-explorer" width="100%" height="600" frameborder="0" allowfullscreen></iframe>""",
+            """
+            <iframe src="https://ee-shubhdhadiwal.projects.earthengine.app/view/global-landsat-lst-explorer" width="100%" height="600" frameborder="0" allowfullscreen> </iframe>
+            """,
             unsafe_allow_html=True
         )
         st.markdown("""Dashboard created by Shubh Dhadiwal using Google Earth Engine. [🚀 Open Earth Engine Code Editor here](https://code.earthengine.google.com/e4830267a6dae171f1bf1057f52e19bc)""", unsafe_allow_html=True)
 
     with st.expander("▶️ NASA POWER Data Access Viewer"):
         st.markdown("""
-        The **NASA POWER** Data Access Viewer is a web-based tool for global meteorological and solar energy data.
+        The **NASA POWER (Prediction Of Worldwide Energy Resources) Data Access Viewer** is a web-based tool that provides access to global meteorological and solar energy data. It is widely used for:
+        - Renewable energy assessments
+        - Agricultural planning
+        - Climate research and environmental studies
+        - Weather-related analytics
+
+**Key Features:**
+- Download daily, hourly, or climatological datasets
+- Access variables like temperature, humidity, wind speed, precipitation, and solar radiation
+- Select specific geographic coordinates or regions
+- Multiple output formats (CSV, GeoJSON, NetCDF, etc.)
+- Easy visualization of time series and maps
+
+**Data Sources:**
+- NASA's MERRA-2 (Modern-Era Retrospective Analysis for Research and Applications, Version 2)
+- GEOS (Goddard Earth Observing System) models
+
+**Applications:**
+- Solar energy project design
+- Crop modeling
+- Hydrology and water resource management
+- Climate variability analysis
         """)
         st.markdown("🔗 [NASA POWER Data Access Viewer Website](https://power.larc.nasa.gov/data-access-viewer/)")
-        components.iframe("https://power.larc.nasa.gov/data-access-viewer/", height=900, width=1400, scrolling=True)
+        st.components.v1.iframe(
+            "https://power.larc.nasa.gov/data-access-viewer/",
+            height=900,
+            width=1400,
+            scrolling=True
+        )
         st.markdown(
             """<p style='font-size:15px; color:gray;'> Source: NASA POWER Project, <a href="https://power.larc.nasa.gov/data-access-viewer/" target="_blank">https://power.larc.nasa.gov/data-access-viewer/</a><br> Credit: NASA Langley Research Center (LaRC) — Prediction Of Worldwide Energy Resources (POWER) Project </p>""",
             unsafe_allow_html=True
@@ -327,36 +399,60 @@ There is one image for each modeled year (2000, 2005, 2010, 2015, and 2020). Pop
 
     with st.expander("▶️ ESA WorldCover LULC Change Analysis 2020-2021"):
         st.markdown("""
-        The ESA WorldCover 10 m products provide global land cover maps at 10 m spatial resolution based on Sentinel-1/2.
+        The European Space Agency (ESA) WorldCover 10 m products provide global land cover maps at 10 m spatial resolution based on Sentinel-1 and Sentinel-2 data. Available years: **2020** and **2021**.
+
+The WorldCover products have been generated as part of the ESA WorldCover project, under the 5th Earth Observation Envelope Programme (EOEP-5) of the European Space Agency.
+
+**Citation:** Zanaga, D., Van De Kerchove, R., De Keersmaecker, W., Souverijns, N., Brockmann, C., Quast, R., Wevers, J., Grosu, A., Paccini, A., Vergnaud, S., Cartus, O., Santoro, M., Fritz, S., Georgieva, I., Lesiv, M., Carter, S., Herold, M., Li, Linlin, Tsendbazar, N.E., Ramoino, F., Arino, O., 2021. ESA WorldCover 10 m 2020 v100. (doi:10.5281/zenodo.5571936)
+
+See also:
+- [ESA WorldCover website](https://esa-worldcover.org/en)
+- [User Manual and Validation Report](https://esa-worldcover.org/en/data-access)
         """)
         st.markdown("---")
-        st.markdown(
-            """<iframe src="https://ee-shubhdhadiwal.projects.earthengine.app/view/esa-lulc-2020-21" width="100%" height="600" frameborder="0" allowfullscreen></iframe>""",
-            unsafe_allow_html=True
-        )
+        st.markdown(f"""
+            <iframe src="https://ee-shubhdhadiwal.projects.earthengine.app/view/esa-lulc-2020-21" width="100%" height="600" frameborder="0" allowfullscreen> </iframe>
+        """, unsafe_allow_html=True)
+        st.markdown("**Note:**")
         st.markdown("""
-**Note:**
-1. This dashboard displays the results only; advanced analysis can be performed in GIS after downloading the data.
-2. For code and downloads, contact the developer. Customization available (may be fee-based).
+1. This dashboard displays the results only; advanced analysis as per the needs to be performed in GIS after downloading the data.
+2. To get access to the code and download the data, please contact the developer. Customization of the code tailored to your study can also be requested (it may be subject to service fees).
 This dashboard is created by Shubh Dhadiwal using Google Earth Engine.
         """, unsafe_allow_html=True)
 
-    # ✅ MODIS moved INSIDE Dashboards tab (this fixes the leak)
-    with st.expander("▶️ MODIS Land Use Land Cover (LULC) Change Analysis 2010-2024"):
-        st.markdown("""
-        The **MODIS** Land Cover Type (MCD12Q1) V6.1 provides yearly global land cover types.
-        """)
-        st.markdown("---")
-        st.markdown(
-            """<iframe class="fullscreen-map" src="https://ee-shubhdhadiwal.projects.earthengine.app/view/modis-lulc-change-analysis-2010-2024" allowfullscreen></iframe>""",
-            unsafe_allow_html=True
-        )
-        st.markdown("""
-**Note:**
-1. This dashboard visualizes annual MODIS LULC maps (2010–2024); detailed stats can be done in GIS or Earth Engine.
-2. For scripts and data exports, contact the developer. Custom analyses available on request (may be fee-based).
+with st.expander("▶️ MODIS Land Use Land Cover (LULC) Change Analysis 2010-2024"):
+    st.markdown("""
+    The **Terra and Aqua combined Moderate Resolution Imaging Spectroradiometer (MODIS)** Land Cover Type (MCD12Q1) Version 6.1 data product provides global land cover types at yearly intervals.
+
+The MCD12Q1 Version 6.1 product is derived using **supervised classifications** of MODIS Terra and Aqua reflectance data. Land cover types are derived from the **International Geosphere-Biosphere Programme (IGBP)**, **University of Maryland (UMD)**, **Leaf Area Index (LAI)**, **BIOME-Biogeochemical Cycles (BGC)**, and **Plant Functional Types (PFT)** classification schemes.
+
+The supervised classifications undergo **post-processing** that incorporates prior knowledge and ancillary information to refine specific classes. Additional land cover property assessment layers are provided by the **FAO Land Cover Classification System (LCCS)** for land cover, land use, and surface hydrology.
+
+**Applications include:**
+- Monitoring long-term land cover change.
+- Tracking transitions between cropland, forest, urban, grassland, and other categories.
+- Supporting climate, hydrology, and biodiversity research.
+
+**Citation:** Please visit the [LP DAAC 'Citing Our Data'](https://lpdaac.usgs.gov/citing-data/) page for information on citing LP DAAC datasets.
+Dataset reference: *Friedl, M.A., Sulla-Menashe, D., 2021. MCD12Q1 MODIS/Terra+Aqua Land Cover Type Yearly L3 Global 500 m SIN Grid V061. NASA EOSDIS Land Processes DAAC.* (doi:[10.5067/MODIS/MCD12Q1.061](https://doi.org/10.5067/MODIS/MCD12Q1.061))
+
+**See also:**
+- [MODIS Land Cover Overview (NASA LP DAAC)](https://lpdaac.usgs.gov/products/mcd12q1v061/)
+- [User Guide and Documentation](https://lpdaac.usgs.gov/documents/101/MCD12_User_Guide_V6.pdf)
+    """)
+    st.markdown("---")
+    # Fullscreen responsive map
+    st.markdown(f"""
+        <iframe class="fullscreen-map" src="https://ee-shubhdhadiwal.projects.earthengine.app/view/modis-lulc-change-analysis-2010-2024" allowfullscreen></iframe>
+    """, unsafe_allow_html=True)
+    st.markdown("**Note:**")
+    st.markdown("""
+1. This dashboard visualizes annual MODIS LULC maps from 2010 to 2024; detailed statistical analysis can be performed in GIS or Earth Engine using the raw dataset.
+2. To get access to the processing scripts and download the data, please contact the developer. Custom analysis and tailored LULC change detection services are available upon request (may be subject to service fees).
 *This dashboard is created by Shubh Dhadiwal using Google Earth Engine.*
-        """, unsafe_allow_html=True)
+    """, unsafe_allow_html=True)
+
+st.stop()
 
 def show_about():
     st.title("📘 About GeoAI Repository")

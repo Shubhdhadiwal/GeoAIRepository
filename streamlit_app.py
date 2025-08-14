@@ -390,47 +390,54 @@ See also:
 This dashboard is created by Shubh Dhadiwal using Google Earth Engine.
         """, unsafe_allow_html=True)
 
-    # ✅ MODIS moved INSIDE Dashboards tab (this fixes the leak)
-    with st.expander("▶️ MODIS Land Use Land Cover (LULC) Change Analysis 2010-2024"):
+# ✅ MODIS moved INSIDE Dashboards tab (this fixes the leak)
+with st.expander("▶️ MODIS Land Use Land Cover (LULC) Change Analysis 2010-2024"):
     st.markdown("""
-        The **Terra and Aqua combined Moderate Resolution Imaging Spectroradiometer (MODIS)** Land Cover Type (MCD12Q1) Version 6.1 data product provides global land cover types at yearly intervals.
+    The **Terra and Aqua combined Moderate Resolution Imaging Spectroradiometer (MODIS)** Land Cover Type (MCD12Q1) Version 6.1 data product provides global land cover types at yearly intervals.
+
+    The MCD12Q1 Version 6.1 product is derived using **supervised classifications** of MODIS Terra and Aqua reflectance data.  
+    Land cover types are derived from the:
+    - **International Geosphere-Biosphere Programme (IGBP)**
+    - **University of Maryland (UMD)**
+    - **Leaf Area Index (LAI)**
+    - **BIOME-Biogeochemical Cycles (BGC)**
+    - **Plant Functional Types (PFT)** classification schemes.
+
+    The supervised classifications undergo **post-processing** that incorporates prior knowledge and ancillary information to refine specific classes.  
+    Additional land cover property assessment layers are provided by the **FAO Land Cover Classification System (LCCS)** for land cover, land use, and surface hydrology.
+
+    **Applications include:**
+    - Monitoring long-term land cover change
+    - Tracking transitions between cropland, forest, urban, grassland, and other categories
+    - Supporting climate, hydrology, and biodiversity research
+
+    **Citation:** Please visit the [LP DAAC 'Citing Our Data'](https://lpdaac.usgs.gov/citing-data/) page for information on citing LP DAAC datasets.  
+    Dataset reference: *Friedl, M.A., Sulla-Menashe, D., 2021. MCD12Q1 MODIS/Terra+Aqua Land Cover Type Yearly L3 Global 500 m SIN Grid V061. NASA EOSDIS Land Processes DAAC.* (doi:[10.5067/MODIS/MCD12Q1.061](https://doi.org/10.5067/MODIS/MCD12Q1.061))
+    """)
     
-        The MCD12Q1 Version 6.1 product is derived using **supervised classifications** of MODIS Terra and Aqua reflectance data.  
-        Land cover types are derived from the:
-        - **International Geosphere-Biosphere Programme (IGBP)**
-        - **University of Maryland (UMD)**
-        - **Leaf Area Index (LAI)**
-        - **BIOME-Biogeochemical Cycles (BGC)**
-        - **Plant Functional Types (PFT)** classification schemes.
+    st.markdown("---")
     
-        The supervised classifications undergo **post-processing** that incorporates prior knowledge and ancillary information to refine specific classes.  
-        Additional land cover property assessment layers are provided by the **FAO Land Cover Classification System (LCCS)** for land cover, land use, and surface hydrology.
-    
-        **Applications include:**
-        - Monitoring long-term land cover change
-        - Tracking transitions between cropland, forest, urban, grassland, and other categories
-        - Supporting climate, hydrology, and biodiversity research
-    
-        **Citation:** Please visit the [LP DAAC 'Citing Our Data'](https://lpdaac.usgs.gov/citing-data/) page for information on citing LP DAAC datasets.  
-        Dataset reference: *Friedl, M.A., Sulla-Menashe, D., 2021. MCD12Q1 MODIS/Terra+Aqua Land Cover Type Yearly L3 Global 500 m SIN Grid V061. NASA EOSDIS Land Processes DAAC.* (doi:[10.5067/MODIS/MCD12Q1.061](https://doi.org/10.5067/MODIS/MCD12Q1.061))
-        """)
-        st.markdown("---")
-        st.markdown(
-            """<iframe class="fullscreen-map" src="https://ee-shubhdhadiwal.projects.earthengine.app/view/modis-lulc-change-analysis-2010-2024" allowfullscreen></iframe>""",
-            unsafe_allow_html=True
-        )
-        st.markdown("""
+    st.markdown(
+        """<iframe class="fullscreen-map" src="https://ee-shubhdhadiwal.projects.earthengine.app/view/modis-lulc-change-analysis-2010-2024" allowfullscreen></iframe>""",
+        unsafe_allow_html=True
+    )
+
+    st.markdown("""
     **Note:**
     1. This dashboard visualizes annual MODIS LULC maps from 2010 to 2024; detailed statistical analysis can be performed in GIS or Earth Engine using the raw dataset.
     2. To get access to the processing scripts and download the data, please contact the developer. Custom analysis and tailored LULC change detection services are available upon request (may be subject to service fees).
+
     *This dashboard is created by Shubh Dhadiwal using Google Earth Engine.*
-        """, unsafe_allow_html=True)
+    """, unsafe_allow_html=True)
+
 
 def show_about():
     st.title("📘 About GeoAI Repository")
+    
     st.markdown("""
     The **GeoAI Repository** is an interactive and open-access platform designed for students, researchers, and professionals in geospatial analytics, urban planning, and climate action. It integrates **Google Earth Engine (GEE)**, Python, and other open-source tools to provide powerful, cloud-based geospatial analysis.
     """)
+    
     st.info("""
     - 🌐 **Public Geospatial Datasets**: Land use, climate, urban infrastructure, and environmental change.  
     - 🛠️ **Open-Source Tools & Platforms**: Built on GEE, Python, and open frameworks.  
@@ -438,8 +445,10 @@ def show_about():
     - 💻 **Python & GEE Scripts**: Satellite processing, LULC, and modeling.  
     - 📊 **Interactive Visualizations**: Dynamic maps, charts, and dashboards.
     """)
+    
     st.subheader("🌟 Vision")
     st.markdown("Empower analysts and planners with accessible, AI-driven geospatial intelligence for a sustainable, resilient planet.")
+    
     st.subheader("🎯 Mission")
     st.markdown("""
     1. Democratize geospatial data  

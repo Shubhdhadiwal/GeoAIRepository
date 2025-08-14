@@ -260,17 +260,30 @@ In addition, since LCZs were originally designed as a new framework for urban he
         )
 
     with st.expander("▶️ BBBike OSM Extract Service"):
-        st.markdown("""
-        The **BBBike OSM Extract Service** is a free web-based tool for extracting **OpenStreetMap (OSM)** data for custom-defined areas anywhere in the world. Users can:
-        - Select a region by drawing a polygon or choosing from predefined cities
-        - Download OSM data in multiple formats (Shapefile, GeoJSON, Garmin IMG, KML, PBF, CSV, etc.)
-        - Filter datasets to include only desired layers (roads, buildings, land use, points of interest, etc.)
+    st.markdown("""
+    The **BBBike OSM Extract Service** is a free web-based tool for extracting **OpenStreetMap (OSM)** data for custom-defined areas anywhere in the world. Users can:
+    - Select a region by drawing a polygon or choosing from predefined cities
+    - Download OSM data in multiple formats (Shapefile, GeoJSON, Garmin IMG, KML, PBF, CSV, etc.)
+    - Filter datasets to include only desired layers (roads, buildings, land use, points of interest, etc.)
 
 **Key Features:**
 - Global coverage
 - Multiple coordinate reference systems supported
-        """)
-        components.iframe("https://extract.bbbike.org/", height=700, width=1300, scrolling=True)
+- Regularly updated extracts (usually weekly)
+- Free to use with generous area limits
+
+**Typical Uses:**
+- GIS analysis
+- Urban planning
+- Navigation system development
+- Research projects
+    """)
+    components.iframe(
+        "https://extract.bbbike.org/",
+        height=700,
+        width=1300,
+        scrolling=True
+    )
 
     with st.expander("▶️ DIVA-GIS Global Data Access"):
         st.markdown("""

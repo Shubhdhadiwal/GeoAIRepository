@@ -475,12 +475,13 @@ st.set_page_config(layout="wide")
     
         st.markdown("---")
         
-        # Fullscreen responsive map
-        st.markdown(f"""
-        <iframe class="fullscreen-map" 
+             <iframe 
                 src="https://ee-shubhdhadiwal.projects.earthengine.app/view/modis-lulc-2010-2024" 
-                allowfullscreen></iframe>
-        """, unsafe_allow_html=True)
+                width="100%" height="600" frameborder="0" allowfullscreen>
+            </iframe>
+            """,
+            unsafe_allow_html=True
+        )
         
         st.markdown("**Note:**")
         st.markdown("""

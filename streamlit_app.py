@@ -429,28 +429,6 @@ The LCZ scheme complements other land use / land cover schemes by its focus on u
         This dashboard is created by Shubh Dhadiwal using Google Earth Engine.
         """, unsafe_allow_html=True)
 
-    # Set Streamlit to wide mode for more map space
-st.set_page_config(layout="wide")
-
-    # Set Streamlit to wide mode for more map space
-    st.set_page_config(layout="wide")
-    
-    # CSS for fullscreen iframe
-    st.markdown("""
-        <style>
-        .block-container {
-            max-width: 98% !important;
-            padding-left: 1rem;
-            padding-right: 1rem;
-        }
-        iframe.fullscreen-map {
-            height: 90vh; /* 90% of viewport height */
-            width: 100%;
-            border: none;
-        }
-        </style>
-    """, unsafe_allow_html=True)
-
     with st.expander("▶️ MODIS Land Use Land Cover (LULC) Change Analysis 2010-2024"):
         st.markdown("""
         The **Terra and Aqua combined Moderate Resolution Imaging Spectroradiometer (MODIS)** Land Cover Type (MCD12Q1) Version 6.1 data product provides global land cover types at yearly intervals.  

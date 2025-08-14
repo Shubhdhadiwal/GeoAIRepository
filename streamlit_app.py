@@ -426,6 +426,7 @@ The LCZ scheme complements other land use / land cover schemes by its focus on u
         </iframe>
         """, unsafe_allow_html=True)
     
+        st.markdown("**Note:**")
         st.markdown("""
         1. This dashboard displays the data only; advanced analysis needs to be performed in GIS after downloading the data.  
         2. To get access to download the code, please contact the developer. Customization of the code tailored to your study can also be requested (it may be subject to service fees).  

@@ -304,12 +304,28 @@ There is one image for each modeled year (2000, 2005, 2010, 2015, and 2020). Pop
     with st.expander("▶️ Global Landsat LST Explorer"):
         st.markdown("""
         The **Global Landsat LST Explorer** is an interactive Google Earth Engine (GEE) application for analyzing Land Surface Temperature (LST) using Landsat 8 and Landsat 9 Collection 2 Level-2 data.
+
+Features include:
+- Selecting **country**, **state/province**, and **year (March–June period)**
+- Visualizing **median LST**
+- Displaying **discrete temperature classes** (e.g., 0–10 °C, 10–20 °C, …, 60–70 °C)
+- Viewing **yearly min/max trend charts** (2015–2024)
+- Exporting processed LST as **GeoTIFF**
+
+**Data Sources & Processing Highlights:**
+- Landsat 8 (LANDSAT/LC08/C02/T1_L2) & Landsat 9 (LANDSAT/LC09/C02/T1_L2) thermal band ST_B10 (Kelvin → °C)
+- Cloud masking via QA_PIXEL band
+- Median compositing (March 1 – June 30)
+- FAO GAUL 2015 boundaries for administrative regions
+- Spatial resolution: 30 m
         """)
         st.markdown("🔗 [Landsat 8 Collection 2 L2 Documentation](https://developers.google.com/earth-engine/datasets/catalog/LANDSAT_LC08_C02_T1_L2)")
         st.markdown("🔗 [Landsat 9 Collection 2 L2 Documentation](https://developers.google.com/earth-engine/datasets/catalog/LANDSAT_LC09_C02_T1_L2)")
         st.markdown("---")
         st.markdown(
-            """<iframe src="https://ee-shubhdhadiwal.projects.earthengine.app/view/global-landsat-lst-explorer" width="100%" height="600" frameborder="0" allowfullscreen></iframe>""",
+            """
+            <iframe src="https://ee-shubhdhadiwal.projects.earthengine.app/view/global-landsat-lst-explorer" width="100%" height="600" frameborder="0" allowfullscreen> </iframe>
+            """,
             unsafe_allow_html=True
         )
         st.markdown("""Dashboard created by Shubh Dhadiwal using Google Earth Engine. [🚀 Open Earth Engine Code Editor here](https://code.earthengine.google.com/e4830267a6dae171f1bf1057f52e19bc)""", unsafe_allow_html=True)

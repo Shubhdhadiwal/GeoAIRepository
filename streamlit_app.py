@@ -134,12 +134,6 @@ def increment_visitor_count_today():
         json.dump(counts, f)
     return counts[today_str]
 
-# =========================
-# ABOUT PAGE
-# =========================
-if selected_tab == "About":
-    st.title("About GeoAI Repository")
-
     # Only increment visitor counter on About page
     if 'visitor_counted' not in st.session_state:
         st.session_state.today_visitor_count = increment_visitor_count_today()

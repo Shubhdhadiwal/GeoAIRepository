@@ -176,301 +176,217 @@ selected_tab = st.sidebar.radio("Select Section", list(sheet_options.keys()))
 if selected_tab == "Dashboards":
     st.title("🌍 Dashboards")
 
-    with st.expander("▶️ Google Open Building Dashboard"):
-        st.markdown("""
-        This large-scale open dataset consists of outlines of buildings derived from high-resolution 50 cm satellite imagery. It contains 1.8B building detections in Africa, Latin America, Caribbean, South Asia and Southeast Asia. The inference spanned an area of 58M km².
+    # Common iframe height
+    iframe_height = 700
 
-For each building in this dataset we include the polygon describing its footprint on the ground, a confidence score indicating how sure we are that this is a building, and a Plus Code corresponding to the center of the building. There is no information about the type of building, its street address, or any details other than its geometry.
+    # Function for adding uniform dashboards
+    def add_dashboard_expander(title, description_md, doc_links, iframe_url, code_editor_url=None, note_md=None, citation_md=None):
+        """
+        title: Dashboard title (string)
+        description_md: Markdown description text
+        doc_links: List of tuples -> [(text, url), ...]
+        iframe_url: URL to embed
+        code_editor_url: Optional Earth Engine code link
+        note_md: Optional Markdown notes
+        citation_md: Optional Markdown citation text
+        """
+        with st.expander(f"▶️ {title}"):
+            st.markdown(description_md)
+            if doc_links:
+                for text, url in doc_links:
+                    st.markdown(f"🔗 [{text}]({url})")
+            st.markdown("---")
+            st.markdown(
+                f"""
+                <iframe 
+                    src="{iframe_url}" 
+                    width="100%" 
+                    height="{iframe_height}" 
+                    frameborder="0" 
+                    allowfullscreen>
+                </iframe>
+                """,
+                unsafe_allow_html=True
+            )
+            if code_editor_url:
+                st.markdown(
+                    f"""
+                    Dashboard created by Shubh Dhadiwal using Google Earth Engine.  
+                    [🚀 Open Earth Engine Code Editor here]({code_editor_url})
+                    """,
+                    unsafe_allow_html=True
+                )
+            if note_md:
+                st.markdown("**Note:**")
+                st.markdown(note_md, unsafe_allow_html=True)
+            if citation_md:
+                st.markdown("---")
+                st.markdown("**Citation:**")
+                st.markdown(citation_md, unsafe_allow_html=True)
 
-Building footprints are useful for a range of important applications: from population estimation, urban planning and humanitarian response to environmental and climate science. The project is based in Ghana, with an initial focus on the continent of Africa and new updates on South Asia, South-East Asia, Latin America and the Caribbean.
+    # ================= DASHBOARDS ================= #
 
-Inference was carried out during May 2023.
-        """)
-        st.markdown("🔗 [Official Dataset Documentation](https://developers.google.com/earth-engine/datasets/catalog/GOOGLE_Research_open-buildings_v3_polygons)")
-        st.markdown("---")
-        st.markdown(
-            """
-            <iframe 
-                src="https://ee-shubhdhadiwal.projects.earthengine.app/view/geoai" 
-                width="100%" height="600" frameborder="0" allowfullscreen>
-            </iframe>
-            """,
-            unsafe_allow_html=True
-        )
-        st.markdown("""
-        Dashboard created by Shubh Dhadiwal using Google Earth Engine.  
-        [🚀 Open Earth Engine Code Editor here](https://code.earthengine.google.com/272ebbc2fd09e86a3b256c9c2f259b9f?hideCode=true)
-        """, unsafe_allow_html=True)
+    # 1. Google Open Building Dashboard
+    add_dashboard_expander(
+        "Google Open Building Dashboard",
+        """
+        This large-scale open dataset consists of outlines of buildings derived from high-resolution 50 cm satellite imagery.  
+        It contains **1.8B building detections** in Africa, Latin America, Caribbean, South Asia and Southeast Asia.  
+        The inference spanned an area of 58M km², carried out in May 2023.
+        
+        Each building includes:
+        - Polygon footprint geometry  
+        - Confidence score (building likelihood)  
+        - Plus Code (center of building)  
 
-    with st.expander("▶️ Local Climate Zones (LCZ) Dashboard"):
-        st.markdown("""
-        This global map of Local Climate Zones, at 100m pixel size and representative for the nominal year 2018, is derived from multiple earth observation datasets and expert LCZ class labels. LCZ_Filter is the recommended band for most users. The other classification band, LCZ, is only provided as it is used to calculate the LCZ_Probability band.
+        **Applications:**  
+        - Population estimation  
+        - Urban planning  
+        - Humanitarian response  
+        - Environmental and climate science  
+        """,
+        [("Official Dataset Documentation", "https://developers.google.com/earth-engine/datasets/catalog/GOOGLE_Research_open-buildings_v3_polygons")],
+        "https://ee-shubhdhadiwal.projects.earthengine.app/view/geoai",
+        "https://code.earthengine.google.com/272ebbc2fd09e86a3b256c9c2f259b9f?hideCode=true"
+    )
 
-The LCZ scheme complements other land use / land cover schemes by its focus on urban and rural landscape types, which can be described by any of the 17 classes in the LCZ scheme. Out of the 17 LCZ classes, 10 reflect the 'built' environment, and each LCZ type is associated with generic numerical descriptions of key urban canopy parameters critical to model atmospheric responses to urbanisation. In addition, since LCZs were originally designed as a new framework for urban heat island studies, they also contain a limited set (7) of 'natural' land-cover classes that can be used as 'control' or 'natural reference' areas.
-        """)
-        st.markdown("🔗 [Official Dataset Documentation](https://developers.google.com/earth-engine/datasets/catalog/RUB_RUBCLIM_LCZ_global_lcz_map_latest#description)")
-        st.markdown("---")
-        st.markdown(
-            """
-            <iframe 
-                src="https://ee-shubhdhadiwal.projects.earthengine.app/view/lcz-dashboard" 
-                width="100%" height="600" frameborder="0" allowfullscreen>
-            </iframe>
-            """,
-            unsafe_allow_html=True
-        )
-        st.markdown("""
-        Dashboard created by Shubh Dhadiwal using Google Earth Engine.  
-        [🚀 Open Earth Engine Code Editor here](https://code.earthengine.google.com/db65e6b4ece8341249a978d4a1509f0e)
-        """, unsafe_allow_html=True)
+    # 2. Local Climate Zones Dashboard
+    add_dashboard_expander(
+        "Local Climate Zones (LCZ) Dashboard",
+        """
+        This global LCZ map (100m resolution, nominal year 2018) is derived from multiple EO datasets and expert labels.  
+        LCZ classification supports **urban heat island** studies, urban climate modeling, and planning.  
 
-    with st.expander("▶️ NASA Sea Level Evaluation Tool"):
-        st.markdown("""
-        The **NASA Sea Level Evaluation Tool** provides interactive visualization and analysis of global sea level data from multiple satellite altimetry missions.  
-        Users can:
-        - Explore sea level trends and anomalies
-        - Compare data from different missions (e.g., TOPEX/Poseidon, Jason-1/2/3, Sentinel-6)
-        - Analyze time series for specific regions or globally
-        - Overlay climate indices for correlation studies
-    
-        **Data Sources:**  
-        - Satellite altimetry measurements from NASA, NOAA, CNES, and ESA missions  
-        - Climate indices (ENSO, PDO, NAO, etc.)
-    
-        **Key Features:**  
-        - Interactive maps and charts
-        - Regional or global data selection
-        - Downloadable CSV datasets for custom analysis
-        """)
-        st.markdown("🔗 [NASA Sea Level Evaluation Tool Website](https://sealevel.nasa.gov/sea-level-evaluation-tool)")
-        components.iframe(
-            "https://sealevel.nasa.gov/sea-level-evaluation-tool",
-            height=1200,
-            width=1400,
-        )
-        st.markdown("""
-        <p style='font-size:15px; color:gray;'>
-        Source: NASA, <a href="https://sealevel.nasa.gov/sea-level-evaluation-tool" target="_blank">https://sealevel.nasa.gov/sea-level-evaluation-tool</a>
-        </p>
-        """, unsafe_allow_html=True)
+        **Classes:**  
+        - 10 'built' environment types  
+        - 7 'natural' land-cover types for reference areas  
+        """,
+        [("Official Dataset Documentation", "https://developers.google.com/earth-engine/datasets/catalog/RUB_RUBCLIM_LCZ_global_lcz_map_latest#description")],
+        "https://ee-shubhdhadiwal.projects.earthengine.app/view/lcz-dashboard",
+        "https://code.earthengine.google.com/db65e6b4ece8341249a978d4a1509f0e"
+    )
 
+    # 3. NASA Sea Level Evaluation Tool
+    add_dashboard_expander(
+        "NASA Sea Level Evaluation Tool",
+        """
+        Interactive visualization of global sea level trends using satellite altimetry missions (TOPEX/Poseidon, Jason, Sentinel-6).  
 
-    with st.expander("▶️ BBBike OSM Extract Service"):
-        st.markdown("""
-        The **BBBike OSM Extract Service** is a free web-based tool for extracting **OpenStreetMap (OSM)** data for custom-defined areas anywhere in the world.  
-        Users can:
-        - Select a region by drawing a polygon or choosing from predefined cities
-        - Download OSM data in multiple formats (Shapefile, GeoJSON, Garmin IMG, KML, PBF, CSV, etc.)
-        - Filter datasets to include only desired layers (roads, buildings, land use, points of interest, etc.)
-    
-        **Key Features:**  
-        - Global coverage
-        - Multiple coordinate reference systems supported
-        - Regularly updated extracts (usually weekly)
-        - Free to use with generous area limits
-    
-        **Typical Uses:**  
-        - GIS analysis
-        - Urban planning
-        - Navigation system development
-        - Research projects
-        """)
-        components.iframe(
-            "https://extract.bbbike.org/",
-            height=700,
-            width=1300,
-            scrolling=True
-        )
+        **Features:**  
+        - Explore regional/global sea level anomalies  
+        - Compare across missions  
+        - Overlay climate indices (ENSO, PDO, NAO, etc.)  
+        """,
+        [("NASA Sea Level Evaluation Tool Website", "https://sealevel.nasa.gov/sea-level-evaluation-tool")],
+        "https://sealevel.nasa.gov/sea-level-evaluation-tool"
+    )
 
-    with st.expander("▶️ DIVA-GIS Global Data Access"):
-        st.markdown("""
-        **DIVA-GIS** provides free spatial data for any country in the world, including:
-        - Administrative boundaries
-        - Roads, railways, and population density
-        - Elevation and climate data
-        - Land cover maps
+    # 4. BBBike OSM Extract Service
+    add_dashboard_expander(
+        "BBBike OSM Extract Service",
+        """
+        Extract **OpenStreetMap (OSM)** data for any area in formats like Shapefile, GeoJSON, KML, CSV.  
+        Ideal for GIS analysis, navigation, and research.
+        """,
+        [],
+        "https://extract.bbbike.org/"
+    )
 
-        This is especially useful for GIS analysis, ecological studies, and spatial planning.
+    # 5. DIVA-GIS Global Data Access
+    add_dashboard_expander(
+        "DIVA-GIS Global Data Access",
+        """
+        Download free spatial data for any country:  
+        - Administrative boundaries  
+        - Population density  
+        - Climate & elevation  
+        - Land cover maps  
+        """,
+        [("Official DIVA-GIS Website", "https://diva-gis.org/data.html")],
+        "https://diva-gis.org/data.html"
+    )
 
-        🔗 [Official DIVA-GIS Website](https://diva-gis.org/data.html)
-        """)
-        st.components.v1.iframe(
-            "https://diva-gis.org/data.html",
-            height=900,
-            width=1400,
-            scrolling=True
-        )  
-    
-    with st.expander("▶️ Gridded Population of World 2020"):
-        st.markdown("""
-        This dataset contains estimates of the number of persons per 30 arc-second (~1 km) grid cell, consistent with national censuses and population registers with respect to relative spatial distribution but adjusted to match the 2015 Revision of UN World Population Prospects country totals.  
-        There is one image for each modeled year (2000, 2005, 2010, 2015, and 2020). Population is distributed to cells using proportional allocation of population from census and administrative units.
-        """)
-        st.markdown("🔗 [General Dataset Documentation - GPWv4, CIESIN, Columbia University](https://doi.org/10.7927/H4F47M65)")
-        st.markdown("---")
-        st.markdown(
-            """
-            <iframe 
-                src="https://ee-shubhdhadiwal.projects.earthengine.app/view/gridded-population-of-world-2020" 
-                width="100%" height="600" frameborder="0" allowfullscreen>
-            </iframe>
-            """,
-            unsafe_allow_html=True
-        )
-        st.markdown("""
-        Dashboard created by Shubh Dhadiwal using Google Earth Engine.  
-        [🚀 Open Earth Engine Code Editor here](https://code.earthengine.google.com/dca1dbdd9db97db7276ffab3cf5b2fe6)
-        """, unsafe_allow_html=True)
-    
-        st.markdown("""
-        ---
-        **Citation:**  
+    # 6. Gridded Population of World 2020
+    add_dashboard_expander(
+        "Gridded Population of World 2020",
+        """
+        Estimates persons per ~1 km² grid cell, adjusted to **UN WPP 2015 Revision** totals.  
+        Years: 2000, 2005, 2010, 2015, 2020.  
+        """,
+        [("Dataset Documentation - GPWv4, CIESIN, Columbia University", "https://doi.org/10.7927/H4F47M65")],
+        "https://ee-shubhdhadiwal.projects.earthengine.app/view/gridded-population-of-world-2020",
+        "https://code.earthengine.google.com/dca1dbdd9db97db7276ffab3cf5b2fe6",
+        citation_md="""
         Center for International Earth Science Information Network - CIESIN - Columbia University. 2018.  
-        Gridded Population of the World, Version 4 (GPWv4.11): Population Density Adjusted to Match 2015 Revision of UN WPP Country Totals, Revision 11.  
-        Palisades, NY: NASA Socioeconomic Data and Applications Center (SEDAC).  
-        https://doi.org/10.7927/H4F47M65. Accessed 12 August 2025.
-        """)
-    
-    with st.expander("▶️ Global Landsat LST Explorer"):
-        st.markdown("""
-        The **Global Landsat LST Explorer** is an interactive Google Earth Engine (GEE) application for analyzing Land Surface Temperature (LST) using Landsat 8 and Landsat 9 Collection 2 Level-2 data.  
-        Features include:
-        - Selecting **country**, **state/province**, and **year (March–June period)**
-        - Visualizing **median LST**
-        - Displaying **discrete temperature classes** (e.g., 0–10 °C, 10–20 °C, …, 60–70 °C)
-        - Viewing **yearly min/max trend charts** (2015–2024)
-        - Exporting processed LST as **GeoTIFF**
-        
-        **Data Sources & Processing Highlights:**  
-        - Landsat 8 (`LANDSAT/LC08/C02/T1_L2`) & Landsat 9 (`LANDSAT/LC09/C02/T1_L2`) thermal band `ST_B10` (Kelvin → °C)  
-        - Cloud masking via `QA_PIXEL` band  
-        - Median compositing (March 1 – June 30)  
-        - FAO GAUL 2015 boundaries for administrative regions  
-        - Spatial resolution: 30 m  
-        """)
-        st.markdown("🔗 [Landsat 8 Collection 2 L2 Documentation](https://developers.google.com/earth-engine/datasets/catalog/LANDSAT_LC08_C02_T1_L2)")
-        st.markdown("🔗 [Landsat 9 Collection 2 L2 Documentation](https://developers.google.com/earth-engine/datasets/catalog/LANDSAT_LC09_C02_T1_L2)")
-        st.markdown("---")
-        st.markdown(
-            """
-            <iframe
-                src="https://ee-shubhdhadiwal.projects.earthengine.app/view/global-landsat-lst-explorer"
-                width="100%" height="600" frameborder="0" allowfullscreen>
-            </iframe>
-            """,
-            unsafe_allow_html=True
-        )
-        st.markdown("""
-        Dashboard created by Shubh Dhadiwal using Google Earth Engine.  
-        [🚀 Open Earth Engine Code Editor here](https://code.earthengine.google.com/e4830267a6dae171f1bf1057f52e19bc)
-        """, unsafe_allow_html=True)
+        *Gridded Population of the World, Version 4 (GPWv4.11): Population Density Adjusted to Match 2015 Revision of UN WPP Country Totals, Revision 11.*  
+        Palisades, NY: NASA SEDAC. [https://doi.org/10.7927/H4F47M65](https://doi.org/10.7927/H4F47M65)  
+        Accessed 12 August 2025.
+        """
+    )
 
-    with st.expander("▶️ NASA POWER Data Access Viewer"):
-        st.markdown("""
-        The **NASA POWER (Prediction Of Worldwide Energy Resources) Data Access Viewer** is a web-based tool that provides access to global meteorological and solar energy data.  
-        It is widely used for:
-        - Renewable energy assessments
-        - Agricultural planning
-        - Climate research and environmental studies
-        - Weather-related analytics
+    # 7. Global Landsat LST Explorer
+    add_dashboard_expander(
+        "Global Landsat LST Explorer",
+        """
+        Analyze **Land Surface Temperature (LST)** from Landsat 8 & 9 C2 L2 thermal bands (`ST_B10`).  
+        - Period: March–June (2015–2024) median composites  
+        - Resolution: 30 m  
+        """,
+        [
+            ("Landsat 8 C2 L2 Documentation", "https://developers.google.com/earth-engine/datasets/catalog/LANDSAT_LC08_C02_T1_L2"),
+            ("Landsat 9 C2 L2 Documentation", "https://developers.google.com/earth-engine/datasets/catalog/LANDSAT_LC09_C02_T1_L2")
+        ],
+        "https://ee-shubhdhadiwal.projects.earthengine.app/view/global-landsat-lst-explorer",
+        "https://code.earthengine.google.com/e4830267a6dae171f1bf1057f52e19bc"
+    )
 
-        **Key Features:**
-        - Download daily, hourly, or climatological datasets
-        - Access variables like temperature, humidity, wind speed, precipitation, and solar radiation
-        - Select specific geographic coordinates or regions
-        - Multiple output formats (CSV, GeoJSON, NetCDF, etc.)
-        - Easy visualization of time series and maps
+    # 8. NASA POWER Data Access Viewer
+    add_dashboard_expander(
+        "NASA POWER Data Access Viewer",
+        """
+        Access global meteorological & solar energy data for renewable energy, agriculture, and climate research.  
+        Sources: MERRA-2, GEOS models.
+        """,
+        [("NASA POWER Data Access Viewer Website", "https://power.larc.nasa.gov/data-access-viewer/")],
+        "https://power.larc.nasa.gov/data-access-viewer/"
+    )
 
-        **Data Sources:**
-        - NASA's MERRA-2 (Modern-Era Retrospective Analysis for Research and Applications, Version 2)
-        - GEOS (Goddard Earth Observing System) models
+    # 9. ESA WorldCover LULC Change Analysis 2020–2021
+    add_dashboard_expander(
+        "ESA WorldCover LULC Change Analysis 2020–2021",
+        """
+        ESA WorldCover 10 m global land cover maps for 2020 & 2021 from Sentinel-1 & 2.  
+        """,
+        [
+            ("ESA WorldCover Website", "https://esa-worldcover.org/en"),
+            ("User Manual & Validation Report", "https://esa-worldcover.org/en/data-access")
+        ],
+        "https://ee-shubhdhadiwal.projects.earthengine.app/view/esa-lulc-2020-21",
+        note_md="""
+        1. This dashboard displays results only; advanced analysis should be done in GIS.  
+        2. Contact the developer for code access and customization.
+        """
+    )
 
-        **Applications:**
-        - Solar energy project design
-        - Crop modeling
-        - Hydrology and water resource management
-        - Climate variability analysis
-        """)
-        st.markdown("🔗 [NASA POWER Data Access Viewer Website](https://power.larc.nasa.gov/data-access-viewer/)")
-        st.components.v1.iframe(
-            "https://power.larc.nasa.gov/data-access-viewer/",
-            height=900,
-            width=1400,
-            scrolling=True
-        )
-        st.markdown("""
-        <p style='font-size:15px; color:gray;'>
-        Source: NASA POWER Project, <a href="https://power.larc.nasa.gov/data-access-viewer/" target="_blank">https://power.larc.nasa.gov/data-access-viewer/</a><br>
-        Credit: NASA Langley Research Center (LaRC) — Prediction Of Worldwide Energy Resources (POWER) Project
-        </p>
-        """, unsafe_allow_html=True)
+    # 10. MODIS LULC Change 2010–2024
+    add_dashboard_expander(
+        "MODIS Land Use Land Cover (LULC) Change Analysis 2010–2024",
+        """
+        Annual MODIS global land cover types (MCD12Q1 V6.1) from 2010–2024.  
+        Classification schemes: IGBP, UMD, LAI, BGC, PFT, LCCS.  
+        """,
+        [
+            ("MODIS Land Cover Overview", "https://lpdaac.usgs.gov/products/mcd12q1v061/"),
+            ("User Guide", "https://lpdaac.usgs.gov/documents/101/MCD12_User_Guide_V6.pdf")
+        ],
+        "https://ee-shubhdhadiwal.projects.earthengine.app/view/modis-lulc-2010-2024",
+        note_md="""
+        1. Visualizes MODIS LULC maps; detailed analysis should be done in GIS or Earth Engine.  
+        2. Contact the developer for scripts and tailored change detection services.
+        """
+    )
 
-    with st.expander("▶️ ESA WorldCover LULC Change Analysis 2020-2021"):
-        st.markdown("""
-        The European Space Agency (ESA) WorldCover 10 m products provide global land cover maps at 10 m spatial resolution based on Sentinel-1 and Sentinel-2 data. Available years: **2020** and **2021**. The WorldCover products have been generated as part of the ESA WorldCover project, under the 5th Earth Observation Envelope Programme (EOEP-5) of the European Space Agency.  
-    
-        **Citation:** Zanaga, D., Van De Kerchove, R., De Keersmaecker, W., Souverijns, N., Brockmann, C., Quast, R., Wevers, J., Grosu, A., Paccini, A., Vergnaud, S., Cartus, O., Santoro, M., Fritz, S., Georgieva, I., Lesiv, M., Carter, S., Herold, M., Li, Linlin, Tsendbazar, N.E., Ramoino, F., Arino, O., 2021. ESA WorldCover 10 m 2020 v100. (doi:10.5281/zenodo.5571936)
-        
-        See also:
-        - [ESA WorldCover website](https://esa-worldcover.org/en)
-        - [User Manual and Validation Report](https://esa-worldcover.org/en/data-access)
-        """)
-        
-        st.markdown("---")
-        
-        st.markdown(f"""
-        <iframe src="https://ee-shubhdhadiwal.projects.earthengine.app/view/esa-lulc-2020-21" width="100%" height="600" frameborder="0" allowfullscreen> </iframe>
-        """, unsafe_allow_html=True)
-        
-        st.markdown("**Note:**")
-        st.markdown("""
-        1. This dashboard displays the results only; advanced analysis as per the needs to be performed in GIS after downloading the data.  
-        2. To get access to the code and download the data, please contact the developer. Customization of the code tailored to your study can also be requested (it may be subject to service fees).  
-        This dashboard is created by Shubh Dhadiwal using Google Earth Engine.
-        """, unsafe_allow_html=True)
-
-    with st.expander("▶️ MODIS Land Use Land Cover (LULC) Change Analysis 2010-2024"):
-        st.markdown("""
-        The **Terra and Aqua combined Moderate Resolution Imaging Spectroradiometer (MODIS)** Land Cover Type (MCD12Q1) Version 6.1 data product provides global land cover types at yearly intervals.  
-        The MCD12Q1 Version 6.1 product is derived using **supervised classifications** of MODIS Terra and Aqua reflectance data.  
-        Land cover types are derived from the **International Geosphere-Biosphere Programme (IGBP)**, **University of Maryland (UMD)**, **Leaf Area Index (LAI)**, **BIOME-Biogeochemical Cycles (BGC)**, and **Plant Functional Types (PFT)** classification schemes.  
-    
-        The supervised classifications undergo **post-processing** that incorporates prior knowledge and ancillary information to refine specific classes.  
-        Additional land cover property assessment layers are provided by the **FAO Land Cover Classification System (LCCS)** for land cover, land use, and surface hydrology.  
-    
-        **Applications include:**
-        - Monitoring long-term land cover change.
-        - Tracking transitions between cropland, forest, urban, grassland, and other categories.
-        - Supporting climate, hydrology, and biodiversity research.
-    
-        **Citation:** Please visit the [LP DAAC 'Citing Our Data'](https://lpdaac.usgs.gov/citing-data/) page for information on citing LP DAAC datasets.  
-        Dataset reference: *Friedl, M.A., Sulla-Menashe, D., 2021. MCD12Q1 MODIS/Terra+Aqua Land Cover Type Yearly L3 Global 500 m SIN Grid V061. NASA EOSDIS Land Processes DAAC.* (doi:[10.5067/MODIS/MCD12Q1.061](https://doi.org/10.5067/MODIS/MCD12Q1.061))
-    
-        **See also:**
-        - [MODIS Land Cover Overview (NASA LP DAAC)](https://lpdaac.usgs.gov/products/mcd12q1v061/)
-        - [User Guide and Documentation](https://lpdaac.usgs.gov/documents/101/MCD12_User_Guide_V6.pdf)
-        """)
-    
-        st.markdown("---")
-        
-             <iframe 
-                src="https://ee-shubhdhadiwal.projects.earthengine.app/view/modis-lulc-2010-2024" 
-                width="100%" height="600" frameborder="0" allowfullscreen>
-            </iframe>
-            """,
-            unsafe_allow_html=True
-        )
-        
-        st.markdown("**Note:**")
-        st.markdown("""
-        1. This dashboard visualizes annual MODIS LULC maps from 2010 to 2024; detailed statistical analysis can be performed in GIS or Earth Engine using the raw dataset.  
-        2. To get access to the processing scripts and download the data, please contact the developer. Custom analysis and tailored LULC change detection services are available upon request (may be subject to service fees).  
-    
-        *This dashboard is created by Shubh Dhadiwal using Google Earth Engine.*
-        """, unsafe_allow_html=True)
-  
     st.stop()
-
 
 # ===== NON-SHEET TABS: About, Submit New Resource, FAQ ===== #
 if selected_tab == "About":

@@ -435,10 +435,10 @@ The LCZ scheme complements other land use / land cover schemes by its focus on u
 
 # ===== NON-SHEET TABS: About, Submit New Resource, FAQ ===== #
 if selected_tab == "About":
-    st.title("📘 About GeoAI Dashboard")
+    st.title("📘 About GeoAI Repository")
     
     st.markdown("""
-    The **GeoAI Dashboard** is an interactive and open-access platform designed for 
+    The **GeoAI Repository** is an interactive and open-access platform designed for 
     **students, researchers, and professionals** in geospatial analytics, urban planning, 
     and climate action. It integrates **Google Earth Engine (GEE)**, Python, and other 
     open-source tools to provide powerful, cloud-based geospatial analysis.

@@ -405,10 +405,6 @@ The LCZ scheme complements other land use / land cover schemes by its focus on u
         </p>
         """, unsafe_allow_html=True)
 
-    import streamlit as st
-
-st.set_page_config(page_title="🌿 LULC Change Analysis Dashboard", layout="wide")
-
     with st.expander("▶️ ESA WorldCover LULC Change Analysis 2020-2021"):
         st.markdown("""
         The European Space Agency (ESA) WorldCover 10 m products provide global land cover maps at 10 m spatial resolution based on Sentinel-1 and Sentinel-2 data.  

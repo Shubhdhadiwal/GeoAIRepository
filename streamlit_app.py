@@ -435,16 +435,26 @@ The LCZ scheme complements other land use / land cover schemes by its focus on u
 
 # ===== NON-SHEET TABS: About, Submit New Resource, FAQ ===== #
 if selected_tab == "About":
-    st.title("📘 About GeoAI Repository")
+    st.title("📘 About GeoAI Dashboard")
     st.markdown("""
-    The **GeoAI Repository** is a free and open resource hub for students, researchers, and professionals 
-    working in geospatial analytics, machine learning, and urban/climate planning.
+    The **GeoAI Dashboard** is an interactive and open-access platform designed for 
+    **students, researchers, and professionals** in geospatial analytics, urban planning, 
+    and climate action. It integrates **Google Earth Engine (GEE)**, Python, and other 
+    open-source tools to provide powerful, cloud-based geospatial analysis.
     """)
     st.info("""
-    - 🌐 Public geospatial datasets  
-    - 🛠️ Open-source tools  
-    - 📘 Free tutorials  
-    - 💻 Python codes for Google Earth Engine  
+    - 🌐 **Public Geospatial Datasets**: Access global and regional datasets on land use, climate, 
+      urban infrastructure, and environmental change.  
+    - 🛠️ **Open-Source Tools & Platforms**: Built on GEE, Python, and other open-source frameworks 
+      for reproducible geospatial analysis.  
+    - 📘 **Tutorials & Workflows**: Step-by-step guides and examples for implementing geospatial AI projects.  
+    - 💻 **Python & GEE Scripts**: Ready-to-use scripts for satellite data processing, land cover analysis, 
+      and urban/climate modeling.  
+    - 📊 **Interactive Visualizations**: Explore dynamic maps, charts, and dashboards for real-time insights.
+    """)
+    st.markdown("""
+    This dashboard aims to **democratize geospatial intelligence**, enabling users to analyze, visualize, 
+    and interpret complex spatial data efficiently without heavy local computing resources.
     """)
 
     categories_to_check = ["Data Sources", "Tools", "Courses", "Free Tutorials", "Python Codes (GEE)"]

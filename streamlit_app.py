@@ -198,7 +198,7 @@ def show_dashboards():
     </style>
     """, unsafe_allow_html=True)
 
-    with st.expander("▶️ Google Open Building Dashboard"):
+    with st.expander("🏢 Google Open Building Dashboard"):
         st.markdown("""
         This large-scale open dataset consists of outlines of buildings derived from high-resolution 50 cm satellite imagery. It contains 1.8B building detections in Africa, Latin America, Caribbean, South Asia and Southeast Asia. The inference spanned an area of 58M km².
 
@@ -216,7 +216,7 @@ The project is based in Ghana, with an initial focus on the continent of Africa 
         )
         st.markdown("""Dashboard created by Shubh Dhadiwal using Google Earth Engine. [🚀 Open Earth Engine Code Editor here](https://code.earthengine.google.com/272ebbc2fd09e86a3b256c9c2f259b9f?hideCode=true)""", unsafe_allow_html=True)
 
-    with st.expander("▶️ Local Climate Zones (LCZ) Dashboard"):
+    with st.expander("🌍 Local Climate Zones (LCZ) Dashboard"):
         st.markdown("""
         This global map of Local Climate Zones, at 100m pixel size and representative for the nominal year 2018, is derived from multiple earth observation datasets and expert LCZ class labels. LCZ_Filter is the recommended band for most users. The other classification band, LCZ, is only provided as it is used to calculate the LCZ_Probability band.
 
@@ -232,7 +232,7 @@ In addition, since LCZs were originally designed as a new framework for urban he
         )
         st.markdown("""Dashboard created by Shubh Dhadiwal using Google Earth Engine. [🚀 Open Earth Engine Code Editor here](https://code.earthengine.google.com/db65e6b4ece8341249a978d4a1509f0e)""", unsafe_allow_html=True)
 
-    with st.expander("▶️ NASA Sea Level Evaluation Tool"):
+    with st.expander("🌊 NASA Sea Level Evaluation Tool"):
         st.markdown("""
         The **NASA Sea Level Evaluation Tool** provides interactive visualization and analysis of global sea level data from multiple satellite altimetry missions. Users can:
         - Explore sea level trends and anomalies
@@ -256,7 +256,7 @@ In addition, since LCZs were originally designed as a new framework for urban he
             unsafe_allow_html=True
         )
 
-    with st.expander("▶️ BBBike OSM Extract Service"):
+    with st.expander("🚴 BBBike OSM Extract Service"):
         st.markdown("""
         The **BBBike OSM Extract Service** is a free web-based tool for extracting **OpenStreetMap (OSM)** data for custom-defined areas anywhere in the world. Users can:
         - Select a region by drawing a polygon or choosing from predefined cities
@@ -269,7 +269,7 @@ In addition, since LCZs were originally designed as a new framework for urban he
         """)
         components.iframe("https://extract.bbbike.org/", height=700, width=1300, scrolling=True)
 
-    with st.expander("▶️ DIVA-GIS Global Data Access"):
+    with st.expander("🌐 DIVA-GIS Global Data Access"):
         st.markdown("""
         **DIVA-GIS** provides free spatial data for any country in the world, including:
         - Administrative boundaries
@@ -298,7 +298,7 @@ There is one image for each modeled year (2000, 2005, 2010, 2015, and 2020). Pop
         st.markdown("""Dashboard created by Shubh Dhadiwal using Google Earth Engine. [🚀 Open Earth Engine Code Editor here](https://code.earthengine.google.com/dca1dbdd9db97db7276ffab3cf5b2fe6)""", unsafe_allow_html=True)
         st.markdown("""--- **Citation:** Center for International Earth Science Information Network - CIESIN - Columbia University. 2018. Gridded Population of the World, Version 4 (GPWv4.11): Population Density Adjusted to Match 2015 Revision of UN WPP Country Totals, Revision 11. Palisades, NY: NASA Socioeconomic Data and Applications Center (SEDAC). https://doi.org/10.7927/H4F47M65. Accessed 12 August 2025.""")
 
-    with st.expander("▶️ Global Landsat LST Explorer"):
+    with st.expander("🌡️ Global Landsat LST Explorer"):
         st.markdown("""
         The **Global Landsat LST Explorer** is an interactive Google Earth Engine (GEE) application for analyzing Land Surface Temperature (LST) using Landsat 8 and Landsat 9 Collection 2 Level-2 data.
 
@@ -327,7 +327,7 @@ Features include:
         )
         st.markdown("""Dashboard created by Shubh Dhadiwal using Google Earth Engine. [🚀 Open Earth Engine Code Editor here](https://code.earthengine.google.com/e4830267a6dae171f1bf1057f52e19bc)""", unsafe_allow_html=True)
 
-    with st.expander("▶️ NASA POWER Data Access Viewer"):
+    with st.expander("☀️ NASA POWER Data Access Viewer"):
         st.markdown("""
         The **NASA POWER (Prediction Of Worldwide Energy Resources) Data Access Viewer** is a web-based tool that provides access to global meteorological and solar energy data. It is widely used for:
         - Renewable energy assessments
@@ -364,7 +364,7 @@ Features include:
             unsafe_allow_html=True
         )
 
-    with st.expander("▶️ ESA WorldCover LULC Change Analysis 2020-2021"):
+    with st.expander("🛰️ ESA WorldCover LULC Change Analysis 2020-2021"):
         st.markdown("""
         The European Space Agency (ESA) WorldCover 10 m products provide global land cover maps at 10 m spatial resolution based on Sentinel-1 and Sentinel-2 data. Available years: **2020** and **2021**.
 
@@ -386,8 +386,9 @@ See also:
 2. To get access to the code and download the data, please contact the developer. Customization of the code tailored to your study can also be requested (it may be subject to service fees).
 This dashboard is created by Shubh Dhadiwal using Google Earth Engine.
         """, unsafe_allow_html=True)
+        
 # ✅ MODIS moved INSIDE Dashboards tab (this fixes the leak)
-    with st.expander("▶️ MODIS Land Use Land Cover (LULC) Change Analysis 2010-2024"):
+    with st.expander("🗺️ MODIS Land Use Land Cover (LULC) Change Analysis 2010-2024"):
         st.markdown("""
         The **Terra and Aqua combined Moderate Resolution Imaging Spectroradiometer (MODIS)** Land Cover Type (MCD12Q1) Version 6.1 data product provides global land cover types at yearly intervals.
     
@@ -426,7 +427,7 @@ This dashboard is created by Shubh Dhadiwal using Google Earth Engine.
         *This dashboard is created by Shubh Dhadiwal using Google Earth Engine.*
         """, unsafe_allow_html=True)
     
-    with st.expander("▶️ Global Surface Water (GSW) Explorer 1984-2021"):
+    with st.expander("💧 Global Surface Water (GSW) Explorer 1984-2021"):
         st.markdown("""
         The **Global Surface Water (GSW) dataset** provides a comprehensive view of the location and temporal distribution of surface water from **1984 to 2021**.  
         It includes statistics on the extent, occurrence, change, and seasonality of water surfaces, enabling detailed hydrological and environmental analysis.
@@ -472,7 +473,7 @@ This dashboard is created by Shubh Dhadiwal using Google Earth Engine.
         *This dashboard is created by Shubh Dhadiwal using Google Earth Engine.*
         """, unsafe_allow_html=True)
 
-    with st.expander("▶️ Flood Detection Dashboard, 2015-2025"):
+    with st.expander("⚠️💧 Flood Detection Dashboard, 2015-2025"):
         st.markdown("""
         The **Flood Detection Dashboard** uses **Sentinel-1 SAR imagery** to detect potential flood-affected areas from **2015 to 2025**.  
         It allows users to interactively explore flood extents for different states, months, and years, providing valuable insights for research, urban planning, and disaster management.

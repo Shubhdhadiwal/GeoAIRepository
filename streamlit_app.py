@@ -35,7 +35,7 @@ def hash_password(password: str) -> str:
     return hashlib.sha256(password.encode()).hexdigest()
 
 USER_CREDENTIALS = {
-    "Shubh1301": hash_password("Shubh130127")
+    "Shubh1301": hash_password("Shubh130128")
 }
 
 if 'authenticated' not in st.session_state:

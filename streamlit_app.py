@@ -201,20 +201,31 @@ def show_dashboards():
     with st.expander("🏢 Google Open Building Dashboard"):
         st.markdown("""
         This large-scale open dataset consists of outlines of buildings derived from high-resolution 50 cm satellite imagery. It contains 1.8B building detections in Africa, Latin America, Caribbean, South Asia and Southeast Asia. The inference spanned an area of 58M km².
-
-For each building in this dataset we include the polygon describing its footprint on the ground, a confidence score indicating how sure we are that this is a building, and a Plus Code corresponding to the center of the building. There is no information about the type of building, its street address, or any details other than its geometry.
-
-Building footprints are useful for a range of important applications: from population estimation, urban planning and humanitarian response to environmental and climate science.
-
-The project is based in Ghana, with an initial focus on the continent of Africa and new updates on South Asia, South-East Asia, Latin America and the Caribbean. Inference was carried out during May 2023.
+    
+        For each building in this dataset we include the polygon describing its footprint on the ground, a confidence score indicating how sure we are that this is a building, and a Plus Code corresponding to the center of the building. There is no information about the type of building, its street address, or any details other than its geometry.
+    
+        Building footprints are useful for a range of important applications: from population estimation, urban planning and humanitarian response to environmental and climate science.
+    
+        The project is based in Ghana, with an initial focus on the continent of Africa and new updates on South Asia, South-East Asia, Latin America and the Caribbean. Inference was carried out during May 2023.
         """)
+        
         st.markdown("🔗 [Official Dataset Documentation](https://developers.google.com/earth-engine/datasets/catalog/GOOGLE_Research_open-buildings_v3_polygons)")
+        
         st.markdown("---")
+        
         st.markdown(
             """<iframe src="https://ee-shubhdhadiwal.projects.earthengine.app/view/geoai" width="100%" height="600" frameborder="0" allowfullscreen></iframe>""",
             unsafe_allow_html=True
         )
-        st.markdown("""Dashboard created by Shubh Dhadiwal using Google Earth Engine. [🚀 Open Earth Engine Code Editor here](https://code.earthengine.google.com/272ebbc2fd09e86a3b256c9c2f259b9f?hideCode=true)""", unsafe_allow_html=True)
+        
+        st.markdown("""
+    **Note:**  
+    1. Some state boundaries may not be available in the FAO GAUL dataset.  
+    2. Detailed statistical analysis can be performed in GIS or Google Earth Engine using the raw dataset.  
+    3. To get access to the processing scripts and download the data, please contact the developer. Custom analysis and tailored building footprint studies are available upon request (may be subject to service fees).
+    
+    Dashboard created by Shubh Dhadiwal using Google Earth Engine (GEE).
+    """)
 
     with st.expander("🌍 Local Climate Zones (LCZ) Dashboard"):
         st.markdown("""

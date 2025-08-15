@@ -472,7 +472,7 @@ This dashboard is created by Shubh Dhadiwal using Google Earth Engine.
         *This dashboard is created by Shubh Dhadiwal using Google Earth Engine.*
         """, unsafe_allow_html=True)
 
-    with st.expander("▶️ Flood Detection Dashboard (Sentinel-1) 2015-2025"):
+    with st.expander("▶️ Flood Detection Dashboard, 2015-2025"):
         st.markdown("""
         The **Flood Detection Dashboard** uses **Sentinel-1 SAR imagery** to detect potential flood-affected areas from **2015 to 2025**.  
         It allows users to interactively explore flood extents for different states, months, and years, providing valuable insights for research, urban planning, and disaster management.

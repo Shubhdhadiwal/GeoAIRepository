@@ -398,8 +398,9 @@ See also:
         """, unsafe_allow_html=True)
         st.markdown("**Note:**")
         st.markdown("""
-1. This dashboard displays the results only; advanced analysis as per the needs to be performed in GIS after downloading the data.
-2. To get access to the code and download the data, please contact the developer. Customization of the code tailored to your study can also be requested (it may be subject to service fees).
+1. Some state boundaries may not be available in the FAO GAUL dataset.
+2. This dashboard displays the results only; advanced analysis as per the needs to be performed in GIS after downloading the data.
+3. To get access to the code and download the data, please contact the developer. Customization of the code tailored to your study can also be requested (it may be subject to service fees).
 This dashboard is created by Shubh Dhadiwal using Google Earth Engine.
         """, unsafe_allow_html=True)
         
@@ -437,8 +438,9 @@ This dashboard is created by Shubh Dhadiwal using Google Earth Engine.
     
         st.markdown("""
         **Note:**
-        1. This dashboard visualizes annual MODIS LULC maps from 2010 to 2024; detailed statistical analysis can be performed in GIS or Earth Engine using the raw dataset.
-        2. To get access to the processing scripts and download the data, please contact the developer. Custom analysis and tailored LULC change detection services are available upon request (may be subject to service fees).
+        1. Some state boundaries may not be available in the FAO GAUL dataset.
+        2. This dashboard visualizes annual MODIS LULC maps from 2010 to 2024; detailed statistical analysis can be performed in GIS or Earth Engine using the raw dataset.
+        3. To get access to the processing scripts and download the data, please contact the developer. Custom analysis and tailored LULC change detection services are available upon request (may be subject to service fees).
     
         *This dashboard is created by Shubh Dhadiwal using Google Earth Engine.*
         """, unsafe_allow_html=True)
@@ -483,8 +485,9 @@ This dashboard is created by Shubh Dhadiwal using Google Earth Engine.
     
         st.markdown("""
         **Note:**
-        1. This dashboard visualizes Global Surface Water (GSW) metrics; detailed statistical analysis can be performed in GIS or Earth Engine using the raw dataset.
-        2. To get access to the processing scripts and download the data, please contact the developer. Custom analysis and tailored GSW studies are available upon request (may be subject to service fees).
+        1. Some state boundaries may not be available in the FAO GAUL dataset.
+        2. This dashboard visualizes Global Surface Water (GSW) metrics; detailed statistical analysis can be performed in GIS or Earth Engine using the raw dataset.
+        3. To get access to the processing scripts and download the data, please contact the developer. Custom analysis and tailored GSW studies are available upon request (may be subject to service fees).
     
         *This dashboard is created by Shubh Dhadiwal using Google Earth Engine.*
         """, unsafe_allow_html=True)

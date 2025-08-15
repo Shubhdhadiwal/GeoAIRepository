@@ -230,10 +230,10 @@ def show_dashboards():
     with st.expander("🌍 Local Climate Zones (LCZ) Dashboard"):
         st.markdown("""
         This global map of Local Climate Zones, at 100m pixel size and representative for the nominal year 2018, is derived from multiple earth observation datasets and expert LCZ class labels. LCZ_Filter is the recommended band for most users. The other classification band, LCZ, is only provided as it is used to calculate the LCZ_Probability band.
-
-The LCZ scheme complements other land use / land cover schemes by its focus on urban and rural landscape types, which can be described by any of the 17 classes in the LCZ scheme. Out of the 17 LCZ classes, 10 reflect the 'built' environment, and each LCZ type is associated with generic numerical descriptions of key urban canopy parameters critical to model atmospheric responses to urbanisation.
-
-In addition, since LCZs were originally designed as a new framework for urban heat island studies, they also contain a limited set (7) of 'natural' land-cover classes that can be used as 'control' or 'natural reference' areas.
+    
+        The LCZ scheme complements other land use / land cover schemes by its focus on urban and rural landscape types, which can be described by any of the 17 classes in the LCZ scheme. Out of the 17 LCZ classes, 10 reflect the 'built' environment, and each LCZ type is associated with generic numerical descriptions of key urban canopy parameters critical to model atmospheric responses to urbanisation.
+    
+        In addition, since LCZs were originally designed as a new framework for urban heat island studies, they also contain a limited set (7) of 'natural' land-cover classes that can be used as 'control' or 'natural reference' areas.
         """)
         st.markdown("🔗 [Official Dataset Documentation](https://developers.google.com/earth-engine/datasets/catalog/RUB_RUBCLIM_LCZ_global_lcz_map_latest#description)")
         st.markdown("---")
@@ -241,31 +241,14 @@ In addition, since LCZs were originally designed as a new framework for urban he
             """<iframe src="https://ee-shubhdhadiwal.projects.earthengine.app/view/lcz-dashboard" width="100%" height="600" frameborder="0" allowfullscreen></iframe>""",
             unsafe_allow_html=True
         )
-        st.markdown("""Dashboard created by Shubh Dhadiwal using Google Earth Engine. [🚀 Open Earth Engine Code Editor here](https://code.earthengine.google.com/db65e6b4ece8341249a978d4a1509f0e)""", unsafe_allow_html=True)
-
-    with st.expander("🌊 NASA Sea Level Evaluation Tool"):
         st.markdown("""
-        The **NASA Sea Level Evaluation Tool** provides interactive visualization and analysis of global sea level data from multiple satellite altimetry missions. Users can:
-        - Explore sea level trends and anomalies
-        - Compare data from different missions (e.g., TOPEX/Poseidon, Jason-1/2/3, Sentinel-6)
-        - Analyze time series for specific regions or globally
-        - Overlay climate indices for correlation studies
-
-**Data Sources:**
-- Satellite altimetry measurements from NASA, NOAA, CNES, and ESA missions
-- Climate indices (ENSO, PDO, NAO, etc.)
-
-**Key Features:**
-- Interactive maps and charts
-- Regional or global data selection
-- Downloadable CSV datasets for custom analysis
-        """)
-        st.markdown("🔗 [NASA Sea Level Evaluation Tool Website](https://sealevel.nasa.gov/sea-level-evaluation-tool)")
-        components.iframe("https://sealevel.nasa.gov/sea-level-evaluation-tool", height=1200, width=1400)
-        st.markdown(
-            """<p style='font-size:15px; color:gray;'> Source: NASA, <a href="https://sealevel.nasa.gov/sea-level-evaluation-tool" target="_blank">https://sealevel.nasa.gov/sea-level-evaluation-tool</a> </p>""",
-            unsafe_allow_html=True
-        )
+    **Note:**  
+    1. Some state boundaries may not be available in the FAO GAUL dataset.  
+    2. Detailed statistical analysis can be performed in GIS or Google Earth Engine using the raw dataset.  
+    3. To get access to the processing scripts and download the data, please contact the developer. Custom analysis and tailored LCZ studies are available upon request (may be subject to service fees).
+    
+    Dashboard created by Shubh Dhadiwal using Google Earth Engine (GEE).
+    """)
 
     with st.expander("🚴 BBBike OSM Extract Service"):
         st.markdown("""

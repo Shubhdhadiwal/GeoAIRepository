@@ -562,7 +562,7 @@ This dashboard is created by Shubh Dhadiwal using Google Earth Engine.
         [Open Global Forest Watch – Global Dashboard](
         https://www.globalforestwatch.org/dashboards/global/)
     
-        *This dashboard, and the GFW platform, were created by the **World Resources Institute (WRI)** with support from partners such as Google, UMD, Esri, Vizzuality, USAID, Imazon, UNEP, and others.* :contentReference[oaicite:3]{index=3}
+        *This dashboard, and the GFW platform, were created by the **World Resources Institute (WRI)** with support from partners such as Google, UMD, Esri, Vizzuality, USAID, Imazon, UNEP, and others.* 
         """, unsafe_allow_html=True)
     
         st.markdown("---")

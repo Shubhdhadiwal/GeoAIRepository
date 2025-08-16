@@ -543,6 +543,35 @@ This dashboard is created by Shubh Dhadiwal using Google Earth Engine.
             unsafe_allow_html=True
         )
 
+    with st.expander("🌳 Global Forest Watch – Global Dashboard"):
+        st.markdown("""
+        **Global Forest Watch (GFW)** is an award-winning, **open-source forest monitoring platform** spearheaded by the **World Resources Institute (WRI)**, alongside partners such as Google, University of Maryland (UMD), Esri, Vizzuality, USAID, and others. It provides **near-real-time insights** into global forest change through interactive maps, alerts, and statistics. :contentReference[oaicite:0]{index=0}
+    
+        **Key Capabilities:**
+        - View global tree cover loss and gain from 2000 onwards, with data updated annually.
+        - Enable **near-real-time deforestation alerts** via MODIS and GLAD systems.
+        - Explore detailed layers including protected areas, biodiversity hotspots, land use types, commodity concessions, and fire events.
+        - Engage with tools tailored to specific needs: **GFW Fires**, **GFW Commodities**, **Forest Watcher**, and dashboards for sustainable sourcing and policy-making. :contentReference[oaicite:1]{index=1}
+    
+        **Impact & Recognition:**
+        - Used globally by governments, NGOs, the media, researchers, and businesses for policy, enforcement, and monitoring.
+        - Has contributed to timely action—like halting illegal logging and fire monitoring across sensitive regions.
+        - Recognized with awards including the Computerworld Editors' Choice Award and UN Big Data Climate Challenge. :contentReference[oaicite:2]{index=2}
+    
+        **Explore the Global Dashboard:**
+        [Open Global Forest Watch – Global Dashboard](
+        https://www.globalforestwatch.org/dashboards/global/)
+    
+        *This dashboard, and the GFW platform, were created by the **World Resources Institute (WRI)** with support from partners such as Google, UMD, Esri, Vizzuality, USAID, Imazon, UNEP, and others.* :contentReference[oaicite:3]{index=3}
+        """, unsafe_allow_html=True)
+    
+        st.markdown("---")
+    
+        st.markdown(
+            """<iframe src="https://www.globalforestwatch.org/dashboards/global/" width="100%" height="600" frameborder="0" allowfullscreen></iframe>""",
+            unsafe_allow_html=True
+        )
+
 def show_about():
     st.title("📘 About GeoAI Repository")
     

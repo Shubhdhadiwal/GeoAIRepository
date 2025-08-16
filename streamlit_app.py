@@ -522,7 +522,7 @@ This dashboard is created by Shubh Dhadiwal using Google Earth Engine.
         - FAO GAUL 2015 Boundaries  
         
         **Explore the Dashboard:**  
-        [🌍 Open Flood Detection Dashboard](https://ee-shubhdhadiwal.projects.earthengine.app/view/flood-detection-2010-2015)
+        [🌍 Open Flood Detection Dashboard](https://ee-shubhdhadiwal.projects.earthengine.app/view/flood-detection-2015-2025)
         
         **Notes:**
         1. Dashboard excludes **permanent water bodies** (rivers, lakes, reservoirs) using JRC GSW.  
@@ -539,7 +539,7 @@ This dashboard is created by Shubh Dhadiwal using Google Earth Engine.
         st.markdown("---")
     
         st.markdown(
-            """<iframe src="https://ee-shubhdhadiwal.projects.earthengine.app/view/flood-detection-sentinel-1-2015-2025" width="100%" height="600" frameborder="0" allowfullscreen></iframe>""",
+            """<iframe src="https://ee-shubhdhadiwal.projects.earthengine.app/view/flood-detection-2015-2025" width="100%" height="600" frameborder="0" allowfullscreen></iframe>""",
             unsafe_allow_html=True
         )
 

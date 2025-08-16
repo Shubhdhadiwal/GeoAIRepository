@@ -543,7 +543,7 @@ This dashboard is created by Shubh Dhadiwal using Google Earth Engine.
             unsafe_allow_html=True
         )
 
-    with st.expander("🌳 Global Forest Watch – Global Dashboard"):
+    with st.expander("🌳 Global Forest Watch Dashboard"):
         st.markdown("""
         **Global Forest Watch (GFW)** is an award-winning, **open-source forest monitoring platform** spearheaded by the **World Resources Institute (WRI)**, alongside partners such as Google, University of Maryland (UMD), Esri, Vizzuality, USAID, and others. It provides **near-real-time insights** into global forest change through interactive maps, alerts, and statistics. :contentReference[oaicite:0]{index=0}
     

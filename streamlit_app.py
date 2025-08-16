@@ -494,42 +494,46 @@ This dashboard is created by Shubh Dhadiwal using Google Earth Engine.
 
     with st.expander("⚠️💧 Flood Detection Dashboard, 2015-2025"):
         st.markdown("""
-        The **Flood Detection Dashboard** uses **Sentinel-1 SAR imagery** to detect potential flood-affected areas from **2015 to 2025**.  
-        It allows users to interactively explore flood extents for different states, months, and years, providing valuable insights for research, urban planning, and disaster management.
-    
+        The **Flood Detection Dashboard** uses **Sentinel-1 SAR imagery** combined with the **JRC Global Surface Water dataset** to detect **potential flood-affected areas** while excluding **permanent water bodies**.  
+        It allows users to interactively explore flood extents for different states, months, and years from **2015 to 2025**, supporting research, urban planning, and disaster management.
+        
         **Dataset Overview:**
-        - Uses **Sentinel-1 VV polarization SAR imagery** to detect low backscatter areas, indicative of potential flooding.
-        - Flood detection threshold is set at **-13 dB VV**, capturing water-covered surfaces even under cloudy conditions.
-        - State boundaries are from **FAO GAUL 2015 Level 1 dataset**. Some regions may not be available or incomplete.
-    
+        - **Sentinel-1 VV polarization SAR imagery** detects low backscatter areas (potential flooding).
+        - Flood detection threshold: **-13 dB VV**.  
+        - Permanent water bodies masked using **JRC Global Surface Water (seasonality = 12 / occurrence ≥ 90%)**.  
+        - State boundaries from **FAO GAUL 2015 Level 1 dataset** (some regions may be incomplete).
+        
         **Key Features:**
-        - **State/Region Selection:** Choose a state or region to visualize floods.  
-        - **Month Selection:** View flood extents for any month (01–12).  
-        - **Year Slider:** Interactive slider allows browsing floods from **2015 to 2025**.  
-        - **Detected Flood Areas:** Blue shaded areas show regions with potential flooding.  
-        - **Export Functionality:** Download the flood layer as a GeoTIFF for further analysis.
-    
+        - **State/Region Selection** – visualize flood layers for selected states.  
+        - **Month Selection** – explore floods across any month (01–12).  
+        - **Year Slider (2015–2025)** – dynamic flood time-series browsing.  
+        - **Detected Flood Areas** – blue shaded regions show temporary water (floods), while cyan highlights permanent water (removed).  
+        - **Export Functionality** – download processed flood maps as GeoTIFF for GIS or further analysis.
+        
         **Applications:**
-        - Flood risk assessment and early warning
-        - Urban planning and disaster management
-        - Research on temporal flood patterns
-    
+        - Flood risk assessment & early warning  
+        - Disaster management & response planning  
+        - Hydrology & climate research  
+        - Urban and infrastructure planning  
+        
         **Data Sources:**  
         - Sentinel-1 SAR Imagery (COPERNICUS/S1_GRD)  
-        - State Boundaries (FAO GAUL 2015; some boundaries may be missing)
-    
+        - JRC Global Surface Water (GSW v1.4)  
+        - FAO GAUL 2015 Boundaries  
+        
         **Explore the Dashboard:**  
-        [Open Flood Detection Dashboard](https://ee-shubhdhadiwal.projects.earthengine.app/view/flood-detection-2010-2015)
-    
-        **Note:**
-        1. This dashboard identifies potential flooded areas but does not differentiate between riverine or urban floods.  
-        2. Validation with local ground data is recommended before decision-making.  
-        3. Some state boundaries may not be available in the FAO GAUL dataset.  
-        4. Detailed statistical analysis can be performed in GIS or Earth Engine using the raw dataset.  
-        5. To get access to the processing scripts and download the data, please contact the developer. Custom analysis and tailored flood studies are available upon request (may be subject to service fees).  
-        6. The use of Sentinel data is governed by the [Copernicus Sentinel Data Terms and Conditions](https://sentinels.copernicus.eu/web/sentinel/terms-of-use).
-    
-        *This dashboard is created by Shubh Dhadiwal using Google Earth Engine.*
+        [🌍 Open Flood Detection Dashboard](https://ee-shubhdhadiwal.projects.earthengine.app/view/flood-detection-sentinel-1-2015-2025)
+        
+        **Notes:**
+        1. Dashboard excludes **permanent water bodies** (rivers, lakes, reservoirs) using JRC GSW.  
+        2. Identifies **potential flood extent**, not distinguishing flood types (urban/riverine).  
+        3. Ground validation is recommended before operational use.  
+        4. Some FAO GAUL boundaries may be missing.  
+        5. Further flood statistics and custom studies can be performed in GEE or GIS.  
+        6. For scripts, custom studies, or dataset access, please contact the developer (may involve service fees).  
+        7. Sentinel data usage is governed by the [Copernicus Sentinel Data Terms and Conditions](https://sentinels.copernicus.eu/web/sentinel/terms-of-use).  
+        
+        *Dashboard created by **Shubh Dhadiwal** using Google Earth Engine.*  
         """, unsafe_allow_html=True)
     
         st.markdown("---")

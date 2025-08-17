@@ -601,7 +601,7 @@ This dashboard is created by Shubh Dhadiwal using Google Earth Engine.
         - FAO GAUL 2015 Boundaries  
         
         **Explore the Dashboard:**  
-        [🌍 Open Global Mangrove Watch Dashboard](https://www.globalmangrovewatch.org/)  
+        [🌍 Open Global Mangrove Watch Dashboard](https://ee-shubhdhadiwal.projects.earthengine.app/view/global-mangrove-watch)  
         
         **Notes:**
         1. Results are suitable for research, conservation, and policy, but **ground validation is recommended** before operational use.  
@@ -614,7 +614,7 @@ This dashboard is created by Shubh Dhadiwal using Google Earth Engine.
         st.markdown("---")
     
         st.markdown(
-            """<iframe src="https://www.globalmangrovewatch.org/" width="100%" height="600" frameborder="0" allowfullscreen></iframe>""",
+            """<iframe src="https://ee-shubhdhadiwal.projects.earthengine.app/view/global-mangrove-watch" width="100%" height="600" frameborder="0" allowfullscreen></iframe>""",
             unsafe_allow_html=True
         )
 

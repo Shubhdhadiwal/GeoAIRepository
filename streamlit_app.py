@@ -445,7 +445,7 @@ This dashboard is created by Shubh Dhadiwal using Google Earth Engine.
         *This dashboard is created by Shubh Dhadiwal using Google Earth Engine.*
         """, unsafe_allow_html=True)
 
-    with st.expander("🌊 Coastal Screening Tool"):
+    with st.expander("🌊 Coastal Screening Tool - Sea Level Rise Spatial Projections"):
         st.markdown("""
         The **Coastal Screening Tool** is an interactive web-based platform for assessing **coastal risks and vulnerabilities**. 
     

@@ -446,28 +446,28 @@ This dashboard is created by Shubh Dhadiwal using Google Earth Engine.
         """, unsafe_allow_html=True)
 
     with st.expander("🌊 Coastal Screening Tool"):
-    st.markdown("""
-    The **Coastal Screening Tool** is an interactive web-based platform for assessing **coastal risks and vulnerabilities**. 
-
-    **Capabilities:**
-    - Select a coastal area of interest anywhere in the world
-    - Visualize projections of **sea level rise, storm surge, and coastal flooding**
-    - Explore different climate scenarios, forecast years, and percentile projections
-    - Download available data layers for GIS analysis (GeoTIFF, Shapefile, CSV, etc.)
-
-    **Datasets available:**
-    - **Sea Level Rise Projections**: IPCC 2021 Median, High, and Low scenarios
-    - **Return Levels**: 1-year, 10-year, 100-year coastal flood events
-    - **Elevation Models**: Best available global coastal elevation data
-    - **Global Coastal Coverage** for both developed and developing regions
-
-    **Credits:**
-    - Developed by **Climate Central**
-    - Data sourced from **IPCC, NASA SRTM, and global coastal elevation datasets**
-    - Map and tool available at: [Climate Central Coastal Risk Map](https://coastal.climatecentral.org/map/)
-
-    """)
-    components.iframe("https://coastal.climatecentral.org/map/", height=700, width=1300, scrolling=True)
+        st.markdown("""
+        The **Coastal Screening Tool** is an interactive web-based platform for assessing **coastal risks and vulnerabilities**. 
+    
+        **Capabilities:**
+        - Select a coastal area of interest anywhere in the world
+        - Visualize projections of **sea level rise, storm surge, and coastal flooding**
+        - Explore different climate scenarios, forecast years, and percentile projections
+        - Download available data layers for GIS analysis (GeoTIFF, Shapefile, CSV, etc.)
+    
+        **Datasets available:**
+        - **Sea Level Rise Projections**: IPCC 2021 Median, High, and Low scenarios
+        - **Return Levels**: 1-year, 10-year, 100-year coastal flood events
+        - **Elevation Models**: Best available global coastal elevation data
+        - **Global Coastal Coverage** for both developed and developing regions
+    
+        **Credits:**
+        - Developed by **Climate Central**
+        - Data sourced from **IPCC, NASA SRTM, and global coastal elevation datasets**
+        - Map and tool available at: [Climate Central Coastal Risk Map](https://coastal.climatecentral.org/map/)
+    
+        """)
+        components.iframe("https://coastal.climatecentral.org/map/", height=700, width=1300, scrolling=True)
     
     with st.expander("💧 Global Surface Water (GSW) Explorer 1984-2021"):
         st.markdown("""

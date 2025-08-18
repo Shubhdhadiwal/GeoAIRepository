@@ -604,7 +604,7 @@ This dashboard is created by Shubh Dhadiwal using Google Earth Engine.
         - **Satellite:** Sentinel-5 Precursor (S5P), launched by **ESA** on **13 October 2017**.  
         - **Instrument:** **TROPOMI** (TROPOspheric Monitoring Instrument), a spectrometer measuring multiple air pollutants.  
         - **Spatial Resolution:** ~7 km × 3.5 km, daily global coverage.  
-        - **Data Availability:** **28 June 2018 – present**.  
+        - **Data Availability:** **June 2018 – present**.  
         - **Purpose:** Provides near-real-time data to monitor **air quality, atmospheric composition, and greenhouse gases**.
     
         **Pollutants Included and Their Importance:**  

@@ -625,14 +625,13 @@ This dashboard is created by Shubh Dhadiwal using Google Earth Engine.
         - **Export Functionality:** Download layers as **GeoTIFF** for GIS, modeling, or research.
     
         **Applications:**  
-        - Urban and regional **air quality management**  
-        - **Climate change studies** and greenhouse gas monitoring  
+        - Urban and regional **air quality management**        - 
         - **Public health risk assessment** and policy formulation  
         - Research on **aerosol transport, photochemical smog, and emission sources**  
         - Validation of **air quality models** and satellite-based studies
     
         **Data Sources:**  
-        - **Sentinel-5P (TROPOMI) L3 products** (2018–2025)  
+        - [**Sentinel-5P (TROPOMI) L3 products** (2018–2025)](https://developers.google.com/earth-engine/datasets/catalog/sentinel-5p) 
         - **FAO GAUL 2015 Level 1 boundaries**  
     
         **Explore the Dashboard:**  

@@ -642,6 +642,66 @@ This dashboard is created by Shubh Dhadiwal using Google Earth Engine.
             unsafe_allow_html=True
         )
 
+with st.expander("🌍🌿 Sentinel-5P Air Quality Dashboard (2018–2025)"):
+    st.markdown("""
+    The **Sentinel-5P Air Quality Dashboard** provides interactive access to **Sentinel-5P satellite data** for monitoring key atmospheric pollutants. It is designed for users interested in **air quality, public health, climate studies, and environmental policy planning**.  
+
+    **About Sentinel-5P and TROPOMI:**  
+    - **Satellite:** Sentinel-5 Precursor (S5P), launched by **ESA** on **13 October 2017**.  
+    - **Instrument:** **TROPOMI** (TROPOspheric Monitoring Instrument), a spectrometer measuring multiple air pollutants.  
+    - **Spatial Resolution:** ~7 km × 3.5 km, daily global coverage.  
+    - **Data Availability:** **28 June 2018 – present**.  
+    - **Purpose:** Provides near-real-time data to monitor **air quality, atmospheric composition, and greenhouse gases**.
+
+    **Pollutants Included and Their Importance:**  
+    - **NO₂ (Nitrogen Dioxide):** Indicator of urban and industrial emissions; affects **respiratory health**.  
+    - **CO (Carbon Monoxide):** Produced from incomplete combustion; impacts **oxygen transport in humans**.  
+    - **O₃ (Ozone):** Ground-level ozone affects **lung function and air quality**.  
+    - **CH₄ (Methane):** Potent **greenhouse gas**; tracking supports **climate mitigation**.  
+    - **SO₂ (Sulfur Dioxide):** Industrial emissions; causes **acid rain** and respiratory issues.  
+    - **Aerosol Index:** Detects absorbing aerosols like **dust, smoke, and pollution plumes**, impacting **health and climate**.  
+    - **HCHO (Formaldehyde):** Marker of **photochemical activity and biomass burning**; toxic to humans.
+
+    **Dashboard Features:**  
+    - **State/Region Selection:** Analyze air quality at regional scales using **FAO GAUL 2015 Level 1 boundaries**.  
+    - **Pollutant Selection:** Switch between multiple pollutants to examine **spatial and temporal variations**.  
+    - **Year Selection (2018–2025):** Explore **annual averages and temporal trends**.  
+    - **Interactive Map:** Visualize pollutant concentrations with **color-coded legends** and **gradient scales**.  
+    - **Average Value Computation:** Provides **summary statistics** for selected regions.  
+    - **Export Functionality:** Download layers as **GeoTIFF** for GIS, modeling, or research.
+
+    **Applications:**  
+    - Urban and regional **air quality management**  
+    - **Climate change studies** and greenhouse gas monitoring  
+    - **Public health risk assessment** and policy formulation  
+    - Research on **aerosol transport, photochemical smog, and emission sources**  
+    - Validation of **air quality models** and satellite-based studies
+
+    **Data Sources:**  
+    - **Sentinel-5P (TROPOMI) L3 products** (2018–2025)  
+    - **FAO GAUL 2015 Level 1 boundaries**  
+
+    **Explore the Dashboard:**  
+    [🌍 Open Sentinel-5P Air Quality Dashboard](https://ee-shubhdhadiwal.projects.earthengine.app/view/air-quality-dashboard)  
+
+    **Credits:**  
+    - Developed by **Shubh Dhadiwal** using **Google Earth Engine**.  
+    - Data courtesy of **ESA Sentinel-5P / TROPOMI** and **FAO GAUL** datasets.  
+
+    **Notes:**  
+    1. Satellite measurements may require **ground validation** for precise operational decisions.  
+    2. Some regions may have **limited coverage** due to cloud or retrieval issues.  
+    3. Contact the developer for **custom studies, scripts, or data extraction**.
+    """, unsafe_allow_html=True)
+
+    st.markdown("---")
+
+    st.markdown(
+        """<iframe src="https://ee-shubhdhadiwal.projects.earthengine.app/view/air-quality-dashboard" width="100%" height="600" frameborder="0" allowfullscreen></iframe>""",
+        unsafe_allow_html=True
+    )
+
+
 def show_about():
     st.title("📘 About GeoAI Repository")
     

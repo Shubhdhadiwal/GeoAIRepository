@@ -607,7 +607,7 @@ This dashboard is created by Shubh Dhadiwal using Google Earth Engine.
         - **Data Availability:** **June 2018 – present**.  
         - **Purpose:** Provides near-real-time data to monitor **air quality, atmospheric composition, and greenhouse gases**.
     
-        **Pollutants Included and Their Importance:**  
+        **Pollutants Included:**  
         - **NO₂ (Nitrogen Dioxide):** Indicator of urban and industrial emissions; affects **respiratory health**.  
         - **CO (Carbon Monoxide):** Produced from incomplete combustion; impacts **oxygen transport in humans**.  
         - **O₃ (Ozone):** Ground-level ozone affects **lung function and air quality**.  

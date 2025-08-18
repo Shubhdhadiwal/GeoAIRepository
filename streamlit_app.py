@@ -619,7 +619,7 @@ This dashboard is created by Shubh Dhadiwal using Google Earth Engine.
         **Dashboard Features:**  
         - **State/Region Selection:** Analyze air quality at regional scales using **FAO GAUL 2015 Level 1 boundaries**.  
         - **Pollutant Selection:** Switch between multiple pollutants to examine **spatial and temporal variations**.  
-        - **Year Selection (2018–2025):** Explore **annual averages and temporal trends**.  
+        - **Year Selection (2018–2025):** Explore **monthly and annual averages and temporal trends**.  
         - **Interactive Map:** Visualize pollutant concentrations with **color-coded legends** and **gradient scales**.  
         - **Average Value Computation:** Provides **summary statistics** for selected regions.  
         - **Export Functionality:** Download layers as **GeoTIFF** for GIS, modeling, or research.

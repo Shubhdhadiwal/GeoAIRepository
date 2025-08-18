@@ -596,53 +596,7 @@ This dashboard is created by Shubh Dhadiwal using Google Earth Engine.
             unsafe_allow_html=True
         )
 
-    with st.expander("🌍🌱 Global Mangrove Watch Dashboard (1996–2020)"):
-        st.markdown("""
-        The **Global Mangrove Watch (GMW) Dashboard** provides access to the **GMW v3.0 dataset** for mapping, analyzing, and exporting **mangrove extent, core, and union layers**.  
-        It enables users to explore mangrove distribution across states and years (1996–2020), supporting research, coastal management, and conservation planning.
-        
-        **Dataset Overview:**
-        - **Extent (1996–2020):** Mangrove area mapped per year.  
-        - **Core:** Stable mangrove forests that persisted across all mapped years.  
-        - **Union:** Combined mangrove extent across all years (any pixel detected at least once).  
-        - Administrative boundaries from **FAO GAUL 2015 Level 1 dataset**.  
-        
-        **Key Features:**
-        - **State/Region Selection** – visualize mangroves for specific regions.  
-        - **Layer Selection** – switch between **Extent (per year)**, **Core (stable areas)**, and **Union (all years)**.  
-        - **Year Slider (1996–2020)** – dynamic browsing of annual mangrove extent.  
-        - **Interactive Map** – explore mangrove coverage with overlays.  
-        - **Export Functionality** – download selected layers as GeoTIFF for GIS and further analysis.  
-        
-        **Applications:**
-        - Mangrove conservation & monitoring  
-        - Coastal protection & blue carbon research  
-        - Biodiversity & habitat mapping  
-        - Policy, planning, and reporting for SDGs & climate commitments  
-        
-        **Data Sources:**  
-        - Global Mangrove Watch (GMW v3.0, 1996–2020)  
-        - FAO GAUL 2015 Boundaries  
-        
-        **Explore the Dashboard:**  
-        [🌍 Open Global Mangrove Watch Dashboard](https://ee-shubhdhadiwal.projects.earthengine.app/view/global-mangrove-watch)  
-        
-        **Notes:**
-        1. Results are suitable for research, conservation, and policy, but **ground validation is recommended** before operational use.  
-        2. Some FAO GAUL boundaries may be incomplete.  
-        3. For scripts, custom studies, or dataset access, please contact the developer (may involve service fees).   
-        
-        *Dashboard created by **Shubh Dhadiwal** using **Google Earth Engine**.*  
-        """, unsafe_allow_html=True)
-    
-        st.markdown("---")
-    
-        st.markdown(
-            """<iframe src="https://ee-shubhdhadiwal.projects.earthengine.app/view/global-mangrove-watch" width="100%" height="600" frameborder="0" allowfullscreen></iframe>""",
-            unsafe_allow_html=True
-        )
-
-with st.expander("🌍🌿 Sentinel-5P Air Quality Dashboard (2018–2025)"):
+    with st.expander("🌍🌿 Sentinel-5P Air Quality Dashboard (2018–2025)"):
     st.markdown("""
     The **Sentinel-5P Air Quality Dashboard** provides interactive access to **Sentinel-5P satellite data** for monitoring key atmospheric pollutants. It is designed for users interested in **air quality, public health, climate studies, and environmental policy planning**.  
 
@@ -691,7 +645,7 @@ with st.expander("🌍🌿 Sentinel-5P Air Quality Dashboard (2018–2025)"):
     **Notes:**  
     1. Satellite measurements may require **ground validation** for precise operational decisions.  
     2. Some regions may have **limited coverage** due to cloud or retrieval issues.  
-    3. Contact the developer for **custom studies, scripts, or data extraction**.
+    3. Contact the developer for **custom studies, scripts, or data extraction** (maybe subject to servie fees).
     """, unsafe_allow_html=True)
 
     st.markdown("---")
@@ -701,6 +655,51 @@ with st.expander("🌍🌿 Sentinel-5P Air Quality Dashboard (2018–2025)"):
         unsafe_allow_html=True
     )
 
+    with st.expander("🌍🌱 Global Mangrove Watch Dashboard (1996–2020)"):
+        st.markdown("""
+        The **Global Mangrove Watch (GMW) Dashboard** provides access to the **GMW v3.0 dataset** for mapping, analyzing, and exporting **mangrove extent, core, and union layers**.  
+        It enables users to explore mangrove distribution across states and years (1996–2020), supporting research, coastal management, and conservation planning.
+        
+        **Dataset Overview:**
+        - **Extent (1996–2020):** Mangrove area mapped per year.  
+        - **Core:** Stable mangrove forests that persisted across all mapped years.  
+        - **Union:** Combined mangrove extent across all years (any pixel detected at least once).  
+        - Administrative boundaries from **FAO GAUL 2015 Level 1 dataset**.  
+        
+        **Key Features:**
+        - **State/Region Selection** – visualize mangroves for specific regions.  
+        - **Layer Selection** – switch between **Extent (per year)**, **Core (stable areas)**, and **Union (all years)**.  
+        - **Year Slider (1996–2020)** – dynamic browsing of annual mangrove extent.  
+        - **Interactive Map** – explore mangrove coverage with overlays.  
+        - **Export Functionality** – download selected layers as GeoTIFF for GIS and further analysis.  
+        
+        **Applications:**
+        - Mangrove conservation & monitoring  
+        - Coastal protection & blue carbon research  
+        - Biodiversity & habitat mapping  
+        - Policy, planning, and reporting for SDGs & climate commitments  
+        
+        **Data Sources:**  
+        - Global Mangrove Watch (GMW v3.0, 1996–2020)  
+        - FAO GAUL 2015 Boundaries  
+        
+        **Explore the Dashboard:**  
+        [🌍 Open Global Mangrove Watch Dashboard](https://ee-shubhdhadiwal.projects.earthengine.app/view/global-mangrove-watch)  
+        
+        **Notes:**
+        1. Results are suitable for research, conservation, and policy, but **ground validation is recommended** before operational use.  
+        2. Some FAO GAUL boundaries may be incomplete.  
+        3. For scripts, custom studies, or dataset access, please contact the developer (may involve service fees).   
+        
+        *Dashboard created by **Shubh Dhadiwal** using **Google Earth Engine**.*  
+        """, unsafe_allow_html=True)
+    
+        st.markdown("---")
+    
+        st.markdown(
+            """<iframe src="https://ee-shubhdhadiwal.projects.earthengine.app/view/global-mangrove-watch" width="100%" height="600" frameborder="0" allowfullscreen></iframe>""",
+            unsafe_allow_html=True
+        )
 
 def show_about():
     st.title("📘 About GeoAI Repository")

@@ -654,6 +654,50 @@ This dashboard is created by Shubh Dhadiwal using Google Earth Engine.
             unsafe_allow_html=True
         )
 
+    with st.expander("⚠️ ThinkHazard! – Global Hazard Screening Tool"):
+        st.markdown("""
+        **ThinkHazard!** is a free, open-source tool developed by GFDRR (Global Facility for Disaster Reduction and Recovery) and the World Bank to help project planners and governments assess natural hazards by location.  
+        It offers an easy-to-use interface for understanding hazard exposure across 11 categories—including floods, earthquakes, drought, landslides, and more—and provides risk-reduction guidance tailored to each hazard and administrative level.
+    
+        **Dashboard Overview:**
+        - **Location Search** – enter your project area (country, region, district).
+        - **Hazard Overview** – instantly view hazard levels (Very Low to High) across 11 natural risks.
+        - **Detailed Guidance** – click into specific hazards for tailored risk-management recommendations, resources, and contacts.
+    
+        **Key Features:**
+        - **Interactive Map** – visualize hazard levels by administrative units (ADM2/ADM1/ADM0).
+        - **PDF Reports** – download hazard summaries with maps and guidance.
+        - **Open-source & Customizable** – available via GitHub (GPL-3.0 licensed), enabling forks and sector-specific versions.  
+          :contentReference[oaicite:0]{index=0}
+    
+        **Applications:**
+        - Risk-sensitive project design and resilience planning  
+        - Disaster risk reduction policy development  
+        - Educational and stakeholder awareness tools  
+    
+        **Explore ThinkHazard!**  
+        [🕸 Open ThinkHazard! Tool](https://thinkhazard.org/en/)
+    
+        **Notes:**
+        1. Offers hazard exposure, not vulnerability or risk (which requires additional data).  
+        2. Provides tailored recommendations for each hazard and location level.  
+        3. Supports multiple languages and downloadable PDFs for reporting.  
+          :contentReference[oaicite:1]{index=1}
+    
+        *Developed by GFDRR Labs in partnership with the World Bank for global hazard-aware planning.*  
+        """, unsafe_allow_html=True)
+    
+        st.markdown("---")
+    
+        st.markdown(
+            """<iframe
+                 src="https://thinkhazard.org/en/"
+                 width="100%" height="600"
+                 frameborder="0" allowfullscreen>
+               </iframe>""",
+            unsafe_allow_html=True
+        )
+
     with st.expander("🌍🌱 Global Mangrove Watch Dashboard (1996–2020)"):
         st.markdown("""
         The **Global Mangrove Watch (GMW) Dashboard** provides access to the **GMW v3.0 dataset** for mapping, analyzing, and exporting **mangrove extent, core, and union layers**.  

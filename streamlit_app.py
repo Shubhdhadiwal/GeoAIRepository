@@ -700,52 +700,6 @@ This dashboard is created by Shubh Dhadiwal using Google Earth Engine.
             unsafe_allow_html=True
         )
 
-with st.expander("🌊🌍 Google Flood Hub – Advanced Flood Forecasting Dashboard"):
-    st.markdown("""
-    The **Google Flood Hub** provides **AI-powered flood forecasting and visualization tools** to help communities, governments, and aid organizations better prepare for and respond to floods.  
-    It leverages **machine learning, satellite imagery, and hydrological models** to predict flooding up to **7 days in advance**, covering areas with the highest risk.
-
-    **Dashboard Overview:**
-    - **Forecast Coverage:** Over **80 countries** and expanding globally.  
-    - **Prediction Window:** Up to **7-day lead time** for flood forecasts.  
-    - **Risk Zones:** Displays areas at risk with real-time probability maps.  
-    - **Integration for Aid Orgs & Governments:** Advanced APIs for disaster planning and early warning systems.  
-
-    **Key Features:**
-    - **Interactive Map** – visualize rivers and flood-prone regions.  
-    - **Localized Alerts** – community-level flood risk updates.  
-    - **Data Access** – exportable datasets for integration into **early warning systems**.  
-    - **Advanced Tools for NGOs** – API access for proactive response planning.  
-
-    **Applications:**
-    - Disaster risk reduction & emergency planning  
-    - Infrastructure protection & urban planning  
-    - Climate resilience strategies  
-    - NGO & government response coordination  
-
-    **Data Sources:**  
-    - Google’s **AI-based hydrologic and forecasting models**  
-    - Satellite imagery & river gauge data  
-
-    **Explore the Dashboard:**  
-    [🌍 Open Google Flood Hub](https://sites.research.google/floods/l/25.086059550203196/76.37516986948914/5)  
-
-    **Notes:**
-    1. Forecasts are probabilistic and **should be combined with local expertise** before decision-making.  
-    2. API and advanced features are available for governments and NGOs for early warning integration.  
-    3. Regular updates improve accuracy through new data and modeling techniques.  
-
-    *Flood Hub developed by **Google Research** using **AI & Earth Engine**.*  
-    """, unsafe_allow_html=True)
-
-    st.markdown("---")
-
-    st.markdown(
-        """<iframe src="https://sites.research.google/floods/l/25.086059550203196/76.37516986948914/5" width="100%" height="600" frameborder="0" allowfullscreen></iframe>""",
-        unsafe_allow_html=True
-    )
-
-
 def show_about():
     st.title("📘 About GeoAI Repository")
     

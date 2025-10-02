@@ -214,7 +214,7 @@ def show_dashboards():
         st.markdown("---")
         
         st.markdown(
-            """<iframe src="https://ee-shubhdhadiwal.projects.earthengine.app/view/geoai" width="100%" height="600" frameborder="0" allowfullscreen></iframe>""",
+            """<iframe src="https://ee-shubhdhadiwal.projects.earthengine.app/view/open-buildings" width="100%" height="600" frameborder="0" allowfullscreen></iframe>""",
             unsafe_allow_html=True
         )
         
